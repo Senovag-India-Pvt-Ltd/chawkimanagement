@@ -1,0 +1,67 @@
+package com.sericulture.model;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.Date;
+
+@Getter
+@Setter
+@Entity
+public class ChowkiManagement {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "chowki_management_seq")
+    @SequenceGenerator(name = "chowki_management_seq", sequenceName = "chowki_management_seq", allocationSize = 1)
+    Integer chowki_id;
+
+    @Column(name = "farmer_name")
+    private String farmerName;
+
+    @Column(name = "father_name")
+    private String fatherName;
+
+    @Column(name = "fruits_id")
+    private String fruitsId;
+
+    @Column(name = "source_of_dfls")
+    private String dflsSource;
+
+    @Column(name = "race_of_dfls")
+    private String raceOfDfls;
+
+    @Column(name = "numbers_of_dfls")
+    private Long numbersOfDfls;
+
+    @Column(name = "lot_numbers_of_the_rsp")
+    private String lotNumberRsp;
+
+    @Column(name = "lot_numbers_crc")
+    private String lotNumberCrc;
+
+    @Column(name = "village")
+    private String village;
+
+    @Column(name = "district")
+    private String district;
+
+    @Column(name = "state")
+    private String state;
+
+    @Column(name = "tsc")
+    private String tsc;
+
+    @Column(name = "sold_after_1st_or_2nd_mould")
+    private String soldAfter1stOr2ndMould;
+
+    @Column(name = "rate_per_100_dfls")
+    private Float ratePer100Dfls;
+
+    @Column(name = "price")
+    private Float price;
+
+    @Column(name = "dispatch_date")
+    private Date dispatchDate;
+
+}

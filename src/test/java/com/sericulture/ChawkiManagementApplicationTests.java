@@ -1,10 +1,9 @@
 package com.sericulture;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
 //@SpringBootTest
-class SpringBootTemplateApplicationTests {
+class ChawkiManagementApplicationTests {
 
 	@Test
 	void contextLoads() {
