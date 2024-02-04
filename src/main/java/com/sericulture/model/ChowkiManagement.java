@@ -14,7 +14,10 @@ public class ChowkiManagement {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "chowki_management_seq")
     @SequenceGenerator(name = "chowki_management_seq", sequenceName = "chowki_management_seq", allocationSize = 1)
-    Integer chowki_id;
+    Integer chowkiId;
+
+    @Column(name = "user_master_id")
+    private Long userMasterId;
 
     @Column(name = "farmer_name")
     private String farmerName;

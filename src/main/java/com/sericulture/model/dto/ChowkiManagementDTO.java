@@ -1,14 +1,15 @@
-package com.sericulture.model.api;
+package com.sericulture.model.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 import java.util.Date;
 
-@Getter
-@Setter
-public class ChowkiManagementRequest {
+@Data
+@AllArgsConstructor
+public class ChowkiManagementDTO {
 
+    private int chowkiId;
 
     private String farmerName;
 
@@ -41,5 +42,7 @@ public class ChowkiManagementRequest {
     private Float price;
 
     private Date dispatchDate;
+
+
 
 }
