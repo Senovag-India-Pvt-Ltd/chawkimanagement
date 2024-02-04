@@ -1,8 +1,10 @@
 package com.sericulture.service;
 
+import com.sericulture.helper.Util;
 import com.sericulture.model.ChowkiManagement;
+import com.sericulture.model.api.AddChowkiRequest;
 import com.sericulture.model.api.AddChowkiResponse;
-import com.sericulture.model.api.ChowkiManagementRequest;
+import com.sericulture.model.dto.ChowkiManagementDTO;
 import com.sericulture.repository.ChowkiManagementRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,28 +19,27 @@ public class ChowkiManagementService {
     @Autowired
     ChowkiManagementRepository chowkiManagemenyRepository;
 
-
-
-    public AddChowkiResponse insertData(ChowkiManagementRequest chowkiManagementRequest) {
+    public AddChowkiResponse insertData(AddChowkiRequest addChowkiRequest) {
         AddChowkiResponse addChowkiResponse=new AddChowkiResponse();
         ChowkiManagement chowkiManagement=new ChowkiManagement();
         try {
-            chowkiManagement.setDflsSource(chowkiManagementRequest.getDflsSource());
-            chowkiManagement.setDispatchDate(chowkiManagementRequest.getDispatchDate());
-            chowkiManagement.setDistrict(chowkiManagementRequest.getDistrict());
-            chowkiManagement.setFarmerName(chowkiManagementRequest.getFarmerName());
-            chowkiManagement.setState(chowkiManagementRequest.getState());
-            chowkiManagement.setFatherName(chowkiManagementRequest.getFatherName());
-            chowkiManagement.setFruitsId(chowkiManagementRequest.getFruitsId());
-            chowkiManagement.setLotNumberCrc(chowkiManagementRequest.getLotNumberCrc());
-            chowkiManagement.setLotNumberRsp(chowkiManagementRequest.getLotNumberRsp());
-            chowkiManagement.setNumbersOfDfls(chowkiManagementRequest.getNumbersOfDfls());
-            chowkiManagement.setPrice(chowkiManagementRequest.getPrice());
-            chowkiManagement.setRaceOfDfls(chowkiManagementRequest.getRaceOfDfls());
-            chowkiManagement.setRatePer100Dfls(chowkiManagementRequest.getRatePer100Dfls());
-            chowkiManagement.setSoldAfter1stOr2ndMould(chowkiManagementRequest.getSoldAfter1stOr2ndMould());
-            chowkiManagement.setTsc(chowkiManagementRequest.getTsc());
-            chowkiManagement.setVillage(chowkiManagementRequest.getVillage());
+            chowkiManagement.setDflsSource(addChowkiRequest.getDflsSource());
+            chowkiManagement.setDispatchDate(addChowkiRequest.getDispatchDate());
+            chowkiManagement.setDistrict(addChowkiRequest.getDistrict());
+            chowkiManagement.setFarmerName(addChowkiRequest.getFarmerName());
+            chowkiManagement.setState(addChowkiRequest.getState());
+            chowkiManagement.setFatherName(addChowkiRequest.getFatherName());
+            chowkiManagement.setFruitsId(addChowkiRequest.getFruitsId());
+            chowkiManagement.setLotNumberCrc(addChowkiRequest.getLotNumberCrc());
+            chowkiManagement.setLotNumberRsp(addChowkiRequest.getLotNumberRsp());
+            chowkiManagement.setNumbersOfDfls(addChowkiRequest.getNumbersOfDfls());
+            chowkiManagement.setPrice(addChowkiRequest.getPrice());
+            chowkiManagement.setRaceOfDfls(addChowkiRequest.getRaceOfDfls());
+            chowkiManagement.setRatePer100Dfls(addChowkiRequest.getRatePer100Dfls());
+            chowkiManagement.setSoldAfter1stOr2ndMould(addChowkiRequest.getSoldAfter1stOr2ndMould());
+            chowkiManagement.setTsc(addChowkiRequest.getTsc());
+            chowkiManagement.setVillage(addChowkiRequest.getVillage());
+            chowkiManagement.setUserMasterId(Util.getUserId(Util.getTokenValues()));
             chowkiManagemenyRepository.save(chowkiManagement);
 
             addChowkiResponse.setError(0);
@@ -53,45 +54,77 @@ public class ChowkiManagementService {
     }
 
 
-    public AddChowkiResponse updateData(ChowkiManagement chowkiManagement) {
+    public AddChowkiResponse updateData(ChowkiManagementDTO updateChowkiRequest) {
+        ChowkiManagement chowkiManagement = new ChowkiManagement();
         AddChowkiResponse addChowkiResponse=new AddChowkiResponse();
-        try {
-            chowkiManagemenyRepository.save(chowkiManagement);
-            addChowkiResponse.setError(0);
-            addChowkiResponse.setMessage("Data updated successfully!");
-        }
-        catch(Exception E){
+        Long userMasterId=Util.getUserId(Util.getTokenValues());
+        if(chowkiManagemenyRepository.findByChowkiIdAndUserMasterId(updateChowkiRequest.getChowkiId(),userMasterId).isEmpty()){
             addChowkiResponse.setError(1);
-            addChowkiResponse.setMessage("Something went wrong; please try again!");
-            log.error("EXCEPTION : {}",E);
+            addChowkiResponse.setMessage("Invalid Chowki ID");
+        }
+        else {
+            try {
+                chowkiManagement.setChowkiId(updateChowkiRequest.getChowkiId());
+                chowkiManagement.setDflsSource(updateChowkiRequest.getDflsSource());
+                chowkiManagement.setDispatchDate(updateChowkiRequest.getDispatchDate());
+                chowkiManagement.setDistrict(updateChowkiRequest.getDistrict());
+                chowkiManagement.setFarmerName(updateChowkiRequest.getFarmerName());
+                chowkiManagement.setState(updateChowkiRequest.getState());
+                chowkiManagement.setFatherName(updateChowkiRequest.getFatherName());
+                chowkiManagement.setFruitsId(updateChowkiRequest.getFruitsId());
+                chowkiManagement.setLotNumberCrc(updateChowkiRequest.getLotNumberCrc());
+                chowkiManagement.setLotNumberRsp(updateChowkiRequest.getLotNumberRsp());
+                chowkiManagement.setNumbersOfDfls(updateChowkiRequest.getNumbersOfDfls());
+                chowkiManagement.setPrice(updateChowkiRequest.getPrice());
+                chowkiManagement.setRaceOfDfls(updateChowkiRequest.getRaceOfDfls());
+                chowkiManagement.setRatePer100Dfls(updateChowkiRequest.getRatePer100Dfls());
+                chowkiManagement.setSoldAfter1stOr2ndMould(updateChowkiRequest.getSoldAfter1stOr2ndMould());
+                chowkiManagement.setTsc(updateChowkiRequest.getTsc());
+                chowkiManagement.setVillage(updateChowkiRequest.getVillage());
+                chowkiManagement.setUserMasterId(Util.getUserId(Util.getTokenValues()));
+                chowkiManagemenyRepository.save(chowkiManagement);
+                addChowkiResponse.setError(0);
+                addChowkiResponse.setMessage("Data updated successfully!");
+            } catch (Exception E) {
+                addChowkiResponse.setError(1);
+                addChowkiResponse.setMessage("Something went wrong; please try again!");
+                log.error("EXCEPTION : {}", E);
+            }
         }
         return addChowkiResponse;
     }
 
-    public List<ChowkiManagement> findAll() {
-        return chowkiManagemenyRepository.findAll();
+    public List<ChowkiManagementDTO> findAll() {
+        return chowkiManagemenyRepository.getByUserMasterIdOrderByChowkiIdDesc(Util.getUserId(Util.getTokenValues()));
     }
 
     public AddChowkiResponse deleteById(Integer id) {
         AddChowkiResponse addChowkiResponse=new AddChowkiResponse();
-        if(chowkiManagemenyRepository.findById(id).isEmpty()){
+        Long userMasterId=Util.getUserId(Util.getTokenValues());
+        if(chowkiManagemenyRepository.findByChowkiIdAndUserMasterId(id,userMasterId).isEmpty()){
             addChowkiResponse.setError(1);
-            addChowkiResponse.setMessage("Wrong Chowki ID");
+            addChowkiResponse.setMessage("Invalid Chowki ID");
         }
-        try {
-            chowkiManagemenyRepository.deleteById(id);
-            addChowkiResponse.setError(0);
-            addChowkiResponse.setMessage("Data deleted successfully!");
-        }
-        catch (Exception E){
-            addChowkiResponse.setError(1);
-            addChowkiResponse.setMessage("Something went wrong; please try again!");
-            log.error("EXCEPTION : {}",E);
+        else {
+            try {
+                chowkiManagemenyRepository.deleteById(id);
+                addChowkiResponse.setError(0);
+                addChowkiResponse.setMessage("Data deleted successfully!");
+            } catch (Exception E) {
+                addChowkiResponse.setError(1);
+                addChowkiResponse.setMessage("Something went wrong; please try again!");
+                log.error("EXCEPTION : {}", E);
+            }
         }
         return addChowkiResponse;
     }
 
-    public Optional<ChowkiManagement> getById(Integer id) {
-        return chowkiManagemenyRepository.findById(id);
+    public Optional<ChowkiManagementDTO> getById(Integer id) {
+        Long userMasterId=Util.getUserId(Util.getTokenValues());
+        Optional<ChowkiManagementDTO> chowkiManagementDTO=chowkiManagemenyRepository.findByChowkiIdAndUserMasterId(id,userMasterId);
+        if(chowkiManagementDTO.isEmpty()){
+            return Optional.empty();
+        }
+        return chowkiManagementDTO;
     }
 }

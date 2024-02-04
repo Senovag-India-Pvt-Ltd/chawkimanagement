@@ -1,9 +1,9 @@
 package com.sericulture.controller;
 
 
-import com.sericulture.model.ChowkiManagement;
+import com.sericulture.model.api.AddChowkiRequest;
 import com.sericulture.model.api.AddChowkiResponse;
-import com.sericulture.model.api.ChowkiManagementRequest;
+import com.sericulture.model.dto.ChowkiManagementDTO;
 import com.sericulture.service.ChowkiManagementService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,26 +21,26 @@ public class ChowkiManagementController {
     private ChowkiManagementService chowkiManagementService;
 
     @PostMapping("/add-info")
-    public AddChowkiResponse insertData(@RequestBody ChowkiManagementRequest ChowkiManagementRequest) {
-        return chowkiManagementService.insertData(ChowkiManagementRequest);
+    public AddChowkiResponse insertData(@RequestBody AddChowkiRequest addChowkiRequest) {
+        return chowkiManagementService.insertData(addChowkiRequest);
     }
 
     @PostMapping("/update-info")
-    public AddChowkiResponse updateData(@RequestBody ChowkiManagement chowkiManagement) {
+    public AddChowkiResponse updateData(@RequestBody ChowkiManagementDTO chowkiManagement) {
         return chowkiManagementService.updateData(chowkiManagement);
     }
 
     @GetMapping("/get-info")
-    public List<ChowkiManagement> getAllChowkiManagement() {
+    public List<ChowkiManagementDTO> getAllChowkiManagement() {
         return chowkiManagementService.findAll();
     }
 
     @GetMapping("/get-info-by-id/{chowki_id}")
-    public Optional<ChowkiManagement> getByChowkiId(@PathVariable Integer chowki_id) {
+    public Optional<ChowkiManagementDTO> getByChowkiId(@PathVariable Integer chowki_id) {
         return chowkiManagementService.getById(chowki_id);
     }
 
-    @GetMapping("/delete-info/{id}")
+    @DeleteMapping("/delete-info/{id}")
     public AddChowkiResponse deleteDataById(@PathVariable Integer id) {
         return chowkiManagementService.deleteById(id);
     }
