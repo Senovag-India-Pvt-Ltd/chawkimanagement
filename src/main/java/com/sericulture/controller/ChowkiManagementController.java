@@ -5,28 +5,49 @@ import com.sericulture.model.api.AddChowkiRequest;
 import com.sericulture.model.api.AddChowkiResponse;
 import com.sericulture.model.dto.ChowkiManagementDTO;
 import com.sericulture.service.ChowkiManagementService;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
+@Validated
 @RequestMapping("/chowkimanagement")
-@Slf4j
 public class ChowkiManagementController {
 
     @Autowired
     private ChowkiManagementService chowkiManagementService;
 
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, Object>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        Map<String, Object> response = new HashMap<>();
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        response.put("validationErrors", errors);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
     @PostMapping("/add-info")
-    public AddChowkiResponse insertData(@RequestBody AddChowkiRequest addChowkiRequest) {
+    public AddChowkiResponse insertData(@Valid @RequestBody AddChowkiRequest addChowkiRequest) {
         return chowkiManagementService.insertData(addChowkiRequest);
     }
 
     @PostMapping("/update-info")
-    public AddChowkiResponse updateData(@RequestBody ChowkiManagementDTO chowkiManagement) {
+    public AddChowkiResponse updateData(@Valid @RequestBody ChowkiManagementDTO chowkiManagement) {
         return chowkiManagementService.updateData(chowkiManagement);
     }
 
