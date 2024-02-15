@@ -3,6 +3,7 @@ package com.sericulture.controller;
 
 import com.sericulture.model.api.AddChowkiRequest;
 import com.sericulture.model.api.AddChowkiResponse;
+import com.sericulture.model.api.ChowkiManagementResponse;
 import com.sericulture.model.dto.ChowkiManagementDTO;
 import com.sericulture.service.ChowkiManagementService;
 import jakarta.validation.Valid;
@@ -52,12 +53,12 @@ public class ChowkiManagementController {
     }
 
     @GetMapping("/get-info")
-    public List<ChowkiManagementDTO> getAllChowkiManagement() {
+    public List<ChowkiManagementResponse> getAllChowkiManagement() {
         return chowkiManagementService.findAll();
     }
 
     @GetMapping("/get-info-by-id/{chowki_id}")
-    public Optional<ChowkiManagementDTO> getByChowkiId(@PathVariable Integer chowki_id) {
+    public Optional<ChowkiManagementResponse> getByChowkiId(@PathVariable Integer chowki_id) {
         return chowkiManagementService.getById(chowki_id);
     }
 

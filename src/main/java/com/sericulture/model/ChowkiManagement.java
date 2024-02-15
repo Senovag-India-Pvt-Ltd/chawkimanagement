@@ -31,9 +31,6 @@ public class ChowkiManagement {
     @Column(name = "source_of_dfls")
     private String dflsSource;
 
-    @Column(name = "race_of_dfls")
-    private String raceOfDfls;
-
     @Column(name = "numbers_of_dfls")
     private Long numbersOfDfls;
 
@@ -43,17 +40,26 @@ public class ChowkiManagement {
     @Column(name = "lot_numbers_crc")
     private String lotNumberCrc;
 
+    @Column(name = "race_of_dfls")
+    private Integer raceOfDfls;
+
     @Column(name = "village")
-    private String village;
+    private Integer village;
 
     @Column(name = "district")
-    private String district;
+    private Integer district;
 
     @Column(name = "state")
-    private String state;
+    private Integer state;
 
     @Column(name = "tsc")
-    private String tsc;
+    private Integer tsc;
+
+    @Column(name = "hobli")
+    private Integer hobli;
+
+    @Column(name = "taluk")
+    private Integer taluk;
 
     @Column(name = "sold_after_1st_or_2nd_mould")
     private String soldAfter1stOr2ndMould;
@@ -66,5 +72,11 @@ public class ChowkiManagement {
 
     @Column(name = "dispatch_date")
     private Date dispatchDate;
+
+    @Column(name = "hatching_date")
+    private Date hatchingDate;
+
+    @Column(name = "receipt_no")
+    private String receiptNo;
 
 }

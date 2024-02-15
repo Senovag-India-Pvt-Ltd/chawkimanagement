@@ -20,16 +20,14 @@ public class AddChowkiRequest {
     private String fatherName;
 
     @Pattern(regexp = "^[a-zA-Z0-9\\s]*$", message = "Fruits Id must contain only letters and numbers")
-    @Schema(name = "fruitsId", example = "string")
+    @Schema(name = "fruitsId", example = "string", required = true)
     private String fruitsId;
 
     @Pattern(regexp = "^[a-zA-Z0-9\\s]*$", message = "DFLS Source must contain only letters and numbers")
     @Schema(name = "dflsSource", example = "string")
     private String dflsSource;
 
-    @Pattern(regexp = "^[a-zA-Z0-9\\s]*$", message = "Race of DFLS must contain only letters and numbers")
-    @Schema(name = "raceOfDfls", example = "string")
-    private String raceOfDfls;
+    private Integer raceOfDfls;
 
     private Long numbersOfDfls;
 
@@ -41,21 +39,15 @@ public class AddChowkiRequest {
     @Schema(name = "lotNumberCrc", example = "string")
     private String lotNumberCrc;
 
-    @Pattern(regexp = "^[a-zA-Z0-9\\s]*$", message = "Village must contain only letters and numbers")
-    @Schema(name = "village", example = "string")
-    private String village;
+    private Integer village;
 
-    @Pattern(regexp = "^[a-zA-Z0-9\\s]*$", message = "District must contain only letters and numbers")
-    @Schema(name = "district", example = "string")
-    private String district;
+    private Integer district;
 
-    @Pattern(regexp = "^[a-zA-Z0-9\\s]*$", message = "State must contain only letters and numbers")
-    @Schema(name = "state", example = "string")
-    private String state;
+    private Integer state;
 
-    @Pattern(regexp = "^[a-zA-Z0-9\\s]*$", message = "TSC must contain only letters and numbers")
-    @Schema(name = "tsc", example = "string")
-    private String tsc;
+    private Integer tsc;
+    private Integer hobli;
+    private Integer taluk;
 
     @Pattern(regexp = "^[a-zA-Z0-9\\s]*$", message = "Sold After 1st or 2nd Mould must contain only letters and numbers")
     @Schema(name = "soldAfter1stOr2ndMould", example = "string")
@@ -66,5 +58,7 @@ public class AddChowkiRequest {
     private Float price;
 
     private Date dispatchDate;
+
+    private Date hatchingDate;
 
 }

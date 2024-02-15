@@ -4,6 +4,7 @@ import com.sericulture.helper.Util;
 import com.sericulture.model.ChowkiManagement;
 import com.sericulture.model.api.AddChowkiRequest;
 import com.sericulture.model.api.AddChowkiResponse;
+import com.sericulture.model.api.ChowkiManagementResponse;
 import com.sericulture.model.dto.ChowkiManagementDTO;
 import com.sericulture.repository.ChowkiManagementRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +40,9 @@ public class ChowkiManagementService {
             chowkiManagement.setSoldAfter1stOr2ndMould(addChowkiRequest.getSoldAfter1stOr2ndMould());
             chowkiManagement.setTsc(addChowkiRequest.getTsc());
             chowkiManagement.setVillage(addChowkiRequest.getVillage());
+            chowkiManagement.setTaluk(addChowkiRequest.getTaluk());
+            chowkiManagement.setHobli(addChowkiRequest.getHobli());
+            chowkiManagement.setHatchingDate(addChowkiRequest.getHatchingDate());
             chowkiManagement.setUserMasterId(Util.getUserId(Util.getTokenValues()));
             chowkiManagemenyRepository.save(chowkiManagement);
 
@@ -81,6 +85,9 @@ public class ChowkiManagementService {
                 chowkiManagement.setSoldAfter1stOr2ndMould(updateChowkiRequest.getSoldAfter1stOr2ndMould());
                 chowkiManagement.setTsc(updateChowkiRequest.getTsc());
                 chowkiManagement.setVillage(updateChowkiRequest.getVillage());
+                chowkiManagement.setTaluk(updateChowkiRequest.getTaluk());
+                chowkiManagement.setHobli(updateChowkiRequest.getHobli());
+                chowkiManagement.setHatchingDate(updateChowkiRequest.getHatchingDate());
                 chowkiManagement.setUserMasterId(Util.getUserId(Util.getTokenValues()));
                 chowkiManagemenyRepository.save(chowkiManagement);
                 addChowkiResponse.setError(0);
@@ -94,7 +101,7 @@ public class ChowkiManagementService {
         return addChowkiResponse;
     }
 
-    public List<ChowkiManagementDTO> findAll() {
+    public List<ChowkiManagementResponse> findAll() {
         return chowkiManagemenyRepository.getByUserMasterIdOrderByChowkiIdDesc(Util.getUserId(Util.getTokenValues()));
     }
 
@@ -119,9 +126,9 @@ public class ChowkiManagementService {
         return addChowkiResponse;
     }
 
-    public Optional<ChowkiManagementDTO> getById(Integer id) {
+    public Optional<ChowkiManagementResponse> getById(Integer id) {
         Long userMasterId=Util.getUserId(Util.getTokenValues());
-        Optional<ChowkiManagementDTO> chowkiManagementDTO=chowkiManagemenyRepository.findByChowkiIdAndUserMasterId(id,userMasterId);
+        Optional<ChowkiManagementResponse> chowkiManagementDTO=chowkiManagemenyRepository.findByChowkiIdAndUserMasterId(id,userMasterId);
         if(chowkiManagementDTO.isEmpty()){
             return Optional.empty();
         }
