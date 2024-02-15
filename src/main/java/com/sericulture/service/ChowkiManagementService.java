@@ -1,11 +1,12 @@
 package com.sericulture.service;
 
 import com.sericulture.helper.Util;
+import com.sericulture.model.api.requests.UpdateChowkiRequest;
+import com.sericulture.model.api.response.AddChowkiResponse;
 import com.sericulture.model.entity.ChowkiManagement;
-import com.sericulture.model.api.AddChowkiRequest;
-import com.sericulture.model.api.AddChowkiResponse;
+import com.sericulture.model.api.requests.AddChowkiRequest;
+import com.sericulture.model.api.response.CommonChowkiResponse;
 import com.sericulture.model.api.ChowkiManagementResponse;
-import com.sericulture.model.dto.ChowkiManagementDTO;
 import com.sericulture.repository.ChowkiManagementRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +22,11 @@ public class ChowkiManagementService {
     ChowkiManagementRepository chowkiManagemenyRepository;
 
     public AddChowkiResponse insertData(AddChowkiRequest addChowkiRequest) {
-        AddChowkiResponse addChowkiResponse=new AddChowkiResponse();
+        AddChowkiResponse addChowkiResponse =new AddChowkiResponse();
         ChowkiManagement chowkiManagement=new ChowkiManagement();
         try {
             float price=(addChowkiRequest.getRatePer100Dfls()*addChowkiRequest.getNumbersOfDfls())/100;
+            String receipt= "CRC/TMK/2024/02/01-DUMMY";
             chowkiManagement.setDflsSource(addChowkiRequest.getDflsSource());
             chowkiManagement.setDispatchDate(addChowkiRequest.getDispatchDate());
             chowkiManagement.setDistrict(addChowkiRequest.getDistrict());
@@ -45,8 +47,10 @@ public class ChowkiManagementService {
             chowkiManagement.setHobli(addChowkiRequest.getHobli());
             chowkiManagement.setHatchingDate(addChowkiRequest.getHatchingDate());
             chowkiManagement.setUserMasterId(Util.getUserId(Util.getTokenValues()));
+            chowkiManagement.setReceiptNo(receipt);
             chowkiManagemenyRepository.save(chowkiManagement);
 
+            addChowkiResponse.setReceiptNo(receipt);
             addChowkiResponse.setError(0);
             addChowkiResponse.setMessage("Data added successfully!");
         }
@@ -59,13 +63,13 @@ public class ChowkiManagementService {
     }
 
 
-    public AddChowkiResponse updateData(ChowkiManagementDTO updateChowkiRequest) {
+    public CommonChowkiResponse updateData(UpdateChowkiRequest updateChowkiRequest) {
         ChowkiManagement chowkiManagement = new ChowkiManagement();
-        AddChowkiResponse addChowkiResponse=new AddChowkiResponse();
+        CommonChowkiResponse commonChowkiResponse =new CommonChowkiResponse();
         Long userMasterId=Util.getUserId(Util.getTokenValues());
         if(chowkiManagemenyRepository.findByChowkiIdAndUserMasterId(updateChowkiRequest.getChowkiId(),userMasterId).isEmpty()){
-            addChowkiResponse.setError(1);
-            addChowkiResponse.setMessage("Invalid Chowki ID");
+            commonChowkiResponse.setError(1);
+            commonChowkiResponse.setMessage("Invalid Chowki ID");
         }
         else {
             try {
@@ -92,40 +96,40 @@ public class ChowkiManagementService {
                 chowkiManagement.setHatchingDate(updateChowkiRequest.getHatchingDate());
                 chowkiManagement.setUserMasterId(Util.getUserId(Util.getTokenValues()));
                 chowkiManagemenyRepository.save(chowkiManagement);
-                addChowkiResponse.setError(0);
-                addChowkiResponse.setMessage("Data updated successfully!");
+                commonChowkiResponse.setError(0);
+                commonChowkiResponse.setMessage("Data updated successfully!");
             } catch (Exception E) {
-                addChowkiResponse.setError(1);
-                addChowkiResponse.setMessage("Something went wrong; please try again!");
+                commonChowkiResponse.setError(1);
+                commonChowkiResponse.setMessage("Something went wrong; please try again!");
                 log.error("EXCEPTION : {}", E);
             }
         }
-        return addChowkiResponse;
+        return commonChowkiResponse;
     }
 
     public List<ChowkiManagementResponse> findAll() {
         return chowkiManagemenyRepository.getByUserMasterIdOrderByChowkiIdDesc(Util.getUserId(Util.getTokenValues()));
     }
 
-    public AddChowkiResponse deleteById(Integer id) {
-        AddChowkiResponse addChowkiResponse=new AddChowkiResponse();
+    public CommonChowkiResponse deleteById(Integer id) {
+        CommonChowkiResponse commonChowkiResponse =new CommonChowkiResponse();
         Long userMasterId=Util.getUserId(Util.getTokenValues());
         if(chowkiManagemenyRepository.findByChowkiIdAndUserMasterId(id,userMasterId).isEmpty()){
-            addChowkiResponse.setError(1);
-            addChowkiResponse.setMessage("Invalid Chowki ID");
+            commonChowkiResponse.setError(1);
+            commonChowkiResponse.setMessage("Invalid Chowki ID");
         }
         else {
             try {
                 chowkiManagemenyRepository.deleteById(id);
-                addChowkiResponse.setError(0);
-                addChowkiResponse.setMessage("Data deleted successfully!");
+                commonChowkiResponse.setError(0);
+                commonChowkiResponse.setMessage("Data deleted successfully!");
             } catch (Exception E) {
-                addChowkiResponse.setError(1);
-                addChowkiResponse.setMessage("Something went wrong; please try again!");
+                commonChowkiResponse.setError(1);
+                commonChowkiResponse.setMessage("Something went wrong; please try again!");
                 log.error("EXCEPTION : {}", E);
             }
         }
-        return addChowkiResponse;
+        return commonChowkiResponse;
     }
 
     public Optional<ChowkiManagementResponse> getById(Integer id) {

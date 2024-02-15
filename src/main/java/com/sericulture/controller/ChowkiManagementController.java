@@ -1,13 +1,13 @@
 package com.sericulture.controller;
 
 
-import com.sericulture.model.api.AddChowkiRequest;
-import com.sericulture.model.api.AddChowkiResponse;
+import com.sericulture.model.api.requests.AddChowkiRequest;
+import com.sericulture.model.api.response.AddChowkiResponse;
+import com.sericulture.model.api.response.CommonChowkiResponse;
 import com.sericulture.model.api.ChowkiManagementResponse;
-import com.sericulture.model.dto.ChowkiManagementDTO;
+import com.sericulture.model.api.requests.UpdateChowkiRequest;
 import com.sericulture.service.ChowkiManagementService;
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,8 +48,8 @@ public class ChowkiManagementController {
     }
 
     @PostMapping("/update-info")
-    public AddChowkiResponse updateData(@Valid @RequestBody ChowkiManagementDTO chowkiManagement) {
-        return chowkiManagementService.updateData(chowkiManagement);
+    public CommonChowkiResponse updateData(@Valid @RequestBody UpdateChowkiRequest updateChowkiRequest) {
+        return chowkiManagementService.updateData(updateChowkiRequest);
     }
 
     @GetMapping("/get-info")
@@ -63,7 +63,7 @@ public class ChowkiManagementController {
     }
 
     @DeleteMapping("/delete-info/{id}")
-    public AddChowkiResponse deleteDataById(@PathVariable Integer id) {
+    public CommonChowkiResponse deleteDataById(@PathVariable Integer id) {
         return chowkiManagementService.deleteById(id);
     }
 }

@@ -1,4 +1,4 @@
-package com.sericulture.model.api;
+package com.sericulture.model.api.response;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -8,4 +8,5 @@ import lombok.Setter;
 public class AddChowkiResponse {
     private int error;
     private String message;
+    private String receiptNo;
 }

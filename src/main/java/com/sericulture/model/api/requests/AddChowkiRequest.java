@@ -1,17 +1,15 @@
-package com.sericulture.model.dto;
+package com.sericulture.model.api.requests;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Date;
 
-@Data
-@AllArgsConstructor
-public class ChowkiManagementDTO {
-
-    private int chowkiId;
+@Getter
+@Setter
+public class AddChowkiRequest {
 
     @Pattern(regexp = "^[a-zA-Z0-9\\s]*$", message = "Farmer Name must contain only letters and numbers")
     @Schema(name = "farmerName", example = "string")
@@ -22,7 +20,7 @@ public class ChowkiManagementDTO {
     private String fatherName;
 
     @Pattern(regexp = "^[a-zA-Z0-9\\s]*$", message = "Fruits Id must contain only letters and numbers")
-    @Schema(name = "fruitsId", example = "string")
+    @Schema(name = "fruitsId", example = "string", required = true)
     private String fruitsId;
 
     @Pattern(regexp = "^[a-zA-Z0-9\\s]*$", message = "DFLS Source must contain only letters and numbers")
@@ -62,8 +60,5 @@ public class ChowkiManagementDTO {
     private Date dispatchDate;
 
     private Date hatchingDate;
-
-
-
 
 }

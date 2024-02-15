@@ -30,7 +30,8 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
             " CM.ratePer100Dfls," +
             " CM.price," +
             " CM.hatchingDate," +
-            " CM.dispatchDate" +
+            " CM.dispatchDate," +
+            " CM.receiptNo" +
             ")\n" +
             " from ChowkiManagement CM\n"+
             " LEFT JOIN Village V ON V.villageId=CM.village\n"+
@@ -64,7 +65,8 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
             " CM.ratePer100Dfls," +
             " CM.price," +
             " CM.hatchingDate," +
-            " CM.dispatchDate" +
+            " CM.dispatchDate," +
+            " CM.receiptNo" +
             ")\n" +
             " from ChowkiManagement CM\n"+
             " LEFT JOIN Village V ON V.villageId=CM.village\n"+

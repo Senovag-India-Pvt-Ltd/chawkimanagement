@@ -51,4 +51,6 @@ public class ChowkiManagementResponse {
 
     private Date dispatchDate;
 
+    private String receiptNo;
+
 }
