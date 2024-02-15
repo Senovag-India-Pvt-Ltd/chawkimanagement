@@ -7,7 +7,9 @@ import com.sericulture.model.entity.ChowkiManagement;
 import com.sericulture.model.api.requests.AddChowkiRequest;
 import com.sericulture.model.api.response.CommonChowkiResponse;
 import com.sericulture.model.api.ChowkiManagementResponse;
+import com.sericulture.model.entity.District;
 import com.sericulture.repository.ChowkiManagementRepository;
+import com.sericulture.repository.DistrictRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,12 +23,22 @@ public class ChowkiManagementService {
     @Autowired
     ChowkiManagementRepository chowkiManagemenyRepository;
 
+    @Autowired
+    DistrictRepository districtRepository;
+
     public AddChowkiResponse insertData(AddChowkiRequest addChowkiRequest) {
         AddChowkiResponse addChowkiResponse =new AddChowkiResponse();
         ChowkiManagement chowkiManagement=new ChowkiManagement();
         try {
             float price=(addChowkiRequest.getRatePer100Dfls()*addChowkiRequest.getNumbersOfDfls())/100;
-            String receipt= "CRC/TMK/2024/02/01-DUMMY";
+            String distCode=getDistrictById(addChowkiRequest.getDistrict()).toUpperCase();
+            String nextSeq=chowkiManagemenyRepository.getNextValRecieptSequence().toString();
+
+            if(nextSeq.length()==1)
+                nextSeq="0"+nextSeq;
+
+            String receipt= "CRC/"+distCode+"/"+nextSeq;
+
             chowkiManagement.setDflsSource(addChowkiRequest.getDflsSource());
             chowkiManagement.setDispatchDate(addChowkiRequest.getDispatchDate());
             chowkiManagement.setDistrict(addChowkiRequest.getDistrict());
@@ -56,7 +68,7 @@ public class ChowkiManagementService {
         }
         catch(Exception E){
             addChowkiResponse.setError(1);
-            addChowkiResponse.setMessage("Something went wrong; please try again!");
+            addChowkiResponse.setMessage("Selected district is invalid or something else went wrong; please try again!");
             log.error("EXCEPTION : {}",E);
         }
         return addChowkiResponse;
@@ -139,5 +151,10 @@ public class ChowkiManagementService {
             return Optional.empty();
         }
         return chowkiManagementDTO;
+    }
+
+    private String getDistrictById(Integer id){
+        String district= districtRepository.findById(id).get().getDistrictName();
+        return district.substring(0,Math.min(district.length(), 3));
     }
 }

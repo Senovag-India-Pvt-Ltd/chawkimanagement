@@ -5,6 +5,7 @@ import com.sericulture.model.api.ChowkiManagementResponse;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -79,5 +80,8 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
             " order by CM.chowkiId DESC"
     )
     List<ChowkiManagementResponse> getByUserMasterIdOrderByChowkiIdDesc(Long userMasterId);
+
+    @Query(value = "SELECT next value for dbo.chowkireceipt_seq", nativeQuery = true)
+    public BigDecimal getNextValRecieptSequence();
 
 }
