@@ -39,7 +39,7 @@ public class ChowkiManagementResponse {
 
     private String hobliName;
 
-    private Integer tsc;
+    private String tscName;
 
     private String soldAfter1stOr2ndMould;
 

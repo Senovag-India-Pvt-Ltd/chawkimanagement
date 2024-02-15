@@ -26,7 +26,7 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
             " S.stateName," +
             " T.talukName," +
             " H.hobliName," +
-            " CM.tsc," +
+            " U.tscName," +
             " CM.soldAfter1stOr2ndMould," +
             " CM.ratePer100Dfls," +
             " CM.price," +
@@ -41,6 +41,7 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
             " LEFT JOIN Taluk T ON T.talukId=CM.taluk\n"+
             " LEFT JOIN Hobli H ON H.hobliId=CM.hobli\n"+
             " LEFT JOIN RaceMaster R ON R.raceId=CM.raceOfDfls\n"+
+            " LEFT JOIN UserMaster U ON U.userMasterId=CM.tsc\n"+
             " where CM.userMasterId = :userMasterId\n"+
             " AND CM.chowkiId = :chowkiId"
     )
@@ -61,7 +62,7 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
             " S.stateName," +
             " T.talukName," +
             " H.hobliName," +
-            " CM.tsc," +
+            " U.tscName," +
             " CM.soldAfter1stOr2ndMould," +
             " CM.ratePer100Dfls," +
             " CM.price," +
@@ -76,6 +77,7 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
             " LEFT JOIN Taluk T ON T.talukId=CM.taluk\n"+
             " LEFT JOIN Hobli H ON H.hobliId=CM.hobli\n"+
             " LEFT JOIN RaceMaster R ON R.raceId=CM.raceOfDfls\n"+
+            " LEFT JOIN UserMaster U ON U.userMasterId=CM.tsc\n"+
             " where CM.userMasterId = :userMasterId\n"+
             " order by CM.chowkiId DESC"
     )
