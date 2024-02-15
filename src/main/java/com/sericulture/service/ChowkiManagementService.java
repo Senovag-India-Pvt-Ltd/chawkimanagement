@@ -1,7 +1,7 @@
 package com.sericulture.service;
 
 import com.sericulture.helper.Util;
-import com.sericulture.model.ChowkiManagement;
+import com.sericulture.model.entity.ChowkiManagement;
 import com.sericulture.model.api.AddChowkiRequest;
 import com.sericulture.model.api.AddChowkiResponse;
 import com.sericulture.model.api.ChowkiManagementResponse;
@@ -24,6 +24,7 @@ public class ChowkiManagementService {
         AddChowkiResponse addChowkiResponse=new AddChowkiResponse();
         ChowkiManagement chowkiManagement=new ChowkiManagement();
         try {
+            float price=(addChowkiRequest.getRatePer100Dfls()*addChowkiRequest.getNumbersOfDfls())/100;
             chowkiManagement.setDflsSource(addChowkiRequest.getDflsSource());
             chowkiManagement.setDispatchDate(addChowkiRequest.getDispatchDate());
             chowkiManagement.setDistrict(addChowkiRequest.getDistrict());
@@ -34,7 +35,7 @@ public class ChowkiManagementService {
             chowkiManagement.setLotNumberCrc(addChowkiRequest.getLotNumberCrc());
             chowkiManagement.setLotNumberRsp(addChowkiRequest.getLotNumberRsp());
             chowkiManagement.setNumbersOfDfls(addChowkiRequest.getNumbersOfDfls());
-            chowkiManagement.setPrice(addChowkiRequest.getPrice());
+            chowkiManagement.setPrice(price);
             chowkiManagement.setRaceOfDfls(addChowkiRequest.getRaceOfDfls());
             chowkiManagement.setRatePer100Dfls(addChowkiRequest.getRatePer100Dfls());
             chowkiManagement.setSoldAfter1stOr2ndMould(addChowkiRequest.getSoldAfter1stOr2ndMould());
@@ -68,6 +69,7 @@ public class ChowkiManagementService {
         }
         else {
             try {
+                float price=(updateChowkiRequest.getRatePer100Dfls()*updateChowkiRequest.getNumbersOfDfls())/100;
                 chowkiManagement.setChowkiId(updateChowkiRequest.getChowkiId());
                 chowkiManagement.setDflsSource(updateChowkiRequest.getDflsSource());
                 chowkiManagement.setDispatchDate(updateChowkiRequest.getDispatchDate());
@@ -79,7 +81,7 @@ public class ChowkiManagementService {
                 chowkiManagement.setLotNumberCrc(updateChowkiRequest.getLotNumberCrc());
                 chowkiManagement.setLotNumberRsp(updateChowkiRequest.getLotNumberRsp());
                 chowkiManagement.setNumbersOfDfls(updateChowkiRequest.getNumbersOfDfls());
-                chowkiManagement.setPrice(updateChowkiRequest.getPrice());
+                chowkiManagement.setPrice(price);
                 chowkiManagement.setRaceOfDfls(updateChowkiRequest.getRaceOfDfls());
                 chowkiManagement.setRatePer100Dfls(updateChowkiRequest.getRatePer100Dfls());
                 chowkiManagement.setSoldAfter1stOr2ndMould(updateChowkiRequest.getSoldAfter1stOr2ndMould());

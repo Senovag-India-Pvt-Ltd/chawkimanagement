@@ -1,8 +1,7 @@
 package com.sericulture.repository;
 
-import com.sericulture.model.ChowkiManagement;
+import com.sericulture.model.entity.ChowkiManagement;
 import com.sericulture.model.api.ChowkiManagementResponse;
-import com.sericulture.model.dto.ChowkiManagementDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

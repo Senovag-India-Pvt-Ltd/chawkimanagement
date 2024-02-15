@@ -1,4 +1,4 @@
-package com.sericulture.model;
+package com.sericulture.model.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
@@ -14,7 +14,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Hobli extends BaseEntity implements Serializable {
+public class Hobli implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "HOBLI_SEQ")
     @SequenceGenerator(name = "HOBLI_SEQ", sequenceName = "HOBLI_SEQ", allocationSize = 1)
@@ -24,16 +24,4 @@ public class Hobli extends BaseEntity implements Serializable {
     @Size(min = 2, max = 250, message = "HOBLI name should be more than 1 characters.")
     @Column(name = "HOBLI_NAME", unique = true)
     private String hobliName;
-
-    @Column(name = "STATE_ID")
-    private Long stateId;
-
-    @Column(name = "DISTRICT_ID")
-    private Long districtId;
-
-    @Column(name = "TALUK_ID")
-    private Long talukId;
-
-    @Column(name = "hobli_name_in_kannada")
-    private String hobliNameInKannada;
 }

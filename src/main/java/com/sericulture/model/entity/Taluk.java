@@ -1,4 +1,4 @@
-package com.sericulture.model;
+package com.sericulture.model.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
@@ -14,7 +14,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Taluk extends BaseEntity implements Serializable {
+public class Taluk implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "TALUK_SEQ")
     @SequenceGenerator(name = "TALUK_SEQ", sequenceName = "TALUK_SEQ", allocationSize = 1)
@@ -24,13 +24,4 @@ public class Taluk extends BaseEntity implements Serializable {
     @Size(min = 2, max = 250, message = "TALUK name should be more than 1 characters.")
     @Column(name = "TALUK_NAME", unique = true)
     private String talukName;
-
-    @Column(name = "STATE_ID")
-    private Long stateId;
-
-    @Column(name = "DISTRICT_ID")
-    private Long districtId;
-
-    @Column(name = "taluk_name_in_kannada")
-    private String talukNameInKannada;
 }

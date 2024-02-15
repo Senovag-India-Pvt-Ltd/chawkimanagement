@@ -1,4 +1,4 @@
-package com.sericulture.model;
+package com.sericulture.model.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
