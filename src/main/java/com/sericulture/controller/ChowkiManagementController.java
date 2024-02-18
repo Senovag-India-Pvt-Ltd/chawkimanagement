@@ -1,6 +1,7 @@
 package com.sericulture.controller;
 
 
+import com.sericulture.model.api.ChowkiManagementByIdDTO;
 import com.sericulture.model.api.requests.AddChowkiRequest;
 import com.sericulture.model.api.response.AddChowkiResponse;
 import com.sericulture.model.api.response.CommonChowkiResponse;
@@ -58,7 +59,7 @@ public class ChowkiManagementController {
     }
 
     @GetMapping("/get-info-by-id/{chowki_id}")
-    public Optional<ChowkiManagementResponse> getByChowkiId(@PathVariable Integer chowki_id) {
+    public Optional<ChowkiManagementByIdDTO> getByChowkiId(@PathVariable Integer chowki_id) {
         return chowkiManagementService.getById(chowki_id);
     }
 

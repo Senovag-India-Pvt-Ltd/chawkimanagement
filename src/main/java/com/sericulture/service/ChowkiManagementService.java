@@ -1,6 +1,7 @@
 package com.sericulture.service;
 
 import com.sericulture.helper.Util;
+import com.sericulture.model.api.ChowkiManagementByIdDTO;
 import com.sericulture.model.api.requests.UpdateChowkiRequest;
 import com.sericulture.model.api.response.AddChowkiResponse;
 import com.sericulture.model.entity.ChowkiManagement;
@@ -144,9 +145,9 @@ public class ChowkiManagementService {
         return commonChowkiResponse;
     }
 
-    public Optional<ChowkiManagementResponse> getById(Integer id) {
+    public Optional<ChowkiManagementByIdDTO> getById(Integer id) {
         Long userMasterId=Util.getUserId(Util.getTokenValues());
-        Optional<ChowkiManagementResponse> chowkiManagementDTO=chowkiManagemenyRepository.findByChowkiIdAndUserMasterId(id,userMasterId);
+        Optional<ChowkiManagementByIdDTO> chowkiManagementDTO=chowkiManagemenyRepository.findByChowkiIdAndUserMasterId(id,userMasterId);
         if(chowkiManagementDTO.isEmpty()){
             return Optional.empty();
         }
