@@ -19,9 +19,16 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
             " CM.fruitsId," +
             " CM.dflsSource," +
             " CM.raceOfDfls," +
+            " R.raceName," +
             " CM.numbersOfDfls," +
             " CM.lotNumberRsp," +
             " CM.lotNumberCrc," +
+            " V.villageName," +
+            " D.districtName," +
+            " S.stateName," +
+            " T.talukName," +
+            " H.hobliName," +
+            " U.tscName," +
             " CM.village," +
             " CM.district," +
             " CM.state," +
@@ -36,6 +43,13 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
             " CM.receiptNo" +
             ")\n" +
             " from ChowkiManagement CM\n"+
+            " LEFT JOIN Village V ON V.villageId=CM.village\n"+
+            " LEFT JOIN District D ON D.districtId=CM.district\n"+
+            " LEFT JOIN State S ON S.stateId=CM.state\n"+
+            " LEFT JOIN Taluk T ON T.talukId=CM.taluk\n"+
+            " LEFT JOIN Hobli H ON H.hobliId=CM.hobli\n"+
+            " LEFT JOIN RaceMaster R ON R.raceId=CM.raceOfDfls\n"+
+            " LEFT JOIN UserMaster U ON U.userMasterId=CM.tsc\n"+
             " where CM.userMasterId = :userMasterId\n"+
             " AND CM.chowkiId = :chowkiId"
     )

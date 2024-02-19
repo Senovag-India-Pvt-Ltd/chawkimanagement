@@ -19,13 +19,27 @@ public class ChowkiManagementByIdDTO {
 
     private String dflsSource;
 
-    private Integer raceName;
+    private Integer raceOfDfls;
+
+    private String raceName;
 
     private Long numbersOfDfls;
 
     private String lotNumberRsp;
 
     private String lotNumberCrc;
+
+    private String villageName;
+
+    private String districtName;
+
+    private String stateName;
+
+    private String talukName;
+
+    private String hobliName;
+
+    private String tscName;
 
     private Integer village;
 
