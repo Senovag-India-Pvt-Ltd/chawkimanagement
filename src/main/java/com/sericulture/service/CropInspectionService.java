@@ -72,6 +72,7 @@ public class CropInspectionService {
                     .note(Util.objectToString(arr[1]))
                     .cropStatusName(Util.objectToString(arr[2]))
                     .mountName(Util.objectToString(arr[3]))
+                    .reasonName(Util.objectToString(arr[4]))
                     .build();
 
             responses.add(response);

@@ -37,6 +37,8 @@ public class UpdateChowkiRequest {
     @Schema(name = "lotNumberRsp", example = "string")
     private String lotNumberRsp;
 
+    private String receiptNo;
+
     @Pattern(regexp = "^[a-zA-Z0-9\\s]*$", message = "Lot Number CRC must contain only letters and numbers")
     @Schema(name = "lotNumberCrc", example = "string")
     private String lotNumberCrc;

@@ -22,6 +22,7 @@ public class CropInspectionResponse {
     private String cropDate;
     private String cropStatusName;
     private String mountName;
+    private String reasonName;
     private Float expectedCocoon;
     private String lotTestDetails;
     private Long diseaseStatusId;

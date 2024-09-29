@@ -30,7 +30,7 @@ public class FitnessCertificate extends BaseEntity implements Serializable {
     @Column(name = "farmer_id")
     private Long farmerId;
 
-    @Column(name = "expected_cocoon4")
+    @Column(name = "expected_cocoon")
     private Float expectedCocoon;
 
     @Column(name = "lot_test_details")

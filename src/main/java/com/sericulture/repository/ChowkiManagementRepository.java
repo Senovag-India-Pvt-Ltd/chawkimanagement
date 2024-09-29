@@ -108,7 +108,7 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
     SELECT cm.chowki_id, cm.lot_numbers_crc, cm.lot_numbers_of_the_rsp, cm.numbers_of_dfls,
     cm.rate_per_100_dfls, cm.race_of_dfls, cm.source_of_dfls, rm.race_name
     FROM chowki_management cm
-    JOIN race_master rm ON cm.race_of_dfls = rm.race_id
+    LEFT JOIN race_master rm ON cm.race_of_dfls = rm.race_id
     WHERE cm.farmer_id =:farmerId
     AND cm.isverified = 0;
     """)
@@ -119,7 +119,7 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
     SELECT cm.chowki_id, cm.lot_numbers_crc, cm.lot_numbers_of_the_rsp, cm.numbers_of_dfls,
     cm.rate_per_100_dfls, cm.race_of_dfls, cm.source_of_dfls,cm.hatching_date, rm.race_name
     FROM chowki_management cm
-    JOIN race_master rm ON cm.race_of_dfls = rm.race_id
+    LEFT JOIN race_master rm ON cm.race_of_dfls = rm.race_id
     WHERE cm.farmer_id =:farmerId
     AND cm.isverified = 1;
     """)
