@@ -62,6 +62,7 @@ public class ChowkiManagementByIdDTO {
     private Date hatchingDate;
 
     private Date dispatchDate;
-
+    private Long farmerId;
+    private int isVerified;
     private String receiptNo;
 }

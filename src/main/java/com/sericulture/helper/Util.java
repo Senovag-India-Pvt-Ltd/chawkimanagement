@@ -10,9 +10,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.security.Principal;
+import java.text.DecimalFormat;
 
 @Component
 public final class Util {
+
+    static DecimalFormat decimalFormat = new DecimalFormat("#.##");
 
 
     @Autowired
@@ -25,5 +28,22 @@ public final class Util {
     }
     public static long getUserId(JwtPayloadData jwtPayloadData) {
         return jwtPayloadData.getUserMasterId();
+    }
+
+    public static int objectToInteger(Object object) {
+        return object == null ? 0 : Integer.parseInt(String.valueOf(object));
+    }
+
+    public static String objectToString(Object object) {
+        return object == null ? "" : String.valueOf(object);
+    }
+
+    public static float objectToFloat(Object object) {
+        return object == null ? 0 : Float.valueOf(decimalFormat.format(Float.parseFloat(String.valueOf(object))));
+    }
+
+
+    public static long objectToLong(Object object) {
+        return object == null ? 0 : Long.parseLong(String.valueOf(object));
     }
 }

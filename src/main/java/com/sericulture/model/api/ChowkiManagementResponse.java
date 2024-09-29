@@ -3,11 +3,13 @@ package com.sericulture.model.api;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.Date;
 
 @Data
+@Builder
 @AllArgsConstructor
 public class ChowkiManagementResponse {
 
@@ -48,9 +50,10 @@ public class ChowkiManagementResponse {
     private Float price;
 
     private Date hatchingDate;
-
+    private String hatchingInspectionDate;
     private Date dispatchDate;
-
+    private Long farmerId;
+    private int isVerified;
     private String receiptNo;
 
 }

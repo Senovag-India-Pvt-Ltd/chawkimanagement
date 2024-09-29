@@ -62,4 +62,8 @@ public class UpdateChowkiRequest {
     private Date dispatchDate;
 
     private Date hatchingDate;
+
+    private Long farmerId;
+
+    private int isVerified;
 }

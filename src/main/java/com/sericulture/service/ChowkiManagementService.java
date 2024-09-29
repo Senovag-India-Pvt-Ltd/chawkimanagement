@@ -15,8 +15,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static io.micrometer.core.ipc.http.HttpSender.Request.build;
 
 @Service
 @Slf4j
@@ -31,6 +34,16 @@ public class ChowkiManagementService {
         AddChowkiResponse addChowkiResponse =new AddChowkiResponse();
         ChowkiManagement chowkiManagement=new ChowkiManagement();
         try {
+            // Fetch farmerId by fruitsId
+            Optional<Long> farmerIdOptional = chowkiManagemenyRepository.findFarmerIdByFruitsId(addChowkiRequest.getFruitsId());
+            if (!farmerIdOptional.isPresent()) {
+                throw new Exception("Farmer not found for the given fruitsId");
+            }
+
+            // Set farmerId and isVerified = 1
+            chowkiManagement.setFarmerId(farmerIdOptional.get());
+            chowkiManagement.setIsVerified(0);  // Set isVerified as 1
+
             float price=(addChowkiRequest.getRatePer100Dfls()*addChowkiRequest.getNumbersOfDfls())/100;
             String distCode=getDistrictById(addChowkiRequest.getDistrict()).toUpperCase();
             String nextSeq=chowkiManagemenyRepository.getNextValRecieptSequence().toString();
@@ -76,49 +89,133 @@ public class ChowkiManagementService {
     }
 
 
+//    public CommonChowkiResponse updateData(UpdateChowkiRequest updateChowkiRequest) {
+//        ChowkiManagement chowkiManagement = new ChowkiManagement();
+//        CommonChowkiResponse commonChowkiResponse =new CommonChowkiResponse();
+//        Long userMasterId=Util.getUserId(Util.getTokenValues());
+//        if(chowkiManagemenyRepository.findByChowkiIdAndUserMasterId(updateChowkiRequest.getChowkiId(),userMasterId).isEmpty()){
+//            commonChowkiResponse.setError(1);
+//            commonChowkiResponse.setMessage("Invalid Chowki ID");
+//        }
+//        else {
+//            try {
+//                // Fetch farmerId by fruitsId
+//                Optional<Long> farmerIdOptional = chowkiManagemenyRepository.findFarmerIdByFruitsId(updateChowkiRequest.getFruitsId());
+//                if (!farmerIdOptional.isPresent()) {
+//                    throw new Exception("Farmer not found for the given fruitsId");
+//                }
+//
+//                // Set farmerId and isVerified = 1
+//                chowkiManagement.setFarmerId(farmerIdOptional.get());
+//                chowkiManagement.setIsVerified(1);  // Set isVerified as 1
+//
+//                float price=(updateChowkiRequest.getRatePer100Dfls()*updateChowkiRequest.getNumbersOfDfls())/100;
+//                chowkiManagement.setChowkiId(updateChowkiRequest.getChowkiId());
+//                chowkiManagement.setDflsSource(updateChowkiRequest.getDflsSource());
+//                chowkiManagement.setDispatchDate(updateChowkiRequest.getDispatchDate());
+//                chowkiManagement.setDistrict(updateChowkiRequest.getDistrict());
+//                chowkiManagement.setFarmerName(updateChowkiRequest.getFarmerName());
+//                chowkiManagement.setState(updateChowkiRequest.getState());
+//                chowkiManagement.setFatherName(updateChowkiRequest.getFatherName());
+//                chowkiManagement.setFruitsId(updateChowkiRequest.getFruitsId());
+//                chowkiManagement.setLotNumberCrc(updateChowkiRequest.getLotNumberCrc());
+//                chowkiManagement.setLotNumberRsp(updateChowkiRequest.getLotNumberRsp());
+//                chowkiManagement.setNumbersOfDfls(updateChowkiRequest.getNumbersOfDfls());
+//                chowkiManagement.setPrice(price);
+//                chowkiManagement.setRaceOfDfls(updateChowkiRequest.getRaceOfDfls());
+//                chowkiManagement.setRatePer100Dfls(updateChowkiRequest.getRatePer100Dfls());
+//                chowkiManagement.setSoldAfter1stOr2ndMould(updateChowkiRequest.getSoldAfter1stOr2ndMould());
+//                chowkiManagement.setTsc(updateChowkiRequest.getTsc());
+//                chowkiManagement.setVillage(updateChowkiRequest.getVillage());
+//                chowkiManagement.setTaluk(updateChowkiRequest.getTaluk());
+//                chowkiManagement.setHobli(updateChowkiRequest.getHobli());
+//                chowkiManagement.setHatchingDate(updateChowkiRequest.getHatchingDate());
+//                chowkiManagement.setUserMasterId(Util.getUserId(Util.getTokenValues()));
+//                chowkiManagemenyRepository.save(chowkiManagement);
+//                commonChowkiResponse.setError(0);
+//                commonChowkiResponse.setMessage("Data updated successfully!");
+//            } catch (Exception E) {
+//                commonChowkiResponse.setError(1);
+//                commonChowkiResponse.setMessage("Something went wrong; please try again!");
+//                log.error("EXCEPTION : {}", E);
+//            }
+//        }
+//        return commonChowkiResponse;
+//    }
+
     public CommonChowkiResponse updateData(UpdateChowkiRequest updateChowkiRequest) {
-        ChowkiManagement chowkiManagement = new ChowkiManagement();
-        CommonChowkiResponse commonChowkiResponse =new CommonChowkiResponse();
-        Long userMasterId=Util.getUserId(Util.getTokenValues());
-        if(chowkiManagemenyRepository.findByChowkiIdAndUserMasterId(updateChowkiRequest.getChowkiId(),userMasterId).isEmpty()){
+        CommonChowkiResponse commonChowkiResponse = new CommonChowkiResponse();
+        Long userMasterId = Util.getUserId(Util.getTokenValues());
+
+        // Fetch existing ChowkiManagement record using DTO
+        Optional<ChowkiManagementByIdDTO> existingChowkiOptional = chowkiManagemenyRepository
+                .findByChowkiIdAndUserMasterId(updateChowkiRequest.getChowkiId(), userMasterId);
+
+        if (existingChowkiOptional.isEmpty()) {
             commonChowkiResponse.setError(1);
             commonChowkiResponse.setMessage("Invalid Chowki ID");
+            return commonChowkiResponse;
         }
-        else {
-            try {
-                float price=(updateChowkiRequest.getRatePer100Dfls()*updateChowkiRequest.getNumbersOfDfls())/100;
-                chowkiManagement.setChowkiId(updateChowkiRequest.getChowkiId());
-                chowkiManagement.setDflsSource(updateChowkiRequest.getDflsSource());
-                chowkiManagement.setDispatchDate(updateChowkiRequest.getDispatchDate());
-                chowkiManagement.setDistrict(updateChowkiRequest.getDistrict());
-                chowkiManagement.setFarmerName(updateChowkiRequest.getFarmerName());
-                chowkiManagement.setState(updateChowkiRequest.getState());
-                chowkiManagement.setFatherName(updateChowkiRequest.getFatherName());
-                chowkiManagement.setFruitsId(updateChowkiRequest.getFruitsId());
-                chowkiManagement.setLotNumberCrc(updateChowkiRequest.getLotNumberCrc());
-                chowkiManagement.setLotNumberRsp(updateChowkiRequest.getLotNumberRsp());
-                chowkiManagement.setNumbersOfDfls(updateChowkiRequest.getNumbersOfDfls());
-                chowkiManagement.setPrice(price);
-                chowkiManagement.setRaceOfDfls(updateChowkiRequest.getRaceOfDfls());
-                chowkiManagement.setRatePer100Dfls(updateChowkiRequest.getRatePer100Dfls());
-                chowkiManagement.setSoldAfter1stOr2ndMould(updateChowkiRequest.getSoldAfter1stOr2ndMould());
-                chowkiManagement.setTsc(updateChowkiRequest.getTsc());
-                chowkiManagement.setVillage(updateChowkiRequest.getVillage());
-                chowkiManagement.setTaluk(updateChowkiRequest.getTaluk());
-                chowkiManagement.setHobli(updateChowkiRequest.getHobli());
-                chowkiManagement.setHatchingDate(updateChowkiRequest.getHatchingDate());
-                chowkiManagement.setUserMasterId(Util.getUserId(Util.getTokenValues()));
-                chowkiManagemenyRepository.save(chowkiManagement);
-                commonChowkiResponse.setError(0);
-                commonChowkiResponse.setMessage("Data updated successfully!");
-            } catch (Exception E) {
-                commonChowkiResponse.setError(1);
-                commonChowkiResponse.setMessage("Something went wrong; please try again!");
-                log.error("EXCEPTION : {}", E);
+
+        ChowkiManagementByIdDTO existingChowki = existingChowkiOptional.get();
+        ChowkiManagement chowkiManagement = new ChowkiManagement();
+
+        try {
+            // Fetch farmerId by fruitsId
+            Optional<Long> farmerIdOptional = chowkiManagemenyRepository.findFarmerIdByFruitsId(updateChowkiRequest.getFruitsId());
+            if (!farmerIdOptional.isPresent()) {
+                throw new Exception("Farmer not found for the given fruitsId");
             }
+
+            // Set farmerId and isVerified
+            chowkiManagement.setFarmerId(farmerIdOptional.get());
+            chowkiManagement.setIsVerified(1);  // Set isVerified as 1
+
+            // Set the Chowki ID from the existing record
+            chowkiManagement.setChowkiId(updateChowkiRequest.getChowkiId());
+
+            // Other fields
+            chowkiManagement.setDflsSource(updateChowkiRequest.getDflsSource());
+            chowkiManagement.setDispatchDate(updateChowkiRequest.getDispatchDate());
+            chowkiManagement.setDistrict(updateChowkiRequest.getDistrict());
+            chowkiManagement.setFarmerName(updateChowkiRequest.getFarmerName());
+            chowkiManagement.setState(updateChowkiRequest.getState());
+            chowkiManagement.setFatherName(updateChowkiRequest.getFatherName());
+            chowkiManagement.setFruitsId(updateChowkiRequest.getFruitsId());
+            chowkiManagement.setLotNumberCrc(updateChowkiRequest.getLotNumberCrc());
+            chowkiManagement.setLotNumberRsp(updateChowkiRequest.getLotNumberRsp());
+            chowkiManagement.setNumbersOfDfls(updateChowkiRequest.getNumbersOfDfls());
+
+            // Calculate price
+            float price = (updateChowkiRequest.getRatePer100Dfls() * updateChowkiRequest.getNumbersOfDfls()) / 100;
+            chowkiManagement.setPrice(price);
+            chowkiManagement.setRaceOfDfls(updateChowkiRequest.getRaceOfDfls());
+            chowkiManagement.setRatePer100Dfls(updateChowkiRequest.getRatePer100Dfls());
+            chowkiManagement.setSoldAfter1stOr2ndMould(updateChowkiRequest.getSoldAfter1stOr2ndMould());
+            chowkiManagement.setTsc(updateChowkiRequest.getTsc());
+            chowkiManagement.setVillage(updateChowkiRequest.getVillage());
+            chowkiManagement.setTaluk(updateChowkiRequest.getTaluk());
+            chowkiManagement.setHobli(updateChowkiRequest.getHobli());
+            chowkiManagement.setHatchingDate(updateChowkiRequest.getHatchingDate());
+            chowkiManagement.setUserMasterId(userMasterId);
+
+            // Keep the existing receipt number
+            chowkiManagement.setReceiptNo(existingChowki.getReceiptNo());
+
+            // Save the updated chowkiManagement
+            chowkiManagemenyRepository.save(chowkiManagement);
+
+            commonChowkiResponse.setError(0);
+            commonChowkiResponse.setMessage("Data updated successfully!");
+        } catch (Exception E) {
+            commonChowkiResponse.setError(1);
+            commonChowkiResponse.setMessage("Something went wrong; please try again!");
+            log.error("EXCEPTION : {}", E);
         }
+
         return commonChowkiResponse;
     }
+
 
     public List<ChowkiManagementResponse> findAll() {
         return chowkiManagemenyRepository.getByUserMasterIdOrderByChowkiIdDesc(Util.getUserId(Util.getTokenValues()));
@@ -158,4 +255,48 @@ public class ChowkiManagementService {
         String district= districtRepository.findById(id).get().getDistrictName();
         return district.substring(0,Math.min(district.length(), 3));
     }
+
+    public List<ChowkiManagementResponse> getChowkiDetailsByFarmerId(Long farmerId) {
+        List<Object[]> chowkiDetails = chowkiManagemenyRepository.getChawkiDetailsByFarmerId(farmerId);
+        List<ChowkiManagementResponse> responses = new ArrayList<>();
+
+        for (Object[] arr : chowkiDetails) {
+            ChowkiManagementResponse response = ChowkiManagementResponse.builder()
+                    .chowkiId(Util.objectToInteger(arr[0]))
+                    .lotNumberCrc(Util.objectToString(arr[1]))
+                    .lotNumberRsp(Util.objectToString(arr[2]))
+                    .numbersOfDfls(Util.objectToLong(arr[3]))
+                    .ratePer100Dfls(Util.objectToFloat(arr[4]))
+                    .dflsSource(Util.objectToString(arr[6]))
+                    .raceName(Util.objectToString(arr[7]))
+                    .build();
+
+            responses.add(response);
+        }
+
+        return responses;
+    }
+
+    public List<ChowkiManagementResponse> getInspectioninfoForFarmer(Long farmerId) {
+        List<Object[]> chowkiDetails = chowkiManagemenyRepository.getInspectioninfoForFarmer(farmerId);
+        List<ChowkiManagementResponse> responses = new ArrayList<>();
+
+        for (Object[] arr : chowkiDetails) {
+            ChowkiManagementResponse response = ChowkiManagementResponse.builder()
+                    .chowkiId(Util.objectToInteger(arr[0]))
+                    .lotNumberCrc(Util.objectToString(arr[1]))
+                    .lotNumberRsp(Util.objectToString(arr[2]))
+                    .numbersOfDfls(Util.objectToLong(arr[3]))
+                    .ratePer100Dfls(Util.objectToFloat(arr[4]))
+                    .dflsSource(Util.objectToString(arr[6]))
+                    .hatchingInspectionDate(Util.objectToString(arr[7]))
+                    .raceName(Util.objectToString(arr[8]))
+                    .build();
+
+            responses.add(response);
+        }
+
+        return responses;
+    }
+
 }

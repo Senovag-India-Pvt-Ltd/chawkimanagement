@@ -63,6 +63,16 @@ public class ChowkiManagementController {
         return chowkiManagementService.getById(chowki_id);
     }
 
+    @GetMapping("/get-chowki-details-by-farmer-id/{farmerId}")
+    public List<ChowkiManagementResponse> getChowkiDetailsByFarmerId(@PathVariable Long farmerId) {
+        return chowkiManagementService.getChowkiDetailsByFarmerId(farmerId);
+    }
+
+    @GetMapping("/getInspectioninfoForFarmer/{farmerId}")
+    public List<ChowkiManagementResponse> InspectioninfoForFarmer(@PathVariable Long farmerId) {
+        return chowkiManagementService.getInspectioninfoForFarmer(farmerId);
+    }
+
     @DeleteMapping("/delete-info/{id}")
     public CommonChowkiResponse deleteDataById(@PathVariable Integer id) {
         return chowkiManagementService.deleteById(id);

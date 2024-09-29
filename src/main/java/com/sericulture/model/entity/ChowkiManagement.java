@@ -79,4 +79,10 @@ public class ChowkiManagement {
     @Column(name = "receipt_no")
     private String receiptNo;
 
+    @Column(name = "farmer_id")
+    private Long farmerId;
+
+    @Column(name = "isverified")
+    private int isVerified;
+
 }

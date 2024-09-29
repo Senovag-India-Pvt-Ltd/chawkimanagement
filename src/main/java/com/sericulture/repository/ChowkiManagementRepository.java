@@ -5,6 +5,7 @@ import com.sericulture.model.entity.ChowkiManagement;
 import com.sericulture.model.api.ChowkiManagementResponse;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -40,9 +41,12 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
             " CM.price," +
             " CM.hatchingDate," +
             " CM.dispatchDate," +
+            " CM.farmerId," +
+            " CM.isVerified," +
             " CM.receiptNo" +
             ")\n" +
             " from ChowkiManagement CM\n"+
+            " LEFT JOIN Farmer f ON f.farmerId=CM.farmerId\n"+
             " LEFT JOIN Village V ON V.villageId=CM.village\n"+
             " LEFT JOIN District D ON D.districtId=CM.district\n"+
             " LEFT JOIN State S ON S.stateId=CM.state\n"+
@@ -76,9 +80,12 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
             " CM.price," +
             " CM.hatchingDate," +
             " CM.dispatchDate," +
+            " CM.farmerId," +
+            " CM.isVerified," +
             " CM.receiptNo" +
             ")\n" +
             " from ChowkiManagement CM\n"+
+            " LEFT JOIN Farmer f ON f.farmerId=CM.farmerId\n"+
             " LEFT JOIN Village V ON V.villageId=CM.village\n"+
             " LEFT JOIN District D ON D.districtId=CM.district\n"+
             " LEFT JOIN State S ON S.stateId=CM.state\n"+
@@ -93,5 +100,31 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
 
     @Query(value = "SELECT next value for dbo.chowkireceipt_seq", nativeQuery = true)
     public BigDecimal getNextValRecieptSequence();
+
+    @Query("SELECT f.farmerId FROM Farmer f LEFT JOIN ChowkiManagement cm ON cm.farmerId = f.farmerId WHERE f.fruitsId = :fruitsId")
+    Optional<Long> findFarmerIdByFruitsId(@Param("fruitsId") String fruitsId);
+
+    @Query(nativeQuery = true, value = """
+    SELECT cm.chowki_id, cm.lot_numbers_crc, cm.lot_numbers_of_the_rsp, cm.numbers_of_dfls,
+    cm.rate_per_100_dfls, cm.race_of_dfls, cm.source_of_dfls, rm.race_name
+    FROM chowki_management cm
+    JOIN race_master rm ON cm.race_of_dfls = rm.race_id
+    WHERE cm.farmer_id =:farmerId
+    AND cm.isverified = 0;
+    """)
+
+    public List<Object[]> getChawkiDetailsByFarmerId(Long farmerId);
+
+    @Query(nativeQuery = true, value = """
+    SELECT cm.chowki_id, cm.lot_numbers_crc, cm.lot_numbers_of_the_rsp, cm.numbers_of_dfls,
+    cm.rate_per_100_dfls, cm.race_of_dfls, cm.source_of_dfls,cm.hatching_date, rm.race_name
+    FROM chowki_management cm
+    JOIN race_master rm ON cm.race_of_dfls = rm.race_id
+    WHERE cm.farmer_id =:farmerId
+    AND cm.isverified = 1;
+    """)
+
+    public List<Object[]> getInspectioninfoForFarmer(Long farmerId);
+
 
 }
