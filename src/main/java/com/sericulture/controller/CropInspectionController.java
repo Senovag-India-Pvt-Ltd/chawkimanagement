@@ -22,7 +22,7 @@ public class CropInspectionController {
     @Autowired
     private CropInspectionService cropInspectionService;
 
-    @PostMapping("/add-info")
+    @PostMapping("/add-crop-inspection-info")
     public AddChowkiResponse insertData(@Valid @RequestBody CropInspectionRequest cropInspectionRequest) {
         return cropInspectionService.insertData(cropInspectionRequest);
     }

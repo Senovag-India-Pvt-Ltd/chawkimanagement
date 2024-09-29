@@ -27,9 +27,10 @@ public interface CropInspectionRepository extends JpaRepository<CropInspection, 
     public List<Object[]> getInspectionDetails(Long chowkiId);
 
     @Query(nativeQuery = true, value = """
-    SELECT cit.inspection_type_id, cit.name
+    SELECT cit.crop_inspection_type_id, cit.name
     FROM crop_inspection_type cit
-    WHERE cit.inspection_type_id NOT IN (
+    WHERE cit.active = 1
+        And cit.crop_inspection_type_id NOT IN (
             SELECT ci.crop_inspection_type_id
             FROM crop_inspection ci
             WHERE ci.chowki_id = :chowkiId

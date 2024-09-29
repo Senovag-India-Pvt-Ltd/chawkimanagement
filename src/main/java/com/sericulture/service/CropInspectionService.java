@@ -113,6 +113,7 @@ public class CropInspectionService {
 
         for (Object[] arr : cropInspectionDetails) {
             CropInspectionResponse response = CropInspectionResponse.builder()
+                    .cropInspectionTypeId(Util.objectToLong(arr[0]))
                     .cropInspectionTypeName(Util.objectToString(arr[1]))
                     .build();
 
