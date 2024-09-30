@@ -88,6 +88,64 @@ public class ChowkiManagementService {
         return addChowkiResponse;
     }
 
+    public AddChowkiResponse insertDFLData(AddChowkiRequest addChowkiRequest) {
+        AddChowkiResponse addChowkiResponse =new AddChowkiResponse();
+        ChowkiManagement chowkiManagement=new ChowkiManagement();
+        try {
+            // Fetch farmerId by fruitsId
+            Optional<Long> farmerIdOptional = chowkiManagemenyRepository.findFarmerIdByFruitsId(addChowkiRequest.getFruitsId());
+            if (!farmerIdOptional.isPresent()) {
+                throw new Exception("Farmer not found for the given fruitsId");
+            }
+
+            // Set farmerId and isVerified = 1
+            chowkiManagement.setFarmerId(farmerIdOptional.get());
+            chowkiManagement.setIsVerified(0);  // Set isVerified as 1
+
+            float price=(addChowkiRequest.getRatePer100Dfls()*addChowkiRequest.getNumbersOfDfls())/100;
+//            String distCode=getDistrictById(addChowkiRequest.getDistrict()).toUpperCase();
+//            String nextSeq=chowkiManagemenyRepository.getNextValRecieptSequence().toString();
+
+//            if(nextSeq.length()==1)
+//                nextSeq="0"+nextSeq;
+//
+//            String receipt= "CRC/"+distCode+"/"+nextSeq;
+
+            chowkiManagement.setDflsSource(addChowkiRequest.getDflsSource());
+            chowkiManagement.setDispatchDate(addChowkiRequest.getDispatchDate());
+            chowkiManagement.setDistrict(addChowkiRequest.getDistrict());
+            chowkiManagement.setFarmerName(addChowkiRequest.getFarmerName());
+            chowkiManagement.setState(addChowkiRequest.getState());
+            chowkiManagement.setFatherName(addChowkiRequest.getFatherName());
+            chowkiManagement.setFruitsId(addChowkiRequest.getFruitsId());
+            chowkiManagement.setLotNumberCrc(addChowkiRequest.getLotNumberCrc());
+            chowkiManagement.setLotNumberRsp(addChowkiRequest.getLotNumberRsp());
+            chowkiManagement.setNumbersOfDfls(addChowkiRequest.getNumbersOfDfls());
+            chowkiManagement.setPrice(price);
+            chowkiManagement.setRaceOfDfls(addChowkiRequest.getRaceOfDfls());
+            chowkiManagement.setRatePer100Dfls(addChowkiRequest.getRatePer100Dfls());
+            chowkiManagement.setSoldAfter1stOr2ndMould(addChowkiRequest.getSoldAfter1stOr2ndMould());
+            chowkiManagement.setTsc(addChowkiRequest.getTsc());
+            chowkiManagement.setVillage(addChowkiRequest.getVillage());
+            chowkiManagement.setTaluk(addChowkiRequest.getTaluk());
+            chowkiManagement.setHobli(addChowkiRequest.getHobli());
+            chowkiManagement.setHatchingDate(addChowkiRequest.getHatchingDate());
+            chowkiManagement.setUserMasterId(Util.getUserId(Util.getTokenValues()));
+            chowkiManagement.setReceiptNo(addChowkiRequest.getReceiptNo());
+            chowkiManagemenyRepository.save(chowkiManagement);
+
+//            addChowkiResponse.setReceiptNo(receipt);
+            addChowkiResponse.setError(0);
+            addChowkiResponse.setMessage("Data added successfully!");
+        }
+        catch(Exception E){
+            addChowkiResponse.setError(1);
+            addChowkiResponse.setMessage("Selected district is invalid or something else went wrong; please try again!");
+            log.error("EXCEPTION : {}",E);
+        }
+        return addChowkiResponse;
+    }
+
 
     public CommonChowkiResponse updateData(UpdateChowkiRequest updateChowkiRequest) {
         ChowkiManagement chowkiManagement = new ChowkiManagement();

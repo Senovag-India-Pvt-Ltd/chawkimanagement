@@ -48,6 +48,12 @@ public class ChowkiManagementController {
         return chowkiManagementService.insertData(addChowkiRequest);
     }
 
+    @PostMapping("/add-dfl-info")
+    public AddChowkiResponse insertDFLData(@Valid @RequestBody AddChowkiRequest addChowkiRequest) {
+        return chowkiManagementService.insertDFLData(addChowkiRequest);
+    }
+
+
     @PostMapping("/update-info")
     public CommonChowkiResponse updateData(@Valid @RequestBody UpdateChowkiRequest updateChowkiRequest) {
         return chowkiManagementService.updateData(updateChowkiRequest);

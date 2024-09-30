@@ -43,6 +43,8 @@ public class AddChowkiRequest {
 
     private Integer district;
 
+    private String receiptNo;
+
     private Integer state;
 
     private Integer tsc;
