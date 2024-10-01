@@ -202,78 +202,78 @@ public class ChowkiManagementService {
         return commonChowkiResponse;
     }
 
-//    public CommonChowkiResponse updateData(UpdateChowkiRequest updateChowkiRequest) {
-//        CommonChowkiResponse commonChowkiResponse = new CommonChowkiResponse();
-//        Long userMasterId = Util.getUserId(Util.getTokenValues());
-//
-//        // Fetch existing ChowkiManagement record using DTO
-//        Optional<ChowkiManagementByIdDTO> existingChowkiOptional = chowkiManagemenyRepository
-//                .findByChowkiIdAndUserMasterId(updateChowkiRequest.getChowkiId(), userMasterId);
-//
-//        if (existingChowkiOptional.isEmpty()) {
-//            commonChowkiResponse.setError(1);
-//            commonChowkiResponse.setMessage("Invalid Chowki ID");
-//            return commonChowkiResponse;
-//        }
-//
-//        ChowkiManagementByIdDTO existingChowki = existingChowkiOptional.get();
-//        ChowkiManagement chowkiManagement = new ChowkiManagement();
-//
-//        try {
-//            // Fetch farmerId by fruitsId
-//            Optional<Long> farmerIdOptional = chowkiManagemenyRepository.findFarmerIdByFruitsId(updateChowkiRequest.getFruitsId());
-//            if (!farmerIdOptional.isPresent()) {
-//                throw new Exception("Farmer not found for the given fruitsId");
-//            }
-//
-//            // Set farmerId and isVerified
-//            chowkiManagement.setFarmerId(farmerIdOptional.get());
-//            chowkiManagement.setIsVerified(1);  // Set isVerified as 1
-//
-//            // Set the Chowki ID from the existing record
-//            chowkiManagement.setChowkiId(updateChowkiRequest.getChowkiId());
-//
-//            // Other fields
-//            chowkiManagement.setDflsSource(updateChowkiRequest.getDflsSource());
-//            chowkiManagement.setDispatchDate(updateChowkiRequest.getDispatchDate());
-//            chowkiManagement.setDistrict(updateChowkiRequest.getDistrict());
-//            chowkiManagement.setFarmerName(updateChowkiRequest.getFarmerName());
-//            chowkiManagement.setState(updateChowkiRequest.getState());
-//            chowkiManagement.setFatherName(updateChowkiRequest.getFatherName());
-//            chowkiManagement.setFruitsId(updateChowkiRequest.getFruitsId());
-//            chowkiManagement.setLotNumberCrc(updateChowkiRequest.getLotNumberCrc());
-//            chowkiManagement.setLotNumberRsp(updateChowkiRequest.getLotNumberRsp());
-//            chowkiManagement.setNumbersOfDfls(updateChowkiRequest.getNumbersOfDfls());
-//
-//            // Calculate price
-//            float price = (updateChowkiRequest.getRatePer100Dfls() * updateChowkiRequest.getNumbersOfDfls()) / 100;
-//            chowkiManagement.setPrice(price);
-//            chowkiManagement.setRaceOfDfls(updateChowkiRequest.getRaceOfDfls());
-//            chowkiManagement.setRatePer100Dfls(updateChowkiRequest.getRatePer100Dfls());
-//            chowkiManagement.setSoldAfter1stOr2ndMould(updateChowkiRequest.getSoldAfter1stOr2ndMould());
-//            chowkiManagement.setTsc(updateChowkiRequest.getTsc());
-//            chowkiManagement.setVillage(updateChowkiRequest.getVillage());
-//            chowkiManagement.setTaluk(updateChowkiRequest.getTaluk());
-//            chowkiManagement.setHobli(updateChowkiRequest.getHobli());
-//            chowkiManagement.setHatchingDate(updateChowkiRequest.getHatchingDate());
-//            chowkiManagement.setUserMasterId(userMasterId);
-//
-//            // Keep the existing receipt number
-//            chowkiManagement.setReceiptNo(existingChowki.getReceiptNo());
-//
-//            // Save the updated chowkiManagement
-//            chowkiManagemenyRepository.save(chowkiManagement);
-//
-//            commonChowkiResponse.setError(0);
-//            commonChowkiResponse.setMessage("Data updated successfully!");
-//        } catch (Exception E) {
-//            commonChowkiResponse.setError(1);
-//            commonChowkiResponse.setMessage("Something went wrong; please try again!");
-//            log.error("EXCEPTION : {}", E);
-//        }
-//
-//        return commonChowkiResponse;
-//    }
+    public CommonChowkiResponse updateDFLData(UpdateChowkiRequest updateChowkiRequest) {
+        CommonChowkiResponse commonChowkiResponse = new CommonChowkiResponse();
+        Long userMasterId = Util.getUserId(Util.getTokenValues());
+
+        // Fetch existing ChowkiManagement record using DTO
+        Optional<ChowkiManagementByIdDTO> existingChowkiOptional = chowkiManagemenyRepository
+                .findByChowkiIdAndUserMasterId(updateChowkiRequest.getChowkiId(), userMasterId);
+
+        if (existingChowkiOptional.isEmpty()) {
+            commonChowkiResponse.setError(1);
+            commonChowkiResponse.setMessage("Invalid Chowki ID");
+            return commonChowkiResponse;
+        }
+
+        ChowkiManagementByIdDTO existingChowki = existingChowkiOptional.get();
+        ChowkiManagement chowkiManagement = new ChowkiManagement();
+
+        try {
+            // Fetch farmerId by fruitsId
+            Optional<Long> farmerIdOptional = chowkiManagemenyRepository.findFarmerIdByFruitsId(updateChowkiRequest.getFruitsId());
+            if (!farmerIdOptional.isPresent()) {
+                throw new Exception("Farmer not found for the given fruitsId");
+            }
+
+            // Set farmerId and isVerified
+            chowkiManagement.setFarmerId(farmerIdOptional.get());
+            chowkiManagement.setIsVerified(1);  // Set isVerified as 1
+
+            // Set the Chowki ID from the existing record
+            chowkiManagement.setChowkiId(existingChowki.getChowkiId());
+
+            // Other fields
+            chowkiManagement.setDflsSource(existingChowki.getDflsSource());
+            chowkiManagement.setDispatchDate(existingChowki.getDispatchDate());
+            chowkiManagement.setDistrict(existingChowki.getDistrict());
+            chowkiManagement.setFarmerName(existingChowki.getFarmerName());
+            chowkiManagement.setState(existingChowki.getState());
+            chowkiManagement.setFatherName(existingChowki.getFatherName());
+            chowkiManagement.setFruitsId(existingChowki.getFruitsId());
+            chowkiManagement.setLotNumberCrc(existingChowki.getLotNumberCrc());
+            chowkiManagement.setLotNumberRsp(existingChowki.getLotNumberRsp());
+            chowkiManagement.setNumbersOfDfls(existingChowki.getNumbersOfDfls());
+
+            // Calculate price
+            float price = (existingChowki.getRatePer100Dfls() * existingChowki.getNumbersOfDfls()) / 100;
+            chowkiManagement.setPrice(price);
+            chowkiManagement.setRaceOfDfls(existingChowki.getRaceOfDfls());
+            chowkiManagement.setRatePer100Dfls(existingChowki.getRatePer100Dfls());
+            chowkiManagement.setSoldAfter1stOr2ndMould(existingChowki.getSoldAfter1stOr2ndMould());
+            chowkiManagement.setTsc(existingChowki.getTsc());
+            chowkiManagement.setVillage(existingChowki.getVillage());
+            chowkiManagement.setTaluk(existingChowki.getTaluk());
+            chowkiManagement.setHobli(existingChowki.getHobli());
+            chowkiManagement.setHatchingDate(existingChowki.getHatchingDate());
+            chowkiManagement.setUserMasterId(userMasterId);
+
+            // Keep the existing receipt number
+            chowkiManagement.setReceiptNo(updateChowkiRequest.getReceiptNo());
+
+            // Save the updated chowkiManagement
+            chowkiManagemenyRepository.save(chowkiManagement);
+
+            commonChowkiResponse.setError(0);
+            commonChowkiResponse.setMessage("Data updated successfully!");
+        } catch (Exception E) {
+            commonChowkiResponse.setError(1);
+            commonChowkiResponse.setMessage("Something went wrong; please try again!");
+            log.error("EXCEPTION : {}", E);
+        }
+
+        return commonChowkiResponse;
+    }
 
 
     public List<ChowkiManagementResponse> findAll() {

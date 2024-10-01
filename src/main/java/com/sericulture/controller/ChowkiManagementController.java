@@ -59,6 +59,11 @@ public class ChowkiManagementController {
         return chowkiManagementService.updateData(updateChowkiRequest);
     }
 
+    @PostMapping("/update-dfl-info")
+    public CommonChowkiResponse updateDFLData(@Valid @RequestBody UpdateChowkiRequest updateChowkiRequest) {
+        return chowkiManagementService.updateDFLData(updateChowkiRequest);
+    }
+
     @GetMapping("/get-info")
     public List<ChowkiManagementResponse> getAllChowkiManagement() {
         return chowkiManagementService.findAll();
