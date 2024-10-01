@@ -42,7 +42,7 @@ public class CropInspectionController {
         return cropInspectionService.getInspectionTypeForCrop(chowkiId);
     }
 
-    @PostMapping("/add-farmer_mulberry-extension-info")
+    @PostMapping("/add-farmer-mulberry-extension-info")
     public AddChowkiResponse insertFarmerMulberryExtension(@Valid @RequestBody CropInspectionRequest cropInspectionRequest) {
         return cropInspectionService.insertFarmerMulberryExtension(cropInspectionRequest);
     }
