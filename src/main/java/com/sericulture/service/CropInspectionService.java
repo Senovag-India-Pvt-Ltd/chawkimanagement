@@ -73,6 +73,7 @@ public class CropInspectionService {
                     .cropStatusName(Util.objectToString(arr[2]))
                     .mountName(Util.objectToString(arr[3]))
                     .reasonName(Util.objectToString(arr[4]))
+                    .chowkiId(Util.objectToLong(arr[5]))
                     .build();
 
             responses.add(response);

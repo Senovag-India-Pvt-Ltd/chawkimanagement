@@ -15,7 +15,8 @@ public interface CropInspectionRepository extends JpaRepository<CropInspection, 
     ci.note,
     cs.name AS crop_status_name,
     m.name AS mount_name,
-    r.name As reason_name
+    r.name As reason_name,
+    ci.chowki_id
 FROM
     crop_inspection ci
 Left JOIN
