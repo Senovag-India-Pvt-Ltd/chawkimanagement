@@ -1,10 +1,9 @@
 package com.sericulture.controller;
 
 import com.sericulture.model.api.ChowkiManagementResponse;
-import com.sericulture.model.api.requests.AddChowkiRequest;
-import com.sericulture.model.api.requests.CropInspectionRequest;
-import com.sericulture.model.api.response.AddChowkiResponse;
-import com.sericulture.model.api.response.CropInspectionResponse;
+import com.sericulture.model.api.requests.*;
+import com.sericulture.model.api.response.*;
+import com.sericulture.model.entity.MgnregaScheme;
 import com.sericulture.service.ChowkiManagementService;
 import com.sericulture.service.CropInspectionService;
 import jakarta.validation.Valid;
@@ -46,5 +45,37 @@ public class CropInspectionController {
     public AddChowkiResponse insertFarmerMulberryExtension(@Valid @RequestBody CropInspectionRequest cropInspectionRequest) {
         return cropInspectionService.insertFarmerMulberryExtension(cropInspectionRequest);
     }
+
+    @PostMapping("/add-supply-of-disinfectants-info")
+    public AddChowkiResponse insertSupplyOfDisinfectantsData(@Valid @RequestBody SupplyOfDisinfectantsRequest supplyOfDisinfectantsRequest) {
+        return cropInspectionService.insertSupplyOfDisinfectantsData(supplyOfDisinfectantsRequest);
+    }
+
+    @GetMapping("/get-supply-of-disinfectants-info")
+    public List<SupplyOfDisinfectantsResponse> getAllSupplyOfDisinfectants() {
+        return cropInspectionService.findAll();
+    }
+
+    @PostMapping("/update-supply-of-disinfectants-info")
+    public CommonChowkiResponse updateSupplyOfDisinfectantsData(@Valid @RequestBody SupplyOfDisinfectantsRequest supplyOfDisinfectantsRequest) {
+        return cropInspectionService.updateSupplyOfDisinfectantsData(supplyOfDisinfectantsRequest);
+    }
+
+    @PostMapping("/add-mgnrega-scheme-info")
+    public AddChowkiResponse insertMgnregaSchemeData(@Valid @RequestBody MgnregaSchemeRequest mgnregaSchemeRequest) {
+        return cropInspectionService.insertMgnregaSchemeData(mgnregaSchemeRequest);
+    }
+
+    @GetMapping("/get-mgnrega-scheme-info")
+    public List<MgnregaScheme> getAllMgnrega() {
+        return cropInspectionService.findMgnregaSchemeAll();
+    }
+
+    @PostMapping("/update-mgnrega-scheme-info")
+    public CommonChowkiResponse updateMgnregaSchemeData(@Valid @RequestBody MgnregaSchemeRequest mgnregaSchemeRequest) {
+        return cropInspectionService.updateMgnregaSchemeData(mgnregaSchemeRequest);
+    }
+
+
 
 }
