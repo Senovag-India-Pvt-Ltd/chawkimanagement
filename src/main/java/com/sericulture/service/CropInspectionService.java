@@ -196,6 +196,7 @@ public class CropInspectionService {
             try {
                 // Update only the necessary fields (timestamps are managed automatically)
                 existingDisinfectant.setFarmerId(supplyOfDisinfectantsRequest.getFarmerId());
+                existingDisinfectant.setSupplyOfDisinfectantsId(supplyOfDisinfectantsRequest.getSupplyOfDisinfectantsId());
                 existingDisinfectant.setDisinfectantMasterId(supplyOfDisinfectantsRequest.getDisinfectantMasterId());
                 existingDisinfectant.setInvoiceNoDate(supplyOfDisinfectantsRequest.getInvoiceNoDate());
                 existingDisinfectant.setQuantity(supplyOfDisinfectantsRequest.getQuantity());
@@ -262,6 +263,7 @@ public class CropInspectionService {
             try {
                 // Update only the necessary fields (timestamps are managed automatically)
                 existingMgnregaScheme.setAcresPlanted(mgnregaSchemeRequest.getAcresPlanted());
+                existingMgnregaScheme.setMgnregaSchemeId(mgnregaSchemeRequest.getMgnregaSchemeId());
                 existingMgnregaScheme.setSpacingFollwedFeet(mgnregaSchemeRequest.getSpacingFollwedFeet());
                 existingMgnregaScheme.setSpacingProcuredNos(mgnregaSchemeRequest.getSpacingProcuredNos());
                 existingMgnregaScheme.setSpacingFollowed(mgnregaSchemeRequest.getSpacingFollowed());
