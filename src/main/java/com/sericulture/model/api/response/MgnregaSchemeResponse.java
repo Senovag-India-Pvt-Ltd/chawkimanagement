@@ -1,10 +1,12 @@
 package com.sericulture.model.api.response;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@AllArgsConstructor
 public class MgnregaSchemeResponse {
     private Long mgnregaSchemeId;
     private String acresPlanted;

@@ -1,5 +1,7 @@
 package com.sericulture.controller;
 
+import com.sericulture.model.ResponseWrapper;
+import com.sericulture.model.api.ChowkiManagementByIdDTO;
 import com.sericulture.model.api.ChowkiManagementResponse;
 import com.sericulture.model.api.requests.*;
 import com.sericulture.model.api.response.*;
@@ -8,10 +10,12 @@ import com.sericulture.service.ChowkiManagementService;
 import com.sericulture.service.CropInspectionService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @Validated
@@ -76,6 +80,14 @@ public class CropInspectionController {
         return cropInspectionService.updateMgnregaSchemeData(mgnregaSchemeRequest);
     }
 
+    @GetMapping("/get-by-supply-of-disinfectants-id/{supplyOfDisinfectantsId}")
+    public Optional<SupplyOfDisinfectantsResponse> getBySupplyOfDisinfectantsId(@PathVariable Long supplyOfDisinfectantsId) {
+        return cropInspectionService.getBySupplyOfDisinfectantsId(supplyOfDisinfectantsId);
+    }
 
+    @GetMapping("/get-by-mgnrega-scheme-id/{mgnregaSchemeId}")
+    public Optional<MgnregaSchemeResponse> getByMgnregaSchemeId(@PathVariable Long mgnregaSchemeId) {
+        return cropInspectionService.getByMgnregaSchemeId(mgnregaSchemeId);
+    }
 
 }

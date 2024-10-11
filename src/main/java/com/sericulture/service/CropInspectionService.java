@@ -1,6 +1,7 @@
 package com.sericulture.service;
 
 import com.sericulture.helper.Util;
+import com.sericulture.model.api.ChowkiManagementByIdDTO;
 import com.sericulture.model.api.requests.CropInspectionRequest;
 import com.sericulture.model.api.requests.MgnregaSchemeRequest;
 import com.sericulture.model.api.requests.SupplyOfDisinfectantsRequest;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -282,6 +284,25 @@ public class CropInspectionService {
 
         return commonChowkiResponse;
     }
+
+    public Optional<SupplyOfDisinfectantsResponse> getBySupplyOfDisinfectantsId(Long supplyOfDisinfectantsId) {
+        Long userMasterId=Util.getUserId(Util.getTokenValues());
+        Optional<SupplyOfDisinfectantsResponse> supplyOfDisinfectantsResponse=supplyOfDisinfectantsRepository.findBySupplyOfDisinfectantsIdAndUserMasterId(supplyOfDisinfectantsId,userMasterId);
+        if(supplyOfDisinfectantsResponse.isEmpty()){
+            return Optional.empty();
+        }
+        return supplyOfDisinfectantsResponse;
+    }
+
+
+    public Optional<MgnregaSchemeResponse> getByMgnregaSchemeId(Long mgnregaSchemeId) {
+        Optional<MgnregaSchemeResponse> mgnregaSchemeResponse=mgnregaSchemeRepository.findByMgnregaSchemeId(mgnregaSchemeId);
+        if(mgnregaSchemeResponse.isEmpty()){
+            return Optional.empty();
+        }
+        return mgnregaSchemeResponse;
+    }
+
 
 
 }

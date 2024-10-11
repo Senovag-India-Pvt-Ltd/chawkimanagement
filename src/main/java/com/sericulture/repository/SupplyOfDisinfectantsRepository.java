@@ -1,5 +1,6 @@
 package com.sericulture.repository;
 
+import com.sericulture.model.api.ChowkiManagementByIdDTO;
 import com.sericulture.model.api.ChowkiManagementResponse;
 import com.sericulture.model.api.response.SupplyOfDisinfectantsResponse;
 import com.sericulture.model.entity.FitnessCertificate;
@@ -16,5 +17,7 @@ public interface SupplyOfDisinfectantsRepository extends JpaRepository<SupplyOfD
     public SupplyOfDisinfectants findBySupplyOfDisinfectantsIdAndUserMasterIdAndActive(long supplyOfDisinfectantsId,long userMasterId, boolean isActive);
 
     List<SupplyOfDisinfectantsResponse> getByUserMasterIdOrderBySupplyOfDisinfectantsIdDesc(Long userMasterId);
+
+    Optional<SupplyOfDisinfectantsResponse> findBySupplyOfDisinfectantsIdAndUserMasterId(Long supplyOfDisinfectantsId, Long userMasterId);
 
 }
