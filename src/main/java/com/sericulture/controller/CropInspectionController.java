@@ -6,6 +6,7 @@ import com.sericulture.model.api.ChowkiManagementResponse;
 import com.sericulture.model.api.requests.*;
 import com.sericulture.model.api.response.*;
 import com.sericulture.model.entity.MgnregaScheme;
+import com.sericulture.model.entity.SupplyOfDisinfectants;
 import com.sericulture.service.ChowkiManagementService;
 import com.sericulture.service.CropInspectionService;
 import jakarta.validation.Valid;
@@ -88,6 +89,11 @@ public class CropInspectionController {
     @GetMapping("/get-by-mgnrega-scheme-id/{mgnregaSchemeId}")
     public Optional<MgnregaSchemeResponse> getByMgnregaSchemeId(@PathVariable Long mgnregaSchemeId) {
         return cropInspectionService.getByMgnregaSchemeId(mgnregaSchemeId);
+    }
+
+    @PostMapping("/add-track-cocoon-info")
+    public AddChowkiResponse insertTrackCocoonData(@Valid @RequestBody TrackCocoonRequest trackCocoonRequest) {
+        return cropInspectionService.insertTrackCocoonData(trackCocoonRequest);
     }
 
 }

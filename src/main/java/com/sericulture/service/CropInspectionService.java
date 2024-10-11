@@ -5,6 +5,7 @@ import com.sericulture.model.api.ChowkiManagementByIdDTO;
 import com.sericulture.model.api.requests.CropInspectionRequest;
 import com.sericulture.model.api.requests.MgnregaSchemeRequest;
 import com.sericulture.model.api.requests.SupplyOfDisinfectantsRequest;
+import com.sericulture.model.api.requests.TrackCocoonRequest;
 import com.sericulture.model.api.response.*;
 import com.sericulture.model.entity.*;
 import com.sericulture.repository.*;
@@ -28,6 +29,9 @@ public class CropInspectionService {
 
     @Autowired
     SupplyOfDisinfectantsRepository supplyOfDisinfectantsRepository;
+
+    @Autowired
+    TrackCocconRepository trackCocconRepository;
 
     @Autowired
     MgnregaSchemeRepository mgnregaSchemeRepository;
@@ -139,6 +143,8 @@ public class CropInspectionService {
             farmerMulberryExtension.setMulberryVarietyId(cropInspectionRequest.getMulberryVarietyId());
             farmerMulberryExtension.setExtensionDate(cropInspectionRequest.getExtensionDate());
             farmerMulberryExtension.setPhotoPath(cropInspectionRequest.getPhotoPath());
+            farmerMulberryExtension.setSpacing(cropInspectionRequest.getSpacing());
+            farmerMulberryExtension.setScheme(cropInspectionRequest.getScheme());
             farmerMulberryExtensionRepository.save(farmerMulberryExtension);
 
             addChowkiResponse.setError(0);
@@ -301,6 +307,31 @@ public class CropInspectionService {
             return Optional.empty();
         }
         return mgnregaSchemeResponse;
+    }
+
+    public AddChowkiResponse insertTrackCocoonData(TrackCocoonRequest trackCocoonRequest) {
+        AddChowkiResponse addChowkiResponse =new AddChowkiResponse();
+        TrackCocoon trackCocoon=new TrackCocoon();
+        try {
+
+            trackCocoon.setMarketAuctionDate(trackCocoonRequest.getMarketAuctionDate());
+            trackCocoon.setMarketMasterId(trackCocoonRequest.getMarketMasterId());
+            trackCocoon.setCocoonsQty(trackCocoonRequest.getCocoonsQty());
+            trackCocoon.setRatePerKg(trackCocoonRequest.getRatePerKg());
+            trackCocoon.setBuyerType(trackCocoonRequest.getBuyerType());
+            trackCocoon.setReelerId(trackCocoonRequest.getReelerId());
+            trackCocoon.setChowkiId(trackCocoonRequest.getChowkiId());
+            trackCocoon.setExternalUnitRegistrationName(trackCocoonRequest.getExternalUnitRegistrationName());
+            trackCocconRepository.save(trackCocoon);
+            addChowkiResponse.setError(0);
+            addChowkiResponse.setMessage("Data added successfully!");
+        }
+        catch(Exception E){
+            addChowkiResponse.setError(1);
+            addChowkiResponse.setMessage("Selected district is invalid or something else went wrong; please try again!");
+            log.error("EXCEPTION : {}",E);
+        }
+        return addChowkiResponse;
     }
 
 

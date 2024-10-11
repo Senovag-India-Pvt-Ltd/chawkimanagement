@@ -42,4 +42,10 @@ public class FarmerMulberryExtension extends BaseEntity implements Serializable 
 
     @Column(name = "extension_date")
     private LocalDate extensionDate;
+
+    @Column(name = "spacing")
+    private String spacing;
+
+    @Column(name = "scheme")
+    private String scheme;
 }

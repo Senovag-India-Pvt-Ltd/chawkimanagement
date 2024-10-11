@@ -27,4 +27,6 @@ public class CropInspectionRequest {
      private LocalDate extensionDate;
      private String mulberryArea;
      private String photoPath;
+     private String spacing;
+     private String scheme;
 }

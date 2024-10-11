@@ -127,4 +127,15 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
     public List<Object[]> getInspectioninfoForFarmer(Long farmerId);
 
 
+    @Query(nativeQuery = true, value = """
+    SELECT cm.chowki_id, cm.lot_numbers_crc, cm.lot_numbers_of_the_rsp, cm.numbers_of_dfls,
+    cm.rate_per_100_dfls, cm.race_of_dfls, cm.source_of_dfls,cm.hatching_date, rm.race_name
+    FROM chowki_management cm
+    LEFT JOIN race_master rm ON cm.race_of_dfls = rm.race_id
+    WHERE cm.fruits_id =:fruitsId
+    AND cm.isverified = 1;
+    """)
+    public List<Object[]> getInspectioninfoForCocoonTrack(String fruitsId);
+
+
 }

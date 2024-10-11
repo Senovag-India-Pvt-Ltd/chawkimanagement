@@ -84,6 +84,11 @@ public class ChowkiManagementController {
         return chowkiManagementService.getInspectioninfoForFarmer(farmerId);
     }
 
+    @GetMapping("/getInspectioninfoForCocoonTrack/{fruitsId}")
+    public List<ChowkiManagementResponse> InspectioninfoForCocoonTrack(@PathVariable String fruitsId) {
+        return chowkiManagementService.getInspectioninfoForCocoonTrack(fruitsId);
+    }
+
     @DeleteMapping("/delete-info/{id}")
     public CommonChowkiResponse deleteDataById(@PathVariable Integer id) {
         return chowkiManagementService.deleteById(id);

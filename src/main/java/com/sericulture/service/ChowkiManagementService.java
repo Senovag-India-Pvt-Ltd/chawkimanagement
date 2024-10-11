@@ -358,4 +358,26 @@ public class ChowkiManagementService {
         return responses;
     }
 
+    public List<ChowkiManagementResponse> getInspectioninfoForCocoonTrack(String fruitsId) {
+        List<Object[]> chowkiDetails = chowkiManagemenyRepository.getInspectioninfoForCocoonTrack(fruitsId);
+        List<ChowkiManagementResponse> responses = new ArrayList<>();
+
+        for (Object[] arr : chowkiDetails) {
+            ChowkiManagementResponse response = ChowkiManagementResponse.builder()
+                    .chowkiId(Util.objectToInteger(arr[0]))
+                    .lotNumberCrc(Util.objectToString(arr[1]))
+                    .lotNumberRsp(Util.objectToString(arr[2]))
+                    .numbersOfDfls(Util.objectToLong(arr[3]))
+                    .ratePer100Dfls(Util.objectToFloat(arr[4]))
+                    .dflsSource(Util.objectToString(arr[6]))
+                    .hatchingInspectionDate(Util.objectToString(arr[7]))
+                    .raceName(Util.objectToString(arr[8]))
+                    .build();
+
+            responses.add(response);
+        }
+
+        return responses;
+    }
+
 }
