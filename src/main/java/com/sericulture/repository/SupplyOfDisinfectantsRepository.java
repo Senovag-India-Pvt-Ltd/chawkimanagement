@@ -35,7 +35,7 @@ public interface SupplyOfDisinfectantsRepository extends JpaRepository<SupplyOfD
 //            "LEFT JOIN UserMaster um ON um.userMasterId = sod.userMasterId " +
 //            "WHERE sod.userMasterId = :userMasterId " +
 //            "ORDER BY sod.supplyOfDisinfectantsId DESC")
-  List<SupplyOfDisinfectantsResponse> getByUserMasterIdOrderBySupplyOfDisinfectantsIdDesc(Long userMasterId);
+//  List<SupplyOfDisinfectantsResponse> getByUserMasterIdOrderBySupplyOfDisinfectantsIdDesc(Long userMasterId);
 
 //    @Query(value = "SELECT new com.sericulture.model.api.SupplyOfDisinfectantsResponse(" +
 //            "sod.supply_of_disinfectants_id, " +
@@ -58,29 +58,30 @@ public interface SupplyOfDisinfectantsRepository extends JpaRepository<SupplyOfD
 //            "ORDER BY sod.supply_of_disinfectants_id DESC", nativeQuery = true)
 //    List<SupplyOfDisinfectantsResponse> getByUserMasterIdOrderBySupplyOfDisinfectantsIdDesc(@Param("userMasterId") Long userMasterId);
 
-//    @Query(nativeQuery = true, value = """
-//            SELECT
-//              sod.supply_of_disinfectants_id,
-//              sod.farmer_id,
-//              sod.user_master_id,
-//              sod.disinfectant_master_id,
-//              sod.invoice_no_date,
-//              sod.quantity,
-//              sod.disinfectant_name,
-//              sod.quantity_supplied,
-//              sod.supply_date,
-//              sod.size_of_rearing_house,
-//              sod.no_of_dfls,
-//              um.first_name,
-//              dm.disinfectant_master_name
-//          FROM
-//              supply_of_disinfectants sod
-//          LEFT JOIN user_master um ON um.user_master_id = sod.user_master_id
-//          LEFT JOIN disinfectant_master dm ON dm.disinfectant_master_id = sod.disinfectant_master_id
-//          WHERE sod.user_master_id = :userMasterId
-//          ORDER BY sod.supply_of_disinfectants_id DESC;
-//    """)
-//    List<SupplyOfDisinfectants> getByUserMasterIdOrderBySupplyOfDisinfectantsIdDesc(@Param("userMasterId") Long userMasterId);
+    @Query(nativeQuery = true, value = """
+    SELECT
+        sod.supply_of_disinfectants_id,
+        sod.farmer_id,
+        sod.user_master_id,
+        sod.disinfectant_master_id,
+        sod.invoice_no_date,
+        sod.quantity,
+        sod.disinfectant_name,
+        sod.quantity_supplied,
+        sod.supply_date,
+        sod.size_of_rearing_house,
+        sod.no_of_dfls,
+        um.first_name,
+        dm.disinfectant_master_name
+    FROM
+        supply_of_disinfectants sod
+    LEFT JOIN user_master um ON um.user_master_id = sod.user_master_id
+    LEFT JOIN disinfectant_master dm ON dm.disinfectant_master_id = sod.disinfectant_master_id
+    WHERE sod.user_master_id = :userMasterId
+    ORDER BY sod.supply_of_disinfectants_id DESC
+""")
+    List<Object[]> getByUserMasterIdOrderBySupplyOfDisinfectantsIdDesc(@Param("userMasterId") Long userMasterId);
+
 
 
     Optional<SupplyOfDisinfectantsResponse> findBySupplyOfDisinfectantsIdAndUserMasterId(Long supplyOfDisinfectantsId, Long userMasterId);

@@ -1,5 +1,6 @@
 package com.sericulture.controller;
 
+import com.sericulture.helper.Util;
 import com.sericulture.model.ResponseWrapper;
 import com.sericulture.model.api.ChowkiManagementByIdDTO;
 import com.sericulture.model.api.ChowkiManagementResponse;
@@ -57,8 +58,8 @@ public class CropInspectionController {
     }
 
     @GetMapping("/get-supply-of-disinfectants-info")
-    public List<SupplyOfDisinfectantsResponse> getAllSupplyOfDisinfectants() {
-        return cropInspectionService.findAll();
+    public List<SupplyOfDisinfectantsListResponse> getByUserMasterIdOrderBySupplyOfDisinfectantsIdDesc() {
+        return cropInspectionService.getByUserMasterIdOrderBySupplyOfDisinfectantsIdDesc(Util.getUserId(Util.getTokenValues()));
     }
 
     @PostMapping("/update-supply-of-disinfectants-info")

@@ -2,6 +2,7 @@ package com.sericulture.service;
 
 import com.sericulture.helper.Util;
 import com.sericulture.model.api.ChowkiManagementByIdDTO;
+import com.sericulture.model.api.ChowkiManagementResponse;
 import com.sericulture.model.api.requests.CropInspectionRequest;
 import com.sericulture.model.api.requests.MgnregaSchemeRequest;
 import com.sericulture.model.api.requests.SupplyOfDisinfectantsRequest;
@@ -158,9 +159,9 @@ public class CropInspectionService {
         return addChowkiResponse;
     }
 
-    public List<SupplyOfDisinfectantsResponse> findAll() {
-        return supplyOfDisinfectantsRepository.getByUserMasterIdOrderBySupplyOfDisinfectantsIdDesc(Util.getUserId(Util.getTokenValues()));
-    }
+//    public List<SupplyOfDisinfectantsResponse> findAll() {
+//        return supplyOfDisinfectantsRepository.getByUserMasterIdOrderBySupplyOfDisinfectantsIdDesc(Util.getUserId(Util.getTokenValues()));
+//    }
 
     public AddChowkiResponse insertSupplyOfDisinfectantsData(SupplyOfDisinfectantsRequest supplyOfDisinfectantsRequest) {
         AddChowkiResponse addChowkiResponse =new AddChowkiResponse();
@@ -332,6 +333,33 @@ public class CropInspectionService {
             log.error("EXCEPTION : {}",E);
         }
         return addChowkiResponse;
+    }
+
+    public List<SupplyOfDisinfectantsListResponse> getByUserMasterIdOrderBySupplyOfDisinfectantsIdDesc(Long userId) {
+        List<Object[]> chowkiDetails = supplyOfDisinfectantsRepository.getByUserMasterIdOrderBySupplyOfDisinfectantsIdDesc(userId);
+        List<SupplyOfDisinfectantsListResponse> responses = new ArrayList<>();
+
+        for (Object[] arr : chowkiDetails) {
+            SupplyOfDisinfectantsListResponse response = SupplyOfDisinfectantsListResponse.builder()
+                    .supplyOfDisinfectantsId(Util.objectToLong(arr[0]))
+                    .farmerId(Util.objectToLong(arr[1]))
+                    .userMasterId(Util.objectToLong(arr[2]))
+                    .disinfectantMasterId(Util.objectToLong(arr[3]))
+                    .invoiceNoDate(Util.objectToString(arr[4]))
+                    .quantity(Util.objectToLong(arr[5]))
+                    .disinfectantName(Util.objectToString(arr[6]))
+                    .quantitySupplied(Util.objectToLong(arr[7]))
+                    .supplyDate(Util.objectToString(arr[8]))
+                    .sizeOfRearingHouse(Util.objectToString(arr[9]))
+                    .numbersOfDfls(Util.objectToLong(arr[10]))
+                    .firstName(Util.objectToString(arr[11]))
+                    .disinfectantMasterName(Util.objectToString(arr[12]))
+                    .build();
+
+            responses.add(response);
+        }
+
+        return responses;
     }
 
 
