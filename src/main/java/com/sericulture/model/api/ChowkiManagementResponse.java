@@ -54,6 +54,7 @@ public class ChowkiManagementResponse {
     private Date dispatchDate;
     private Long farmerId;
     private int isVerified;
+    private int isSaleTracked;
     private String receiptNo;
 
 }

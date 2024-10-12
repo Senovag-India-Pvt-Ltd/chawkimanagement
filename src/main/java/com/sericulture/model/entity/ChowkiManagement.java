@@ -85,4 +85,7 @@ public class ChowkiManagement {
     @Column(name = "isverified")
     private int isVerified;
 
+    @Column(name = "is_sale_tracked")
+    private int isSaleTracked;
+
 }

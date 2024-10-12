@@ -133,7 +133,7 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
     FROM chowki_management cm
     LEFT JOIN race_master rm ON cm.race_of_dfls = rm.race_id
     WHERE cm.fruits_id =:fruitsId
-    AND cm.isverified = 1;
+    AND cm.is_sale_tracked = 0;
     """)
     public List<Object[]> getInspectioninfoForCocoonTrack(String fruitsId);
 

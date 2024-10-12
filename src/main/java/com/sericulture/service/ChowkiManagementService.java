@@ -100,7 +100,8 @@ public class ChowkiManagementService {
 
             // Set farmerId and isVerified = 1
             chowkiManagement.setFarmerId(farmerIdOptional.get());
-            chowkiManagement.setIsVerified(0);  // Set isVerified as 1
+            chowkiManagement.setIsVerified(0);
+            chowkiManagement.setIsSaleTracked(0); // Set isVerified as 1
 
             float price=(addChowkiRequest.getRatePer100Dfls()*addChowkiRequest.getNumbersOfDfls())/100;
 //            String distCode=getDistrictById(addChowkiRequest.getDistrict()).toUpperCase();

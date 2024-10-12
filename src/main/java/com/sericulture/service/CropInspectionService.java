@@ -38,6 +38,9 @@ public class CropInspectionService {
     MgnregaSchemeRepository mgnregaSchemeRepository;
 
     @Autowired
+    ChowkiManagementRepository chowkiManagementRepository;
+
+    @Autowired
     FarmerMulberryExtensionRepository farmerMulberryExtensionRepository;
 
     public AddChowkiResponse insertData(CropInspectionRequest cropInspectionRequest) {
@@ -311,10 +314,10 @@ public class CropInspectionService {
     }
 
     public AddChowkiResponse insertTrackCocoonData(TrackCocoonRequest trackCocoonRequest) {
-        AddChowkiResponse addChowkiResponse =new AddChowkiResponse();
-        TrackCocoon trackCocoon=new TrackCocoon();
+        AddChowkiResponse addChowkiResponse = new AddChowkiResponse();
+        TrackCocoon trackCocoon = new TrackCocoon();
         try {
-
+            // Set data for TrackCocoon
             trackCocoon.setMarketAuctionDate(trackCocoonRequest.getMarketAuctionDate());
             trackCocoon.setMarketMasterId(trackCocoonRequest.getMarketMasterId());
             trackCocoon.setCocoonsQty(trackCocoonRequest.getCocoonsQty());
@@ -323,17 +326,31 @@ public class CropInspectionService {
             trackCocoon.setReelerId(trackCocoonRequest.getReelerId());
             trackCocoon.setChowkiId(trackCocoonRequest.getChowkiId());
             trackCocoon.setExternalUnitRegistrationName(trackCocoonRequest.getExternalUnitRegistrationName());
+
+            // Save TrackCocoon data
             trackCocconRepository.save(trackCocoon);
+
+            // Create ChowkiManagement object and set isSaleTracked as 1
+            ChowkiManagement chowkiManagement = new ChowkiManagement();
+            chowkiManagement.setChowkiId(trackCocoonRequest.getChowkiId());
+            chowkiManagement.setIsSaleTracked(1); // Set isSaleTracked to 1
+
+            // Save ChowkiManagement data
+            chowkiManagementRepository.save(chowkiManagement);
+
+            // Set success response
             addChowkiResponse.setError(0);
             addChowkiResponse.setMessage("Data added successfully!");
-        }
-        catch(Exception E){
+        } catch (Exception e) {
+            // Handle error scenario
             addChowkiResponse.setError(1);
             addChowkiResponse.setMessage("Selected district is invalid or something else went wrong; please try again!");
-            log.error("EXCEPTION : {}",E);
+            log.error("EXCEPTION : {}", e);
         }
+
         return addChowkiResponse;
     }
+
 
     public List<SupplyOfDisinfectantsListResponse> getByUserMasterIdOrderBySupplyOfDisinfectantsIdDesc(Long userId) {
         List<Object[]> chowkiDetails = supplyOfDisinfectantsRepository.getByUserMasterIdOrderBySupplyOfDisinfectantsIdDesc(userId);

@@ -15,6 +15,6 @@ public class TrackCocoonRequest {
     private Long ratePerKg;
     private String buyerType;
     private Long reelerId;
-    private Long chowkiId;
+    private Integer chowkiId;
     private String externalUnitRegistrationName;
 }
