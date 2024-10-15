@@ -7,6 +7,9 @@ import lombok.Setter;
 @Setter
 public class AddChowkiResponse {
     private int error;
+    private Long farmerMulberryExtensionId;
+    private Long cropInspectionId;
+    private Long fitnessCertificateId;
     private String message;
     private String receiptNo;
 }

@@ -67,10 +67,12 @@ public class CropInspectionService {
             cropInspection.setNote(cropInspectionRequest.getNote());
             cropInspection.setCropStatusId(cropInspectionRequest.getCropStatusId());
             cropInspection.setMountId(cropInspectionRequest.getMountId());
+            cropInspection.setCropInspectionPath(cropInspectionRequest.getCropInspectionPath());
             cropInspectionRepository.save(cropInspection);
 
             addChowkiResponse.setError(0);
             addChowkiResponse.setMessage("Data added successfully!");
+            addChowkiResponse.setCropInspectionId(cropInspection.getCropInspectionId());
         }
         catch(Exception E){
             addChowkiResponse.setError(1);
@@ -114,10 +116,12 @@ public class CropInspectionService {
             fitnessCertificate.setDiseaseStatusId(cropInspectionRequest.getDiseaseStatusId());
             fitnessCertificate.setExpectedMarkerDate(cropInspectionRequest.getExpectedMarkerDate());
             fitnessCertificate.setNoOfChandies(cropInspectionRequest.getNoOfChandies());
+            fitnessCertificate.setFitnessCertificatePath(cropInspectionRequest.getFitnessCertificatePath());
             fitnessCertificateRepository.save(fitnessCertificate);
 
             addChowkiResponse.setError(0);
             addChowkiResponse.setMessage("Data added successfully!");
+            addChowkiResponse.setFitnessCertificateId(fitnessCertificate.getFitnessCertificateId());
         }
         catch(Exception E){
             addChowkiResponse.setError(1);
@@ -161,11 +165,13 @@ public class CropInspectionService {
             farmerMulberryExtension.setApplicationType(cropInspectionRequest.getApplicationType());
             farmerMulberryExtension.setUprootingDate(cropInspectionRequest.getUprootingDate());
             farmerMulberryExtension.setUprootingReason(cropInspectionRequest.getUprootingReason());
+            farmerMulberryExtension.setPhotoPath(cropInspectionRequest.getPhotoPath());
             farmerMulberryExtension.setNoOfSapplings(cropInspectionRequest.getNoOfSapplings());
             farmerMulberryExtensionRepository.save(farmerMulberryExtension);
 
             addChowkiResponse.setError(0);
             addChowkiResponse.setMessage("Data added successfully!");
+            addChowkiResponse.setFarmerMulberryExtensionId(farmerMulberryExtension.getFarmerMulberryExtensionId());
         }
         catch(Exception E){
             addChowkiResponse.setError(1);

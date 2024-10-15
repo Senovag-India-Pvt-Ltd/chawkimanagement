@@ -33,4 +33,6 @@ public class CropInspectionRequest {
      private LocalDate uprootingDate;
      private String uprootingReason;
      private String noOfSapplings;
+     private String fitnessCertificatePath;
+     private String cropInspectionPath;
 }
