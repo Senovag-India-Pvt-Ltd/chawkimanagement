@@ -233,6 +233,11 @@
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
+			<groupId>software.amazon.awssdk</groupId>
+			<artifactId>s3</artifactId>
+			<version>2.15.0</version>
+		</dependency>
+		<dependency>
 			<groupId>com.sericulture</groupId>
 			<artifactId>senovag-auth-module</artifactId>
 			<version>3.0.5</version>
@@ -259,6 +264,11 @@
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 			<version>2.0.2</version>
+		</dependency>
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk-s3</artifactId>
+			<version>1.12.268</version>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -295,9 +305,23 @@
 				<scope>import</scope>
 			</dependency>
 			<dependency>
+				<groupId>software.amazon.awssdk</groupId>
+				<artifactId>bom</artifactId>
+				<version>2.15.0</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
 				<groupId>de.codecentric</groupId>
 				<artifactId>spring-boot-admin-dependencies</artifactId>
 				<version>${spring-boot-admin.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.amazonaws</groupId>
+				<artifactId>aws-java-sdk-bom</artifactId>
+				<version>1.11.1000</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>

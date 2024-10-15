@@ -1,6 +1,8 @@
 package com.sericulture.service;
 
+import com.sericulture.controller.S3Controller;
 import com.sericulture.helper.Util;
+import com.sericulture.model.Mapper;
 import com.sericulture.model.api.ChowkiManagementByIdDTO;
 import com.sericulture.model.api.ChowkiManagementResponse;
 import com.sericulture.model.api.requests.CropInspectionRequest;
@@ -13,10 +15,11 @@ import com.sericulture.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -36,6 +39,12 @@ public class CropInspectionService {
 
     @Autowired
     MgnregaSchemeRepository mgnregaSchemeRepository;
+
+    @Autowired
+    S3Controller s3Controller;
+
+    @Autowired
+    Mapper mapper;
 
     @Autowired
     ChowkiManagementRepository chowkiManagementRepository;
@@ -149,6 +158,10 @@ public class CropInspectionService {
             farmerMulberryExtension.setPhotoPath(cropInspectionRequest.getPhotoPath());
             farmerMulberryExtension.setSpacing(cropInspectionRequest.getSpacing());
             farmerMulberryExtension.setScheme(cropInspectionRequest.getScheme());
+            farmerMulberryExtension.setApplicationType(cropInspectionRequest.getApplicationType());
+            farmerMulberryExtension.setUprootingDate(cropInspectionRequest.getUprootingDate());
+            farmerMulberryExtension.setUprootingReason(cropInspectionRequest.getUprootingReason());
+            farmerMulberryExtension.setNoOfSapplings(cropInspectionRequest.getNoOfSapplings());
             farmerMulberryExtensionRepository.save(farmerMulberryExtension);
 
             addChowkiResponse.setError(0);
@@ -378,6 +391,74 @@ public class CropInspectionService {
 
         return responses;
     }
+
+    @Transactional
+    public CropInspectionResponse uploadCropInspection(MultipartFile multipartFile, String cropInspectionId) throws Exception {
+        CropInspectionResponse cropInspectionResponse = new CropInspectionResponse();
+        CropInspection cropInspection = cropInspectionRepository.findByCropInspectionIdAndActive(Long.parseLong(cropInspectionId), true);
+        if (Objects.nonNull(cropInspection)) {
+            UUID uuid = UUID.randomUUID();
+            String extension = StringUtils.getFilenameExtension(multipartFile.getOriginalFilename());
+            String fileName = "cropInspection/" + cropInspectionId + "_" + uuid + "_" + extension;
+            s3Controller.uploadFile(multipartFile, fileName);
+            cropInspection.setCropInspectionPath(fileName);
+            cropInspection.setActive(true);
+            CropInspection cropInspection1 = cropInspectionRepository.save(cropInspection);
+            cropInspectionResponse = mapper.cropInspectionEntityToObject(cropInspection1, CropInspectionResponse.class);
+            cropInspectionResponse.setError(false);
+        } else {
+            cropInspectionResponse.setError(true);
+            cropInspectionResponse.setError_description("Error occurred while fetching Mulberry Extension");
+            // throw new ValidationException("Error occurred while fetching village");
+        }
+        return cropInspectionResponse;
+    }
+
+    @Transactional
+    public CropInspectionResponse uploadMulberryExtension(MultipartFile multipartFile, String farmerMulberryExtensionId) throws Exception {
+        CropInspectionResponse cropInspectionResponse = new CropInspectionResponse();
+        FarmerMulberryExtension farmerMulberryExtension = farmerMulberryExtensionRepository.findByFarmerMulberryExtensionIdAndActive(Long.parseLong(farmerMulberryExtensionId), true);
+        if (Objects.nonNull(farmerMulberryExtension)) {
+            UUID uuid = UUID.randomUUID();
+            String extension = StringUtils.getFilenameExtension(multipartFile.getOriginalFilename());
+            String fileName = "farmerMulberryExtension/" + farmerMulberryExtensionId + "_" + uuid + "_" + extension;
+            s3Controller.uploadFile(multipartFile, fileName);
+            farmerMulberryExtension.setPhotoPath(fileName);
+            farmerMulberryExtension.setActive(true);
+            FarmerMulberryExtension farmerMulberryExtension1 = farmerMulberryExtensionRepository.save(farmerMulberryExtension);
+            cropInspectionResponse = mapper.mulberryExtensionEntityToObject(farmerMulberryExtension1, CropInspectionResponse.class);
+            cropInspectionResponse.setError(false);
+        } else {
+            cropInspectionResponse.setError(true);
+            cropInspectionResponse.setError_description("Error occurred while fetching Mulberry Extension");
+            // throw new ValidationException("Error occurred while fetching village");
+        }
+        return cropInspectionResponse;
+    }
+
+
+    @Transactional
+    public CropInspectionResponse uploadFitnessCertificate(MultipartFile multipartFile, String fitnessCertificateId) throws Exception {
+        CropInspectionResponse cropInspectionResponse = new CropInspectionResponse();
+        FitnessCertificate fitnessCertificate = fitnessCertificateRepository.findByFitnessCertificateIdAndActive(Long.parseLong(fitnessCertificateId), true);
+        if (Objects.nonNull(fitnessCertificate)) {
+            UUID uuid = UUID.randomUUID();
+            String extension = StringUtils.getFilenameExtension(multipartFile.getOriginalFilename());
+            String fileName = "fitnessCertificate/" + fitnessCertificateId + "_" + uuid + "_" + extension;
+            s3Controller.uploadFile(multipartFile, fileName);
+            fitnessCertificate.setFitnessCertificatePath(fileName);
+            fitnessCertificate.setActive(true);
+            FitnessCertificate fitnessCertificate1 = fitnessCertificateRepository.save(fitnessCertificate);
+            cropInspectionResponse = mapper.fitnessCertificateEntityToObject(fitnessCertificate1, CropInspectionResponse.class);
+            cropInspectionResponse.setError(false);
+        } else {
+            cropInspectionResponse.setError(true);
+            cropInspectionResponse.setError_description("Error occurred while fetching Fitness Certificate");
+            // throw new ValidationException("Error occurred while fetching village");
+        }
+        return cropInspectionResponse;
+    }
+
 
 
 

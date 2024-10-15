@@ -44,4 +44,7 @@ public class CropInspection extends BaseEntity implements Serializable {
     @Column(name = "mount_id")
     private Long mountId;
 
+    @Column(name = "crop_inspection_path")
+    private String cropInspectionPath;
+
 }

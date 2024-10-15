@@ -44,4 +44,7 @@ public class FitnessCertificate extends BaseEntity implements Serializable {
 
     @Column(name = "expected_marker_date")
     private LocalDate expectedMarkerDate;
+
+    @Column(name = "fitness_certificate_path")
+    private String fitnessCertificatePath;
 }

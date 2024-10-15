@@ -48,4 +48,17 @@ public class FarmerMulberryExtension extends BaseEntity implements Serializable 
 
     @Column(name = "scheme")
     private String scheme;
+
+    @Column(name = "application_type")
+    private String applicationType;
+
+    @Column(name = "uprooting_date")
+    private LocalDate uprootingDate;
+
+    @Column(name = "uprooting_reason")
+    private String uprootingReason;
+
+    @Column(name = "number_of_sapplings")
+    private String noOfSapplings;
+
 }

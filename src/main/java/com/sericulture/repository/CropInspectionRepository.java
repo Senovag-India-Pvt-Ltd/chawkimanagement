@@ -9,6 +9,8 @@ import java.util.List;
 
 public interface CropInspectionRepository extends JpaRepository<CropInspection, Long> {
 
+    public CropInspection findByCropInspectionIdAndActive(long id, boolean isActive);
+
     @Query(nativeQuery = true, value = """
   SELECT
     ci.date,

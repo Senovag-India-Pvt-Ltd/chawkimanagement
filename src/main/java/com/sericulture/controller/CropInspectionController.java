@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -96,5 +97,36 @@ public class CropInspectionController {
     public AddChowkiResponse insertTrackCocoonData(@Valid @RequestBody TrackCocoonRequest trackCocoonRequest) {
         return cropInspectionService.insertTrackCocoonData(trackCocoonRequest);
     }
+
+    @PostMapping("/upload-crop-inspection")
+    public ResponseEntity<ResponseWrapper> uploadCropInspection(@RequestParam("multipartFile") MultipartFile multipartFile,
+                                                  @RequestParam("cropInspectionId") String cropInspectionId) throws Exception {
+
+        ResponseWrapper rw = ResponseWrapper.createWrapper(CropInspectionResponse.class);
+
+        rw.setContent(cropInspectionService.uploadCropInspection(multipartFile, cropInspectionId));
+        return ResponseEntity.ok(rw);
+    }
+
+    @PostMapping("/upload-mulberry-photo")
+    public ResponseEntity<ResponseWrapper> uploadMulberryExtension(@RequestParam("multipartFile") MultipartFile multipartFile,
+                                                  @RequestParam("farmerMulberryExtensionId") String farmerMulberryExtensionId) throws Exception {
+
+        ResponseWrapper rw = ResponseWrapper.createWrapper(CropInspectionResponse.class);
+
+        rw.setContent(cropInspectionService.uploadMulberryExtension(multipartFile, farmerMulberryExtensionId));
+        return ResponseEntity.ok(rw);
+    }
+
+    @PostMapping("/upload-fitness-certificate")
+    public ResponseEntity<ResponseWrapper> uploadFitnessCertificate(@RequestParam("multipartFile") MultipartFile multipartFile,
+                                                  @RequestParam("fitnessCertificateId") String fitnessCertificateId) throws Exception {
+
+        ResponseWrapper rw = ResponseWrapper.createWrapper(CropInspectionResponse.class);
+
+        rw.setContent(cropInspectionService.uploadFitnessCertificate(multipartFile, fitnessCertificateId));
+        return ResponseEntity.ok(rw);
+    }
+
 
 }

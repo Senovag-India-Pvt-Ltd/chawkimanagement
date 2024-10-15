@@ -1,14 +1,15 @@
 package com.sericulture.model.api.response;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.*;
 
 import java.time.LocalDate;
 
 @Getter
 @Setter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class CropInspectionResponse {
     private  Long cropInspectionId;
     private  Long chowkiId;
@@ -33,4 +34,13 @@ public class CropInspectionResponse {
     private String photoPath;
     private Float noOfChandies;
     private String cropInspectionTypeName;
+    private String applicationType;
+    private LocalDate uprootingDate;
+    private String uprootingReason;
+    private String noOfSapplings;
+//    @Schema(name = "error", example = "true")
+    private Boolean error;
+
+//    @Schema(name = "error_description", example = "Username or password is incorrect")
+    private String error_description;
 }

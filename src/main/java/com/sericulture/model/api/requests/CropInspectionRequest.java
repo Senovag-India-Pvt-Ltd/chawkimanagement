@@ -29,4 +29,8 @@ public class CropInspectionRequest {
      private String photoPath;
      private String spacing;
      private String scheme;
+     private String applicationType;
+     private LocalDate uprootingDate;
+     private String uprootingReason;
+     private String noOfSapplings;
 }
