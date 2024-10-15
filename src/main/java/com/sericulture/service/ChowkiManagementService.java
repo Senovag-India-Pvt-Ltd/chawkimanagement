@@ -222,14 +222,14 @@ public class ChowkiManagementService {
 
         try {
             // Fetch farmerId by fruitsId
-            Optional<Long> farmerIdOptional = chowkiManagemenyRepository.findFarmerIdByFruitsId(updateChowkiRequest.getFruitsId());
+            Optional<Long> farmerIdOptional = chowkiManagemenyRepository.findFarmerIdByFruitsIdAndChawkiId(updateChowkiRequest.getFruitsId(), updateChowkiRequest.getChowkiId());
             if (!farmerIdOptional.isPresent()) {
                 throw new Exception("Farmer not found for the given fruitsId");
             }
 
             // Set farmerId and isVerified
             chowkiManagement.setFarmerId(farmerIdOptional.get());
-            chowkiManagement.setIsVerified(1);  // Set isVerified as 1
+                chowkiManagement.setIsVerified(1);  // Set isVerified as 1
 
             // Set the Chowki ID from the existing record
             chowkiManagement.setChowkiId(existingChowki.getChowkiId());

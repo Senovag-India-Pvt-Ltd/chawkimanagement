@@ -104,6 +104,9 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
     @Query("SELECT f.farmerId FROM Farmer f LEFT JOIN ChowkiManagement cm ON cm.farmerId = f.farmerId WHERE f.fruitsId = :fruitsId")
     Optional<Long> findFarmerIdByFruitsId(@Param("fruitsId") String fruitsId);
 
+    @Query("SELECT f.farmerId FROM Farmer f LEFT JOIN ChowkiManagement cm ON cm.farmerId = f.farmerId WHERE f.fruitsId = :fruitsId and cm.chowkiId = :chowkiId")
+    Optional<Long> findFarmerIdByFruitsIdAndChawkiId(@Param("fruitsId") String fruitsId, @Param("chowkiId") Integer chowkiId);
+
     @Query(nativeQuery = true, value = """
     SELECT cm.chowki_id, cm.lot_numbers_crc, cm.lot_numbers_of_the_rsp, cm.numbers_of_dfls,
     cm.rate_per_100_dfls, cm.race_of_dfls, cm.source_of_dfls, rm.race_name
