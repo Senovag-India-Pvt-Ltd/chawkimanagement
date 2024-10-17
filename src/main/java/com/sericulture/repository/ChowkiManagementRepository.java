@@ -104,7 +104,7 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
     @Query("SELECT DISTINCT(f.farmerId) FROM Farmer f LEFT JOIN ChowkiManagement cm ON cm.farmerId = f.farmerId WHERE f.fruitsId = :fruitsId")
     Optional<Long> findFarmerIdByFruitsId(@Param("fruitsId") String fruitsId);
 
-    @Query("SELECT f.farmerId FROM Farmer f LEFT JOIN ChowkiManagement cm ON cm.farmerId = f.farmerId WHERE f.fruitsId = :fruitsId and cm.chowkiId = :chowkiId")
+    @Query("SELECT DISTINCT(f.farmerId) FROM Farmer f LEFT JOIN ChowkiManagement cm ON cm.farmerId = f.farmerId WHERE f.fruitsId = :fruitsId and cm.chowkiId = :chowkiId")
     Optional<Long> findFarmerIdByFruitsIdAndChawkiId(@Param("fruitsId") String fruitsId, @Param("chowkiId") Integer chowkiId);
 
     @Query(nativeQuery = true, value = """
