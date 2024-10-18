@@ -128,5 +128,10 @@ public class CropInspectionController {
         return ResponseEntity.ok(rw);
     }
 
+    @GetMapping("/getFitnessCertificatePath/{farmerId}")
+    public List<CropInspectionResponse> getFitnessCertificatePath(@PathVariable Long farmerId) {
+        return cropInspectionService.getFitnessCertificatePath(farmerId);
+    }
+
 
 }

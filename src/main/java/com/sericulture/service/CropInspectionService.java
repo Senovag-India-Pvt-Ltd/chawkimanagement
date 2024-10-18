@@ -465,7 +465,21 @@ public class CropInspectionService {
         return cropInspectionResponse;
     }
 
+    public List<CropInspectionResponse> getFitnessCertificatePath(Long farmerId) {
+        List<Object[]> chowkiDetails = fitnessCertificateRepository.getFitnessCertificatePath(farmerId);
+        List<CropInspectionResponse> responses = new ArrayList<>();
 
+        for (Object[] arr : chowkiDetails) {
+            CropInspectionResponse response = CropInspectionResponse.builder()
+                    .fitnessCertificateId(Util.objectToLong(arr[0]))
+                    .fitnessCertificatePath(Util.objectToString(arr[1]))
+                    .farmerId(Util.objectToLong(arr[2]))
+                    .build();
 
+            responses.add(response);
+        }
+
+        return responses;
+    }
 
 }

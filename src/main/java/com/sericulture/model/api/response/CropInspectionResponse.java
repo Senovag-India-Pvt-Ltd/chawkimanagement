@@ -38,6 +38,8 @@ public class CropInspectionResponse {
     private LocalDate uprootingDate;
     private String uprootingReason;
     private String noOfSapplings;
+    private Long fitnessCertificateId;
+    private String fitnessCertificatePath;
 //    @Schema(name = "error", example = "true")
     private Boolean error;
 
