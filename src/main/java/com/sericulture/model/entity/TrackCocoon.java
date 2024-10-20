@@ -44,6 +44,9 @@ public class TrackCocoon extends BaseEntity implements Serializable {
     @Column(name = "chowki_id")
     private Integer chowkiId;
 
+    @Column(name = "id")
+    private Integer saleAndDisposalId;
+
     @Column(name = "external_unit_registration_name")
     private String externalUnitRegistrationName;
 

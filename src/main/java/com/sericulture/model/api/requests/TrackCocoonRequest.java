@@ -16,5 +16,6 @@ public class TrackCocoonRequest {
     private String buyerType;
     private Long reelerId;
     private Integer chowkiId;
+    private Integer saleAndDisposalId;
     private String externalUnitRegistrationName;
 }

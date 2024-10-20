@@ -98,6 +98,11 @@ public class CropInspectionController {
         return cropInspectionService.insertTrackCocoonData(trackCocoonRequest);
     }
 
+    @PostMapping("/add-sale-track-cocoon-info")
+    public AddChowkiResponse insertSaleTrackCocoonData(@Valid @RequestBody TrackCocoonRequest trackCocoonRequest) {
+        return cropInspectionService.insertSaleTrackCocoonData(trackCocoonRequest);
+    }
+
     @PostMapping("/upload-crop-inspection")
     public ResponseEntity<ResponseWrapper> uploadCropInspection(@RequestParam("multipartFile") MultipartFile multipartFile,
                                                   @RequestParam("cropInspectionId") String cropInspectionId) throws Exception {

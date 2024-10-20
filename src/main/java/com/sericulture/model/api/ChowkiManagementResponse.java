@@ -56,5 +56,11 @@ public class ChowkiManagementResponse {
     private int isVerified;
     private int isSaleTracked;
     private String receiptNo;
+    private int saleAndDisposalId;
+    private String ratePerDFls;
+    private Long raceId;
+    private String expectedHatchingDate;
+    private String auctionDate;
+    private String cocoonsQuantity;
 
 }

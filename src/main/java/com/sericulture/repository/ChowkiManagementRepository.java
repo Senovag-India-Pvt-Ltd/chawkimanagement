@@ -140,5 +140,25 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
     """)
     public List<Object[]> getInspectioninfoForCocoonTrack(String fruitsId);
 
+    @Query(nativeQuery = true, value = """
+     SELECT Distinct
+       sadod.id,
+       sadod.rate_per100dfls_price,
+       sadod.number_of_dfls_disposed,
+       sadod.lot_number,
+       sadod.expected_date_of_hatching,
+       sadod.race_id,
+       rm.race_name,
+       lg.auction_date,
+       lg.lot_weight
+   FROM sale_and_disposal_of_dfls sadod
+   LEFT JOIN race_master rm ON sadod.race_id = rm.race_id
+   LEFT JOIN market_auction ma ON ma.lot_Parental_Level = sadod.lot_number
+   LEFT JOIN lot_groupage lg ON lg.market_auction_id = ma.market_auction_id
+   WHERE sadod.fruits_id = :fruitsId
+   AND sadod.is_sale_tracked = 0;
+   """)
+    public List<Object[]> getInspectioninfoForCocoonSaleTrack(String fruitsId);
+
 
 }

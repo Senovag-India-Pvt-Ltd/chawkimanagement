@@ -381,4 +381,27 @@ public class ChowkiManagementService {
         return responses;
     }
 
+    public List<ChowkiManagementResponse> getInspectioninfoForCocoonSaleTrack(String fruitsId) {
+        List<Object[]> chowkiDetails = chowkiManagemenyRepository.getInspectioninfoForCocoonSaleTrack(fruitsId);
+        List<ChowkiManagementResponse> responses = new ArrayList<>();
+
+        for (Object[] arr : chowkiDetails) {
+            ChowkiManagementResponse response = ChowkiManagementResponse.builder()
+                    .saleAndDisposalId(Util.objectToInteger(arr[0]))
+                    .ratePerDFls(Util.objectToString(arr[1]))
+                    .numbersOfDfls(Util.objectToLong(arr[2]))
+                    .lotNumberRsp(Util.objectToString(arr[3]))
+                    .expectedHatchingDate(Util.objectToString(arr[4]))
+                    .raceId(Util.objectToLong(arr[5]))
+                    .raceName(Util.objectToString(arr[6]))
+                    .auctionDate(Util.objectToString(arr[7]))
+                    .cocoonsQuantity(Util.objectToString(arr[8]))
+                    .build();
+
+            responses.add(response);
+        }
+
+        return responses;
+    }
+
 }

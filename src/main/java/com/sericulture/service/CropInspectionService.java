@@ -41,6 +41,9 @@ public class CropInspectionService {
     MgnregaSchemeRepository mgnregaSchemeRepository;
 
     @Autowired
+    SaleAndDisposalOfDflsRepository saleAndDisposalOfDflsRepository;
+
+    @Autowired
     S3Controller s3Controller;
 
     @Autowired
@@ -480,6 +483,55 @@ public class CropInspectionService {
         }
 
         return responses;
+    }
+
+    public AddChowkiResponse insertSaleTrackCocoonData(TrackCocoonRequest trackCocoonRequest) {
+        AddChowkiResponse addChowkiResponse = new AddChowkiResponse();
+        TrackCocoon trackCocoon = new TrackCocoon();
+        try {
+            // Set data for TrackCocoon
+            trackCocoon.setMarketAuctionDate(trackCocoonRequest.getMarketAuctionDate());
+            trackCocoon.setMarketMasterId(trackCocoonRequest.getMarketMasterId());
+            trackCocoon.setCocoonsQty(trackCocoonRequest.getCocoonsQty());
+            trackCocoon.setRatePerKg(trackCocoonRequest.getRatePerKg());
+            trackCocoon.setBuyerType(trackCocoonRequest.getBuyerType());
+            trackCocoon.setReelerId(trackCocoonRequest.getReelerId());
+//        trackCocoon.setChowkiId(trackCocoonRequest.getChowkiId());
+            trackCocoon.setSaleAndDisposalId(trackCocoonRequest.getSaleAndDisposalId());
+            trackCocoon.setExternalUnitRegistrationName(trackCocoonRequest.getExternalUnitRegistrationName());
+
+            // Save TrackCocoon data
+            trackCocconRepository.save(trackCocoon);
+
+            // Fetch existing SaleAndDisposalOfDfls by ID
+            Optional<SaleAndDisposalOfDfls> existingRecordOptional = saleAndDisposalOfDflsRepository.findByIdAndActive(trackCocoonRequest.getSaleAndDisposalId(), true );
+
+            if (existingRecordOptional.isPresent()) {
+                SaleAndDisposalOfDfls existingRecord = existingRecordOptional.get();
+
+                // Update the necessary field
+                existingRecord.setIsSaleTracked(1); // Set isSaleTracked to 1
+
+                // Save the updated SaleAndDisposalOfDfls object
+                saleAndDisposalOfDflsRepository.save(existingRecord);
+            } else {
+                // Handle case where record does not exist (if needed)
+                addChowkiResponse.setError(1);
+                addChowkiResponse.setMessage("SaleAndDisposalOfDfls record not found!");
+                return addChowkiResponse;
+            }
+
+            // Set success response
+            addChowkiResponse.setError(0);
+            addChowkiResponse.setMessage("Data added successfully!");
+        } catch (Exception e) {
+            // Handle error scenario
+            addChowkiResponse.setError(1);
+            addChowkiResponse.setMessage("Selected district is invalid or something else went wrong; please try again!");
+            log.error("EXCEPTION : {}", e);
+        }
+
+        return addChowkiResponse;
     }
 
 }
