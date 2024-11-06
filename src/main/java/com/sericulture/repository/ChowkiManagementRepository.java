@@ -59,12 +59,13 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
     )
     Optional<ChowkiManagementByIdDTO> findByChowkiIdAndUserMasterId(Integer chowkiId, Long userMasterId);
 
-    @Query("select new com.sericulture.model.api.ChowkiManagementResponse(" +
+    @Query("select new com.sericulture.model.api.ChowkiManagementByIdDTO(" +
             " CM.chowkiId," +
             " CM.farmerName," +
             " CM.fatherName," +
             " CM.fruitsId," +
             " CM.dflsSource," +
+            " CM.raceOfDfls," +
             " R.raceName," +
             " CM.numbersOfDfls," +
             " CM.lotNumberRsp," +
@@ -75,6 +76,12 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
             " T.talukName," +
             " H.hobliName," +
             " U.name AS tscName," +
+            " CM.village," +
+            " CM.district," +
+            " CM.state," +
+            " CM.taluk," +
+            " CM.hobli," +
+            " CM.tsc," +
             " CM.soldAfter1stOr2ndMould," +
             " CM.ratePer100Dfls," +
             " CM.price," +
@@ -96,7 +103,7 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
             " where CM.userMasterId = :userMasterId\n"+
             " order by CM.chowkiId DESC"
     )
-    List<ChowkiManagementResponse> getByUserMasterIdOrderByChowkiIdDesc(Long userMasterId);
+    List<ChowkiManagementByIdDTO> getByUserMasterIdOrderByChowkiIdDesc(Long userMasterId);
 
     @Query(value = "SELECT next value for dbo.chowkireceipt_seq", nativeQuery = true)
     public BigDecimal getNextValRecieptSequence();

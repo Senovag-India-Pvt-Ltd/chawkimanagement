@@ -65,7 +65,7 @@ public class ChowkiManagementController {
     }
 
     @GetMapping("/get-info")
-    public List<ChowkiManagementResponse> getAllChowkiManagement() {
+    public List<ChowkiManagementByIdDTO> getAllChowkiManagement() {
         return chowkiManagementService.findAll();
     }
 

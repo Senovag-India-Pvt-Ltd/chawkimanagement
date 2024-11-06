@@ -277,7 +277,7 @@ public class ChowkiManagementService {
     }
 
 
-    public List<ChowkiManagementResponse> findAll() {
+    public List<ChowkiManagementByIdDTO> findAll() {
         return chowkiManagemenyRepository.getByUserMasterIdOrderByChowkiIdDesc(Util.getUserId(Util.getTokenValues()));
     }
 
