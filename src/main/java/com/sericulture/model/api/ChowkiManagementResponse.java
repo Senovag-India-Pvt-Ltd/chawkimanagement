@@ -65,5 +65,6 @@ public class ChowkiManagementResponse {
     private String auctionDate;
     private String cocoonsQuantity;
     private String dateOfDisposal;
+    private String nameAndAddressOfTheFarm;
 
 }

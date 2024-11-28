@@ -3,6 +3,7 @@ package com.sericulture.controller;
 
 import com.sericulture.model.api.ChowkiManagementByIdDTO;
 import com.sericulture.model.api.requests.AddChowkiRequest;
+import com.sericulture.model.api.requests.AddSaleDisposalRequest;
 import com.sericulture.model.api.response.AddChowkiResponse;
 import com.sericulture.model.api.response.CommonChowkiResponse;
 import com.sericulture.model.api.ChowkiManagementResponse;
@@ -54,8 +55,8 @@ public class ChowkiManagementController {
     }
 
     @PostMapping("/add-sale-disposal-dfl-info")
-    public AddChowkiResponse insertSaleAndDisposalDFlDetails(@Valid @RequestBody AddChowkiRequest addChowkiRequest) {
-        return chowkiManagementService.insertSaleAndDisposalDFlDetails(addChowkiRequest);
+    public AddChowkiResponse insertSaleAndDisposalDFlDetails(@Valid @RequestBody AddSaleDisposalRequest addSaleDisposalRequest) {
+        return chowkiManagementService.insertSaleAndDisposalDFlDetails(addSaleDisposalRequest);
     }
 
 

@@ -66,4 +66,16 @@ public class SaleAndDisposalOfDfls extends BaseEntity implements Serializable {
 
     @Column(name = "receipt_no")
     private String receiptNo;
+
+    @Column(name = "price")
+    private Float price;
+
+    @Column(name = "sold_after_1st_or_2nd_mould")
+    private String soldAfter1stOr2ndMould;
+
+    @Column(name = "tsc")
+    private Long tsc;
+
+    @Column(name = "source_of_dfls")
+    private String dflsSource;
 }

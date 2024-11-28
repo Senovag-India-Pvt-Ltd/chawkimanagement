@@ -2,6 +2,7 @@ package com.sericulture.model;
 
 
 import com.sericulture.model.api.requests.AddChowkiRequest;
+import com.sericulture.model.api.requests.AddSaleDisposalRequest;
 import com.sericulture.model.entity.CropInspection;
 import com.sericulture.model.entity.FarmerMulberryExtension;
 import com.sericulture.model.entity.FitnessCertificate;
@@ -61,12 +62,12 @@ public class Mapper {
 
     /**
      * Maps Sale and disposal of dfls Object to Sale and disposal of dfls  Response Object
-     * @param addChowkiRequest
+     * @param addSaleDisposalRequest
      * @param <T>
      */
-    public <T> T saleAndDisposalOfDflsObjectToEntity(AddChowkiRequest addChowkiRequest , Class<T> claaz) {
-        log.info("Value of mapper is:",mapper, addChowkiRequest);
-        return (T) mapper.map(addChowkiRequest, claaz);
+    public <T> T saleAndDisposalOfDflsObjectToEntity(AddSaleDisposalRequest addSaleDisposalRequest , Class<T> claaz) {
+        log.info("Value of mapper is:",mapper, addSaleDisposalRequest);
+        return (T) mapper.map(addSaleDisposalRequest, claaz);
     }
 
 

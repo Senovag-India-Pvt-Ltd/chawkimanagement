@@ -3,6 +3,7 @@ package com.sericulture.service;
 import com.sericulture.helper.Util;
 import com.sericulture.model.Mapper;
 import com.sericulture.model.api.ChowkiManagementByIdDTO;
+import com.sericulture.model.api.requests.AddSaleDisposalRequest;
 import com.sericulture.model.api.requests.UpdateChowkiRequest;
 import com.sericulture.model.api.response.AddChowkiResponse;
 import com.sericulture.model.entity.ChowkiManagement;
@@ -159,9 +160,9 @@ public class ChowkiManagementService {
     }
 
     @Transactional
-    public AddChowkiResponse insertSaleAndDisposalDFlDetails(AddChowkiRequest addChowkiRequest) {
+    public AddChowkiResponse insertSaleAndDisposalDFlDetails(AddSaleDisposalRequest addSaleDisposalRequest) {
         AddChowkiResponse addChowkiResponse = new AddChowkiResponse();
-        SaleAndDisposalOfDfls saleAndDisposalOfDfls = mapper.saleAndDisposalOfDflsObjectToEntity(addChowkiRequest, SaleAndDisposalOfDfls.class);
+        SaleAndDisposalOfDfls saleAndDisposalOfDfls = mapper.saleAndDisposalOfDflsObjectToEntity(addSaleDisposalRequest, SaleAndDisposalOfDfls.class);
         validator.validate(saleAndDisposalOfDfls);
 //        List<RpPagePermission> rpPagePermissionList = rpPagePermissionRepository.findByRpPagePermissionName(rpPagePermissionRequest.getRpPagePermissionName());
 //        if(!rpPagePermissionList.isEmpty() && rpPagePermissionList.stream().filter(RpPagePermission::getActive).findAny().isPresent()){
@@ -376,6 +377,8 @@ public class ChowkiManagementService {
                     .raceName(Util.objectToString(arr[5]))
                     .expectedHatchingDate(Util.objectToString(arr[6]))
                     .dateOfDisposal(Util.objectToString(arr[7]))
+                    .dflsSource(Util.objectToString(arr[8]))
+                    .nameAndAddressOfTheFarm(Util.objectToString(arr[9]))
                     .build();
 
             responses.add(response);
@@ -437,6 +440,9 @@ public class ChowkiManagementService {
                     .ratePer100Dfls(Util.objectToFloat(arr[3]))
                     .raceName(Util.objectToString(arr[5]))
                     .hatchingInspectionDate(Util.objectToString(arr[6]))
+                    .dateOfDisposal(Util.objectToString(arr[7]))
+                    .dflsSource(Util.objectToString(arr[8]))
+                    .nameAndAddressOfTheFarm(Util.objectToString(arr[9]))
                     .build();
 
             responses.add(response);

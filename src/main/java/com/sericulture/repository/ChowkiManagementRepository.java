@@ -135,7 +135,9 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
          sadod.race_id,
          rm.race_name,
          sadod.expected_date_of_hatching,
-         sadod.date_of_disposal
+         sadod.date_of_disposal,
+         sadod.source_of_dfls,
+         sadod.name_and_address_of_the_farm
      FROM sale_and_disposal_of_dfls sadod
      LEFT JOIN race_master rm ON sadod.race_id = rm.race_id
      WHERE sadod.fruits_id = :fruitsId
@@ -179,7 +181,10 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
          sadod.rate_per100dfls_price ,
          sadod.race_id,
          rm.race_name,
-         sadod.expected_date_of_hatching
+         sadod.expected_date_of_hatching,
+         sadod.date_of_disposal,
+         sadod.source_of_dfls,
+         sadod.name_and_address_of_the_farm
      FROM sale_and_disposal_of_dfls sadod
      LEFT JOIN race_master rm ON sadod.race_id = rm.race_id
      WHERE sadod.fruits_id = :fruitsId
