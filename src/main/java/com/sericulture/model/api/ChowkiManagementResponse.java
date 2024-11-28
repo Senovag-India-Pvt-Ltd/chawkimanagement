@@ -64,5 +64,6 @@ public class ChowkiManagementResponse {
     private String expectedHatchingDate;
     private String auctionDate;
     private String cocoonsQuantity;
+    private String dateOfDisposal;
 
 }

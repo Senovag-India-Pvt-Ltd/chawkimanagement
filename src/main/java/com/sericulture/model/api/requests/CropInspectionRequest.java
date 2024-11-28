@@ -35,4 +35,6 @@ public class CropInspectionRequest {
      private String noOfSapplings;
      private String fitnessCertificatePath;
      private String cropInspectionPath;
+     private Long saleAndDisposalId;
+     private String fruitsId;
 }

@@ -62,6 +62,8 @@ public class CropInspectionService {
             // Fetch farmerId by fruitsId
 
 
+            cropInspection.setSaleAndDisposalId(cropInspectionRequest.getSaleAndDisposalId());
+            cropInspection.setFruitsId(cropInspectionRequest.getFruitsId());
             cropInspection.setChowkiId(cropInspectionRequest.getChowkiId());
             cropInspection.setFarmerId(cropInspectionRequest.getFarmerId());
             cropInspection.setCropInspectionTypeId(cropInspectionRequest.getCropInspectionTypeId());
@@ -136,6 +138,22 @@ public class CropInspectionService {
 
     public List<CropInspectionResponse> getInspectionTypeForCrop(Long chowkiId) {
         List<Object[]> cropInspectionDetails = cropInspectionRepository.getInspectionTypeForCrop(chowkiId);
+        List<CropInspectionResponse> responses = new ArrayList<>();
+
+        for (Object[] arr : cropInspectionDetails) {
+            CropInspectionResponse response = CropInspectionResponse.builder()
+                    .cropInspectionTypeId(Util.objectToLong(arr[0]))
+                    .cropInspectionTypeName(Util.objectToString(arr[1]))
+                    .build();
+
+            responses.add(response);
+        }
+
+        return responses;
+    }
+
+    public List<CropInspectionResponse> getInspectionTypeForCropFromSaleAndDisposalOfDfl(Long saleAndDisposalId) {
+        List<Object[]> cropInspectionDetails = cropInspectionRepository.getInspectionTypeForCropFromSaleAndDisposalOfDfl(saleAndDisposalId);
         List<CropInspectionResponse> responses = new ArrayList<>();
 
         for (Object[] arr : cropInspectionDetails) {

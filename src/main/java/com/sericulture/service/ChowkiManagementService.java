@@ -374,6 +374,8 @@ public class ChowkiManagementService {
                     .numbersOfDfls(Util.objectToLong(arr[2]))
                     .ratePer100Dfls(Util.objectToFloat(arr[3]))
                     .raceName(Util.objectToString(arr[5]))
+                    .expectedHatchingDate(Util.objectToString(arr[6]))
+                    .dateOfDisposal(Util.objectToString(arr[7]))
                     .build();
 
             responses.add(response);

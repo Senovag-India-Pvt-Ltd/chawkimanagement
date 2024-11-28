@@ -48,6 +48,11 @@ public class CropInspectionController {
         return cropInspectionService.getInspectionTypeForCrop(chowkiId);
     }
 
+    @GetMapping("/getInspectionTypeForCropFromSaleAndDisposalOfDfl/{saleAndDisposalId}")
+    public List<CropInspectionResponse> getInspectionTypeForCropFromSaleAndDisposalOfDfl(@PathVariable Long saleAndDisposalId) {
+        return cropInspectionService.getInspectionTypeForCropFromSaleAndDisposalOfDfl(saleAndDisposalId);
+    }
+
     @PostMapping("/add-farmer-mulberry-extension-info")
     public AddChowkiResponse insertFarmerMulberryExtension(@Valid @RequestBody CropInspectionRequest cropInspectionRequest) {
         return cropInspectionService.insertFarmerMulberryExtension(cropInspectionRequest);

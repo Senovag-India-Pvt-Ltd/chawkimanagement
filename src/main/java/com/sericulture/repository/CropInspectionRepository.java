@@ -46,4 +46,17 @@ Left JOIN
     List<Object[]> getInspectionTypeForCrop(@Param("chowkiId") Long chowkiId);
 
 
+    @Query(nativeQuery = true, value = """
+    SELECT cit.crop_inspection_type_id, cit.name
+    FROM crop_inspection_type cit
+    WHERE cit.active = 1
+        And cit.crop_inspection_type_id NOT IN (
+            SELECT ci.crop_inspection_type_id
+            FROM crop_inspection ci
+            WHERE ci.sale_and_disposal_id = :saleAndDisposalId
+    )
+    """)
+    List<Object[]> getInspectionTypeForCropFromSaleAndDisposalOfDfl(@Param("saleAndDisposalId") Long saleAndDisposalId);
+
+
 }
