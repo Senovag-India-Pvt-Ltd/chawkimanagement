@@ -1,6 +1,7 @@
 package com.sericulture.service;
 
 import com.sericulture.helper.Util;
+import com.sericulture.model.Mapper;
 import com.sericulture.model.api.ChowkiManagementByIdDTO;
 import com.sericulture.model.api.requests.UpdateChowkiRequest;
 import com.sericulture.model.api.response.AddChowkiResponse;
@@ -9,15 +10,16 @@ import com.sericulture.model.api.requests.AddChowkiRequest;
 import com.sericulture.model.api.response.CommonChowkiResponse;
 import com.sericulture.model.api.ChowkiManagementResponse;
 import com.sericulture.model.entity.District;
+import com.sericulture.model.entity.SaleAndDisposalOfDfls;
 import com.sericulture.repository.ChowkiManagementRepository;
 import com.sericulture.repository.DistrictRepository;
+import com.sericulture.repository.SaleAndDisposalOfDflsRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static io.micrometer.core.ipc.http.HttpSender.Request.build;
 
@@ -28,7 +30,16 @@ public class ChowkiManagementService {
     ChowkiManagementRepository chowkiManagemenyRepository;
 
     @Autowired
+    SaleAndDisposalOfDflsRepository saleAndDisposalOfDflsRepository;
+
+    @Autowired
     DistrictRepository districtRepository;
+
+    @Autowired
+    Mapper mapper;
+
+    @Autowired
+    CustomValidator validator;
 
     public AddChowkiResponse insertData(AddChowkiRequest addChowkiRequest) {
         AddChowkiResponse addChowkiResponse =new AddChowkiResponse();
@@ -145,6 +156,21 @@ public class ChowkiManagementService {
             log.error("EXCEPTION : {}",E);
         }
         return addChowkiResponse;
+    }
+
+    @Transactional
+    public AddChowkiResponse insertSaleAndDisposalDFlDetails(AddChowkiRequest addChowkiRequest) {
+        AddChowkiResponse addChowkiResponse = new AddChowkiResponse();
+        SaleAndDisposalOfDfls saleAndDisposalOfDfls = mapper.saleAndDisposalOfDflsObjectToEntity(addChowkiRequest, SaleAndDisposalOfDfls.class);
+        validator.validate(saleAndDisposalOfDfls);
+//        List<RpPagePermission> rpPagePermissionList = rpPagePermissionRepository.findByRpPagePermissionName(rpPagePermissionRequest.getRpPagePermissionName());
+//        if(!rpPagePermissionList.isEmpty() && rpPagePermissionList.stream().filter(RpPagePermission::getActive).findAny().isPresent()){
+//            throw new ValidationException("RpPagePermission name already exist");
+//        }
+//        if(!rpPagePermissionList.isEmpty() && rpPagePermissionList.stream().filter(Predicate.not(RpPagePermission::getActive)).findAny().isPresent()){
+//            throw new ValidationException("RpPagePermission name already exist with inactive state");
+//        }
+        return mapper.saleAndDisposalOfDflsEntityToObject(saleAndDisposalOfDflsRepository.save(saleAndDisposalOfDfls), AddChowkiResponse.class);
     }
 
 
@@ -337,6 +363,44 @@ public class ChowkiManagementService {
         return responses;
     }
 
+    public List<ChowkiManagementResponse> getSaleAndDisposalDetailsByFruitsId(String fruitsId) {
+        List<Object[]> chowkiDetails = chowkiManagemenyRepository.getSaleAndDisposalDetailsByFruitsId(fruitsId);
+        List<ChowkiManagementResponse> responses = new ArrayList<>();
+
+        for (Object[] arr : chowkiDetails) {
+            ChowkiManagementResponse response = ChowkiManagementResponse.builder()
+                    .saleAndDisposalId(Util.objectToInteger(arr[0]))
+                    .lotNumberCrc(Util.objectToString(arr[1]))
+                    .numbersOfDfls(Util.objectToLong(arr[2]))
+                    .ratePer100Dfls(Util.objectToFloat(arr[3]))
+                    .raceName(Util.objectToString(arr[5]))
+                    .build();
+
+            responses.add(response);
+        }
+
+        return responses;
+    }
+
+    public List<ChowkiManagementResponse> getSaleAndDisposalDetailsForRssoByFruitsId(String fruitsId) {
+        List<Object[]> chowkiDetails = chowkiManagemenyRepository.getSaleAndDisposalDetailsForRssoByFruitsId(fruitsId);
+        List<ChowkiManagementResponse> responses = new ArrayList<>();
+
+        for (Object[] arr : chowkiDetails) {
+            ChowkiManagementResponse response = ChowkiManagementResponse.builder()
+                    .saleAndDisposalId(Util.objectToInteger(arr[0]))
+                    .lotNumberCrc(Util.objectToString(arr[1]))
+                    .numbersOfDfls(Util.objectToLong(arr[2]))
+                    .ratePer100Dfls(Util.objectToFloat(arr[3]))
+                    .raceName(Util.objectToString(arr[5]))
+                    .build();
+
+            responses.add(response);
+        }
+
+        return responses;
+    }
+
     public List<ChowkiManagementResponse> getInspectioninfoForFarmer(Long farmerId) {
         List<Object[]> chowkiDetails = chowkiManagemenyRepository.getInspectioninfoForFarmer(farmerId);
         List<ChowkiManagementResponse> responses = new ArrayList<>();
@@ -351,6 +415,26 @@ public class ChowkiManagementService {
                     .dflsSource(Util.objectToString(arr[6]))
                     .hatchingInspectionDate(Util.objectToString(arr[7]))
                     .raceName(Util.objectToString(arr[8]))
+                    .build();
+
+            responses.add(response);
+        }
+
+        return responses;
+    }
+
+    public List<ChowkiManagementResponse> getInspectioninfoForFarmerFromSaleDisposalOfDFls(String fruitsId) {
+        List<Object[]> chowkiDetails = chowkiManagemenyRepository.getInspectioninfoForFarmerFromSaleDisposalOfDFls(fruitsId);
+        List<ChowkiManagementResponse> responses = new ArrayList<>();
+
+        for (Object[] arr : chowkiDetails) {
+            ChowkiManagementResponse response = ChowkiManagementResponse.builder()
+                    .saleAndDisposalId(Util.objectToInteger(arr[0]))
+                    .lotNumberCrc(Util.objectToString(arr[1]))
+                    .numbersOfDfls(Util.objectToLong(arr[2]))
+                    .ratePer100Dfls(Util.objectToFloat(arr[3]))
+                    .raceName(Util.objectToString(arr[5]))
+                    .hatchingInspectionDate(Util.objectToString(arr[6]))
                     .build();
 
             responses.add(response);
@@ -402,6 +486,28 @@ public class ChowkiManagementService {
         }
 
         return responses;
+    }
+
+    @Transactional
+    public CommonChowkiResponse updateSaleDFLData(UpdateChowkiRequest updateChowkiRequest){
+        CommonChowkiResponse commonChowkiResponse = new CommonChowkiResponse();
+
+            SaleAndDisposalOfDfls saleAndDisposalOfDfls = saleAndDisposalOfDflsRepository.findByFruitsIdAndIdAndActiveIn(updateChowkiRequest.getFruitsId(),updateChowkiRequest.getSaleAndDisposalId(), Set.of(true, false));
+            if (Objects.nonNull(saleAndDisposalOfDfls)) {
+                saleAndDisposalOfDfls.setReceiptNo(updateChowkiRequest.getReceiptNo());
+                saleAndDisposalOfDfls.setIsVerified(1);
+                saleAndDisposalOfDfls.setUserMasterId(Util.getUserId(Util.getTokenValues()));
+                saleAndDisposalOfDfls.setActive(true);
+                SaleAndDisposalOfDfls saleAndDisposalOfDfls1 = saleAndDisposalOfDflsRepository.save(saleAndDisposalOfDfls);
+                commonChowkiResponse = mapper.saleAndDisposalOfDflsEntityToObject(saleAndDisposalOfDfls1, CommonChowkiResponse.class);
+                commonChowkiResponse.setError(0);
+            } else {
+                commonChowkiResponse.setError(1);
+                commonChowkiResponse.setMessage("Error occurred while fetching sale and disposal of dfls");
+                // throw new ValidationException("Error occurred while fetching village");
+            }
+//        }
+        return commonChowkiResponse;
     }
 
 }

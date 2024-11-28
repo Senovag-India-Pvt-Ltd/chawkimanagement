@@ -125,6 +125,39 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
 
     public List<Object[]> getChawkiDetailsByFarmerId(Long farmerId);
 
+
+    @Query(nativeQuery = true, value = """
+         SELECT
+         sadod.id,
+         sadod.lot_number,
+         sadod.number_of_dfls_disposed,
+         sadod.rate_per100dfls_price ,
+         sadod.race_id,
+         rm.race_name
+     FROM sale_and_disposal_of_dfls sadod
+     LEFT JOIN race_master rm ON sadod.race_id = rm.race_id
+     WHERE sadod.fruits_id = :fruitsId
+     AND sadod.is_verified = 0;
+    """)
+
+    public List<Object[]> getSaleAndDisposalDetailsByFruitsId(String fruitsId);
+
+    @Query(nativeQuery = true, value = """
+         SELECT
+         sadod.id,
+         sadod.lot_number,
+         sadod.number_of_dfls_disposed,
+         sadod.rate_per100dfls_price ,
+         sadod.race_id,
+         rm.race_name
+     FROM sale_and_disposal_of_dfls_rsso sadod
+     LEFT JOIN race_master rm ON sadod.race_id = rm.race_id
+     WHERE sadod.fruits_id = :fruitsId
+     AND sadod.is_verified = 0;
+    """)
+
+    public List<Object[]> getSaleAndDisposalDetailsForRssoByFruitsId(String fruitsId);
+
     @Query(nativeQuery = true, value = """
     SELECT cm.chowki_id, cm.lot_numbers_crc, cm.lot_numbers_of_the_rsp, cm.numbers_of_dfls,
     cm.rate_per_100_dfls, cm.race_of_dfls, cm.source_of_dfls,cm.hatching_date, rm.race_name
@@ -135,6 +168,23 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
     """)
 
     public List<Object[]> getInspectioninfoForFarmer(Long farmerId);
+
+    @Query(nativeQuery = true, value = """
+         SELECT
+         sadod.id,
+         sadod.lot_number,
+         sadod.number_of_dfls_disposed,
+         sadod.rate_per100dfls_price ,
+         sadod.race_id,
+         rm.race_name,
+         sadod.expected_date_of_hatching
+     FROM sale_and_disposal_of_dfls sadod
+     LEFT JOIN race_master rm ON sadod.race_id = rm.race_id
+     WHERE sadod.fruits_id = :fruitsId
+     AND sadod.is_verified = 1;
+    """)
+
+    public List<Object[]> getInspectioninfoForFarmerFromSaleDisposalOfDFls(String fruitsId);
 
 
     @Query(nativeQuery = true, value = """

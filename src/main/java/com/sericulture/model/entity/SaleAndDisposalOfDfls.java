@@ -21,7 +21,7 @@ public class SaleAndDisposalOfDfls extends BaseEntity implements Serializable {
 
     private String lotNumber;
 
-    private Integer eggSheetNumbers;
+    private String eggSheetNumbers;
 
     private Integer raceId;
 
@@ -59,5 +59,11 @@ public class SaleAndDisposalOfDfls extends BaseEntity implements Serializable {
     private Long grainageId;
 
     @Column(name = "is_sale_tracked")
-    private int isSaleTracked;
+    private Integer isSaleTracked;
+
+    @Column(name = "is_verified")
+    private Integer isVerified;
+
+    @Column(name = "receipt_no")
+    private String receiptNo;
 }

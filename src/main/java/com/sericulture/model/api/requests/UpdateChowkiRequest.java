@@ -68,4 +68,6 @@ public class UpdateChowkiRequest {
     private Long farmerId;
 
     private int isVerified;
+
+    private Long saleAndDisposalId;
 }

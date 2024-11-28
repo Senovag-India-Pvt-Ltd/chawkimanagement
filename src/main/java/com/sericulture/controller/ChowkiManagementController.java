@@ -53,6 +53,11 @@ public class ChowkiManagementController {
         return chowkiManagementService.insertDFLData(addChowkiRequest);
     }
 
+    @PostMapping("/add-sale-disposal-dfl-info")
+    public AddChowkiResponse insertSaleAndDisposalDFlDetails(@Valid @RequestBody AddChowkiRequest addChowkiRequest) {
+        return chowkiManagementService.insertSaleAndDisposalDFlDetails(addChowkiRequest);
+    }
+
 
     @PostMapping("/update-info")
     public CommonChowkiResponse updateData(@Valid @RequestBody UpdateChowkiRequest updateChowkiRequest) {
@@ -62,6 +67,11 @@ public class ChowkiManagementController {
     @PostMapping("/update-dfl-info")
     public CommonChowkiResponse updateDFLData(@Valid @RequestBody UpdateChowkiRequest updateChowkiRequest) {
         return chowkiManagementService.updateDFLData(updateChowkiRequest);
+    }
+
+    @PostMapping("/update-sale-disposal-dfl-info")
+    public CommonChowkiResponse updateSaleDFLData(@Valid @RequestBody UpdateChowkiRequest updateChowkiRequest) {
+        return chowkiManagementService.updateSaleDFLData(updateChowkiRequest);
     }
 
     @GetMapping("/get-info")
@@ -79,9 +89,24 @@ public class ChowkiManagementController {
         return chowkiManagementService.getChowkiDetailsByFarmerId(farmerId);
     }
 
+    @GetMapping("/get-sale-disposal-by-fruits-id/{fruitsId}")
+    public List<ChowkiManagementResponse> getSaleAndDisposalDetailsByFruitsId(@PathVariable String fruitsId) {
+        return chowkiManagementService.getSaleAndDisposalDetailsByFruitsId(fruitsId);
+    }
+
+    @GetMapping("/get-sale-disposal-rsso-by-fruits-id/{fruitsId}")
+    public List<ChowkiManagementResponse> getSaleAndDisposalDetailsForRssoByFruitsId(@PathVariable String fruitsId) {
+        return chowkiManagementService.getSaleAndDisposalDetailsForRssoByFruitsId(fruitsId);
+    }
+
     @GetMapping("/getInspectioninfoForFarmer/{farmerId}")
     public List<ChowkiManagementResponse> InspectioninfoForFarmer(@PathVariable Long farmerId) {
         return chowkiManagementService.getInspectioninfoForFarmer(farmerId);
+    }
+
+    @GetMapping("/getInspectioninfoForFarmerFromSaleDisposalOfDFls/{fruitsId}")
+    public List<ChowkiManagementResponse> getInspectioninfoForFarmerFromSaleDisposalOfDFls(@PathVariable String fruitsId) {
+        return chowkiManagementService.getInspectioninfoForFarmerFromSaleDisposalOfDFls(fruitsId);
     }
 
     @GetMapping("/getInspectioninfoForCocoonTrack/{fruitsId}")
