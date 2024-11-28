@@ -47,4 +47,10 @@ public class FitnessCertificate extends BaseEntity implements Serializable {
 
     @Column(name = "fitness_certificate_path")
     private String fitnessCertificatePath;
+
+    @Column(name = "fruits_id")
+    private String fruitsId;
+
+    @Column(name = "sale_and_disposal_id")
+    private Long  saleAndDisposalId;
 }

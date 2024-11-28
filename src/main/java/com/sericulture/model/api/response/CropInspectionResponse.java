@@ -40,6 +40,7 @@ public class CropInspectionResponse {
     private String noOfSapplings;
     private Long fitnessCertificateId;
     private String fitnessCertificatePath;
+    private Long saleAndDisposalId;
 //    @Schema(name = "error", example = "true")
     private Boolean error;
 

@@ -107,13 +107,35 @@ public class CropInspectionService {
         return responses;
     }
 
+    public List<CropInspectionResponse> getInspectionDetailsForSaleAndDisposalDFL(Long saleAndDisposalId) {
+        List<Object[]> cropInspectionDetails = cropInspectionRepository.getInspectionDetailsForSaleAndDisposalDFL(saleAndDisposalId);
+        List<CropInspectionResponse> responses = new ArrayList<>();
+
+        for (Object[] arr : cropInspectionDetails) {
+            CropInspectionResponse response = CropInspectionResponse.builder()
+                    .cropDate(Util.objectToString(arr[0]))
+                    .note(Util.objectToString(arr[1]))
+                    .cropStatusName(Util.objectToString(arr[2]))
+                    .mountName(Util.objectToString(arr[3]))
+                    .reasonName(Util.objectToString(arr[4]))
+                    .saleAndDisposalId(Util.objectToLong(arr[5]))
+                    .build();
+
+            responses.add(response);
+        }
+
+        return responses;
+    }
+
     public AddChowkiResponse insertFitnessData(CropInspectionRequest cropInspectionRequest) {
         AddChowkiResponse addChowkiResponse =new AddChowkiResponse();
         FitnessCertificate fitnessCertificate=new FitnessCertificate();
         try {
             // Fetch farmerId by fruitsId
 
-
+            fitnessCertificate.setSaleAndDisposalId(cropInspectionRequest.getSaleAndDisposalId());
+            fitnessCertificate.setFruitsId(cropInspectionRequest.getFruitsId());
+            fitnessCertificate.setChowkiId(cropInspectionRequest.getChowkiId());
             fitnessCertificate.setChowkiId(cropInspectionRequest.getChowkiId());
             fitnessCertificate.setFarmerId(cropInspectionRequest.getFarmerId());
             fitnessCertificate.setExpectedCocoon(cropInspectionRequest.getExpectedCocoon());

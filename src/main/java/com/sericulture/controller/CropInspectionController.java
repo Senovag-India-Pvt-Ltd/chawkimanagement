@@ -38,6 +38,11 @@ public class CropInspectionController {
         return cropInspectionService.getInspectionDetails(chowkiId);
     }
 
+    @GetMapping("/getInspectionDetailsForSaleAndDisposalDFL/{saleAndDisposalId}")
+    public List<CropInspectionResponse> getInspectionDetailsForSaleAndDisposalDFL(@PathVariable Long saleAndDisposalId) {
+        return cropInspectionService.getInspectionDetailsForSaleAndDisposalDFL(saleAndDisposalId);
+    }
+
     @PostMapping("/add-fitness-info")
     public AddChowkiResponse insertFitnessData(@Valid @RequestBody CropInspectionRequest cropInspectionRequest) {
         return cropInspectionService.insertFitnessData(cropInspectionRequest);
