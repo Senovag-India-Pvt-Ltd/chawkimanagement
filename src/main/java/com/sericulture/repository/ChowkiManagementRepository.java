@@ -224,5 +224,54 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
    """)
     public List<Object[]> getInspectioninfoForCocoonSaleTrack(String fruitsId);
 
+    @Query(nativeQuery = true, value = """
+         SELECT
+             sadod.id,
+             sadod.lot_number,
+             sadod.number_of_dfls_disposed,
+             sadod.rate_per100dfls_price,
+             sadod.race_id,
+             rm.race_name,
+             sadod.expected_date_of_hatching,
+             sadod.date_of_disposal,
+             sadod.source_of_dfls,
+             sadod.name_and_address_of_the_farm,
+             f.fruits_id
+         FROM sale_and_disposal_of_dfls sadod
+         LEFT JOIN race_master rm ON sadod.race_id = rm.race_id
+         LEFT JOIN farmer f ON sadod.fruits_id = f.fruits_id
+         WHERE f.tsc_master_id = :tscMasterId
+    """)
+
+    public List<Object[]> getFarmerDetailsFromSaleDisposalOfDFlsByTsc(Long tscMasterId);
+
+
+    @Query(nativeQuery = true, value = """
+    SELECT
+         sadod.id,
+         sadod.lot_number,
+         sadod.number_of_dfls_disposed,
+         sadod.rate_per100dfls_price ,
+         sadod.race_id,
+         rm.race_name,
+         sadod.name_and_address_of_the_farm,
+         f.fruits_id
+     FROM sale_and_disposal_of_dfls_rsso sadod
+     LEFT JOIN race_master rm ON sadod.race_id = rm.race_id
+     LEFT JOIN farmer f ON sadod.fruits_id = f.fruits_id
+     WHERE f.tsc_master_id = :tscMasterId
+    """)
+    public List<Object[]> getFarmerDetailsFromSaleDisposalOfDFlsRssoByTsc(Long tscMasterId);
+
+    @Query(nativeQuery = true, value = """
+     SELECT cm.chowki_id, cm.lot_numbers_crc, cm.lot_numbers_of_the_rsp, cm.numbers_of_dfls,
+      cm.rate_per_100_dfls, cm.race_of_dfls, cm.source_of_dfls,cm.hatching_date, rm.race_name,f.fruits_id,f.first_name
+      FROM chowki_management cm
+      LEFT JOIN race_master rm ON cm.race_of_dfls = rm.race_id
+    LEFT JOIN farmer f ON cm.fruits_id = f.fruits_id
+    WHERE f.tsc_master_id = :tscMasterId
+   """)
+    public List<Object[]> getFarmerDetailsFromChowkiManagementByTsc(Long tscMasterId);
+
 
 }

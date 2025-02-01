@@ -518,4 +518,73 @@ public class ChowkiManagementService {
         return commonChowkiResponse;
     }
 
+    public List<ChowkiManagementResponse> getFarmerDetailsFromSaleDisposalOfDFlsByTsc(Long tscMasterId) {
+        List<Object[]> chowkiDetails = chowkiManagemenyRepository.getFarmerDetailsFromSaleDisposalOfDFlsByTsc(tscMasterId);
+        List<ChowkiManagementResponse> responses = new ArrayList<>();
+
+        for (Object[] arr : chowkiDetails) {
+            ChowkiManagementResponse response = ChowkiManagementResponse.builder()
+                    .saleAndDisposalId(Util.objectToInteger(arr[0]))
+                    .lotNumberCrc(Util.objectToString(arr[1]))
+                    .numbersOfDfls(Util.objectToLong(arr[2]))
+                    .ratePer100Dfls(Util.objectToFloat(arr[3]))
+                    .raceName(Util.objectToString(arr[5]))
+                    .hatchingInspectionDate(Util.objectToString(arr[6]))
+                    .dateOfDisposal(Util.objectToString(arr[7]))
+                    .dflsSource(Util.objectToString(arr[8]))
+                    .nameAndAddressOfTheFarm(Util.objectToString(arr[9]))
+                    .fruitsId(Util.objectToString(arr[10]))
+                    .build();
+
+            responses.add(response);
+        }
+
+        return responses;
+    }
+
+    public List<ChowkiManagementResponse> getFarmerDetailsFromSaleDisposalOfDFlsRssoByTsc(Long tscMasterId) {
+        List<Object[]> chowkiDetails = chowkiManagemenyRepository.getFarmerDetailsFromSaleDisposalOfDFlsRssoByTsc(tscMasterId);
+        List<ChowkiManagementResponse> responses = new ArrayList<>();
+
+        for (Object[] arr : chowkiDetails) {
+            ChowkiManagementResponse response = ChowkiManagementResponse.builder()
+                    .saleAndDisposalId(Util.objectToInteger(arr[0]))
+                    .lotNumberCrc(Util.objectToString(arr[1]))
+                    .numbersOfDfls(Util.objectToLong(arr[2]))
+                    .ratePer100Dfls(Util.objectToFloat(arr[3]))
+                    .raceName(Util.objectToString(arr[5]))
+                    .nameAndAddressOfTheFarm(Util.objectToString(arr[6]))
+                    .fruitsId(Util.objectToString(arr[7]))
+                    .build();
+
+            responses.add(response);
+        }
+
+        return responses;
+    }
+
+    public List<ChowkiManagementResponse> getFarmerDetailsFromChowkiManagementByTsc(Long tscMasterId) {
+        List<Object[]> chowkiDetails = chowkiManagemenyRepository.getFarmerDetailsFromChowkiManagementByTsc(tscMasterId);
+        List<ChowkiManagementResponse> responses = new ArrayList<>();
+
+        for (Object[] arr : chowkiDetails) {
+            ChowkiManagementResponse response = ChowkiManagementResponse.builder()
+                    .chowkiId(Util.objectToInteger(arr[0]))
+                    .lotNumberCrc(Util.objectToString(arr[1]))
+                    .lotNumberRsp(Util.objectToString(arr[2]))
+                    .numbersOfDfls(Util.objectToLong(arr[3]))
+                    .ratePer100Dfls(Util.objectToFloat(arr[4]))
+                    .dflsSource(Util.objectToString(arr[6]))
+                    .hatchingInspectionDate(Util.objectToString(arr[7]))
+                    .raceName(Util.objectToString(arr[8]))
+                    .fruitsId(Util.objectToString(arr[9]))
+                    .nameAndAddressOfTheFarm(Util.objectToString(arr[10]))
+                    .build();
+
+            responses.add(response);
+        }
+
+        return responses;
+    }
+
 }

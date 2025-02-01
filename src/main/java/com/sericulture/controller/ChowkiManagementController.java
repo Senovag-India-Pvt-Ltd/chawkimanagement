@@ -124,5 +124,20 @@ public class ChowkiManagementController {
     public List<ChowkiManagementResponse> getInspectioninfoForCocoonSaleTrack(@PathVariable String fruitsId) {
         return chowkiManagementService.getInspectioninfoForCocoonSaleTrack(fruitsId);
     }
+
+    @GetMapping("/getFarmerDetailsFromSaleDisposalOfDFlsByTsc/{tscMasterId}")
+    public List<ChowkiManagementResponse> getFarmerDetailsFromSaleDisposalOfDFlsByTsc(@PathVariable Long tscMasterId) {
+        return chowkiManagementService.getFarmerDetailsFromSaleDisposalOfDFlsByTsc(tscMasterId);
+    }
+
+    @GetMapping("/getFarmerDetailsFromSaleDisposalOfDFlsRssoByTsc/{tscMasterId}")
+    public List<ChowkiManagementResponse> getFarmerDetailsFromSaleDisposalOfDFlsRssoByTsc(@PathVariable Long tscMasterId) {
+        return chowkiManagementService.getFarmerDetailsFromSaleDisposalOfDFlsRssoByTsc(tscMasterId);
+    }
+
+    @GetMapping("/getFarmerDetailsFromChowkiManagementByTsc/{tscMasterId}")
+    public List<ChowkiManagementResponse> getFarmerDetailsFromChowkiManagementByTsc(@PathVariable Long tscMasterId) {
+        return chowkiManagementService.getFarmerDetailsFromChowkiManagementByTsc(tscMasterId);
+    }
 }
 
