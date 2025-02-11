@@ -241,6 +241,9 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
          LEFT JOIN race_master rm ON sadod.race_id = rm.race_id
          LEFT JOIN farmer f ON sadod.fruits_id = f.fruits_id
          WHERE f.tsc_master_id = :tscMasterId
+             AND sadod.active = 1
+             AND f.active = 1
+             AND sadod.is_verified = 0;
     """)
 
     public List<Object[]> getFarmerDetailsFromSaleDisposalOfDFlsByTsc(Long tscMasterId);
@@ -260,6 +263,8 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
      LEFT JOIN race_master rm ON sadod.race_id = rm.race_id
      LEFT JOIN farmer f ON sadod.fruits_id = f.fruits_id
      WHERE f.tsc_master_id = :tscMasterId
+             AND sadod.active = 1
+             AND f.active = 1
     """)
     public List<Object[]> getFarmerDetailsFromSaleDisposalOfDFlsRssoByTsc(Long tscMasterId);
 
@@ -270,6 +275,7 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
       LEFT JOIN race_master rm ON cm.race_of_dfls = rm.race_id
     LEFT JOIN farmer f ON cm.fruits_id = f.fruits_id
     WHERE f.tsc_master_id = :tscMasterId
+             AND f.active = 1
    """)
     public List<Object[]> getFarmerDetailsFromChowkiManagementByTsc(Long tscMasterId);
 
