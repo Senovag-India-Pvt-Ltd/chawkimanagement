@@ -6,10 +6,22 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CropInspectionRepository extends JpaRepository<CropInspection, Long> {
 
     public CropInspection findByCropInspectionIdAndActive(long id, boolean isActive);
+
+//    Optional<CropInspection> findByFarmerIdAndSaleAndDisposalIdAndActive(Long farmerId, Long saleAndDisposalId, Boolean active);
+
+    @Query("SELECT ci FROM CropInspection ci WHERE ci.farmerId = :farmerId AND ci.saleAndDisposalId = :saleAndDisposalId AND ci.active = true")
+    Optional<CropInspection> findByFarmerIdAndSaleAndDisposalIdAndActive(
+            @Param("farmerId") Long farmerId,
+            @Param("saleAndDisposalId") Long saleAndDisposalId
+    );
+
+
+
 
     @Query(nativeQuery = true, value = """
   SELECT
@@ -50,6 +62,7 @@ Left JOIN
     reason r ON ci.reason_id = r.reason_id
   WHERE
       ci.sale_and_disposal_id = :saleAndDisposalId
+      AND ci.is_crop_inspected = 1
 """)
     public List<Object[]> getInspectionDetailsForSaleAndDisposalDFL(@Param("saleAndDisposalId") Long saleAndDisposalId);
 

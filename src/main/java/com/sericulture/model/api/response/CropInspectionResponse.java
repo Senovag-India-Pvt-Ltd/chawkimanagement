@@ -41,6 +41,11 @@ public class CropInspectionResponse {
     private Long fitnessCertificateId;
     private String fitnessCertificatePath;
     private Long saleAndDisposalId;
+    private String dflsSource;
+    private String numbersOfDfls;
+    private String lotNumberRsp;
+    private Long raceOfDfls;
+    private String raceName;
 //    @Schema(name = "error", example = "true")
     private Boolean error;
 

@@ -14,13 +14,16 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Getter
 @Setter
-public class UserMaster implements Serializable {
+public class UserMaster extends BaseEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_master_seq")
     @SequenceGenerator(name = "user_master_seq", sequenceName = "user_master_seq", allocationSize = 1)
     @Column(name = "user_master_id")
     private Long userMasterId;
+
+    @Column(name = "tsc_master_id")
+    private Long tscMasterId;
 
     @Column(name = "first_name")
     private String tscName;

@@ -23,7 +23,7 @@ public class CropInspection extends BaseEntity implements Serializable {
     @Column(name = "chowki_id ")
     private Long chowkiId;
 
-    @Column(name = "sale_and_disposal_id ")
+    @Column(name = "sale_and_disposal_id")
     private Long saleAndDisposalId;
 
     @Column(name = "farmer_id")
@@ -52,5 +52,8 @@ public class CropInspection extends BaseEntity implements Serializable {
 
     @Column(name = "fruits_id")
     private String fruitsId;
+
+    @Column(name = "is_crop_inspected")
+    private Integer isCropInspected;
 
 }

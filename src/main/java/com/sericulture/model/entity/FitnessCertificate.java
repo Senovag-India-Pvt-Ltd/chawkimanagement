@@ -53,4 +53,7 @@ public class FitnessCertificate extends BaseEntity implements Serializable {
 
     @Column(name = "sale_and_disposal_id")
     private Long  saleAndDisposalId;
+
+    @Column(name = "is_fc_issued")
+    private Integer isFcIssued;
 }

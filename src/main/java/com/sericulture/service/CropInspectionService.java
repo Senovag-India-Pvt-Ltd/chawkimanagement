@@ -60,6 +60,17 @@ public class CropInspectionService {
         CropInspection cropInspection=new CropInspection();
         try {
             // Fetch farmerId by fruitsId
+            Optional<CropInspection> existingInspection = cropInspectionRepository
+                    .findByFarmerIdAndSaleAndDisposalIdAndActive(
+                            cropInspectionRequest.getFarmerId(),
+                            cropInspectionRequest.getSaleAndDisposalId()
+                    );
+
+            if (existingInspection.isPresent()) {
+                addChowkiResponse.setError(1);
+                addChowkiResponse.setMessage("Data already exists for the given Farmer and Sale/Disposal ID.");
+                return addChowkiResponse;
+            }
 
 
             cropInspection.setSaleAndDisposalId(cropInspectionRequest.getSaleAndDisposalId());
@@ -73,6 +84,7 @@ public class CropInspectionService {
             cropInspection.setCropStatusId(cropInspectionRequest.getCropStatusId());
             cropInspection.setMountId(cropInspectionRequest.getMountId());
             cropInspection.setCropInspectionPath(cropInspectionRequest.getCropInspectionPath());
+            cropInspection.setIsCropInspected(1);
             cropInspectionRepository.save(cropInspection);
 
             addChowkiResponse.setError(0);
@@ -133,9 +145,21 @@ public class CropInspectionService {
         try {
             // Fetch farmerId by fruitsId
 
+            Optional<FitnessCertificate> existingInspection = fitnessCertificateRepository
+                    .findByFarmerIdAndSaleAndDisposalIdAndActive(
+                            cropInspectionRequest.getFarmerId(),
+                            cropInspectionRequest.getSaleAndDisposalId()
+                    );
+
+            if (existingInspection.isPresent()) {
+                addChowkiResponse.setError(1);
+                addChowkiResponse.setMessage("Data already exists for the given Farmer and Sale/Disposal ID.");
+                return addChowkiResponse;
+            }
+
+
             fitnessCertificate.setSaleAndDisposalId(cropInspectionRequest.getSaleAndDisposalId());
             fitnessCertificate.setFruitsId(cropInspectionRequest.getFruitsId());
-            fitnessCertificate.setChowkiId(cropInspectionRequest.getChowkiId());
             fitnessCertificate.setChowkiId(cropInspectionRequest.getChowkiId());
             fitnessCertificate.setFarmerId(cropInspectionRequest.getFarmerId());
             fitnessCertificate.setExpectedCocoon(cropInspectionRequest.getExpectedCocoon());
@@ -144,6 +168,7 @@ public class CropInspectionService {
             fitnessCertificate.setExpectedMarkerDate(cropInspectionRequest.getExpectedMarkerDate());
             fitnessCertificate.setNoOfChandies(cropInspectionRequest.getNoOfChandies());
             fitnessCertificate.setFitnessCertificatePath(cropInspectionRequest.getFitnessCertificatePath());
+            fitnessCertificate.setIsFcIssued(1);
             fitnessCertificateRepository.save(fitnessCertificate);
 
             addChowkiResponse.setError(0);
@@ -517,6 +542,11 @@ public class CropInspectionService {
                     .fitnessCertificateId(Util.objectToLong(arr[0]))
                     .fitnessCertificatePath(Util.objectToString(arr[1]))
                     .farmerId(Util.objectToLong(arr[2]))
+                    .dflsSource(Util.objectToString(arr[3]))
+                    .numbersOfDfls(Util.objectToString(arr[4]))
+                    .lotNumberRsp(Util.objectToString(arr[5]))
+                    .raceOfDfls(Util.objectToLong(arr[6]))
+                    .raceName(Util.objectToString(arr[7]))
                     .build();
 
             responses.add(response);

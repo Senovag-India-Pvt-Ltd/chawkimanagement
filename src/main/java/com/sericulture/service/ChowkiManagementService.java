@@ -12,9 +12,11 @@ import com.sericulture.model.api.response.CommonChowkiResponse;
 import com.sericulture.model.api.ChowkiManagementResponse;
 import com.sericulture.model.entity.District;
 import com.sericulture.model.entity.SaleAndDisposalOfDfls;
+import com.sericulture.model.entity.UserMaster;
 import com.sericulture.repository.ChowkiManagementRepository;
 import com.sericulture.repository.DistrictRepository;
 import com.sericulture.repository.SaleAndDisposalOfDflsRepository;
+import com.sericulture.repository.UserMasterRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,6 +37,9 @@ public class ChowkiManagementService {
 
     @Autowired
     DistrictRepository districtRepository;
+
+    @Autowired
+    UserMasterRepository userMasterRepository;
 
     @Autowired
     Mapper mapper;
@@ -365,7 +370,20 @@ public class ChowkiManagementService {
     }
 
     public List<ChowkiManagementResponse> getSaleAndDisposalDetailsByFruitsId(String fruitsId) {
-        List<Object[]> chowkiDetails = chowkiManagemenyRepository.getSaleAndDisposalDetailsByFruitsId(fruitsId);
+        Long userId = Util.getUserId(Util.getTokenValues());
+//        Long tscId = userMasterRepository.findByUserMasterIdAndActive(userId,1);
+        Optional<UserMaster> userOpt = userMasterRepository.findByUserMasterIdAndActive(userId, true);
+
+        if (userOpt.isEmpty()) {
+            throw new RuntimeException("User not found or inactive");
+        }
+
+        Long tscId = userOpt.get().getTscMasterId();
+
+        if (tscId == null) {
+            throw new RuntimeException("TSC ID not found for userId: " + userId);
+        }
+        List<Object[]> chowkiDetails = chowkiManagemenyRepository.getSaleAndDisposalDetailsByFruitsId(fruitsId,tscId);
         List<ChowkiManagementResponse> responses = new ArrayList<>();
 
         for (Object[] arr : chowkiDetails) {

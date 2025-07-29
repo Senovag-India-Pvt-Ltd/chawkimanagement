@@ -141,10 +141,11 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
      FROM sale_and_disposal_of_dfls sadod
      LEFT JOIN race_master rm ON sadod.race_id = rm.race_id
      WHERE sadod.fruits_id = :fruitsId
+     AND sadod.tsc = :tscId
      AND sadod.is_verified = 0;
     """)
 
-    public List<Object[]> getSaleAndDisposalDetailsByFruitsId(String fruitsId);
+    public List<Object[]> getSaleAndDisposalDetailsByFruitsId(String fruitsId,Long tscId);
 
     @Query(nativeQuery = true, value = """
          SELECT
@@ -236,14 +237,12 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
              sadod.date_of_disposal,
              sadod.source_of_dfls,
              sadod.name_and_address_of_the_farm,
-             f.fruits_id
+             sadod.fruits_id
          FROM sale_and_disposal_of_dfls sadod
          LEFT JOIN race_master rm ON sadod.race_id = rm.race_id
-         LEFT JOIN farmer f ON sadod.fruits_id = f.fruits_id
-         WHERE f.tsc_master_id = :tscMasterId
+         WHERE sadod.tsc = :tscMasterId
              AND sadod.active = 1
-             AND f.active = 1
-             AND sadod.is_verified = 0;
+             AND sadod.is_disposed = 1;
     """)
 
     public List<Object[]> getFarmerDetailsFromSaleDisposalOfDFlsByTsc(Long tscMasterId);
