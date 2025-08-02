@@ -242,7 +242,7 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
          LEFT JOIN race_master rm ON sadod.race_id = rm.race_id
          WHERE sadod.tsc = :tscMasterId
              AND sadod.active = 1
-             AND sadod.is_disposed = 1;
+             AND sadod.is_verified = 0;
     """)
 
     public List<Object[]> getFarmerDetailsFromSaleDisposalOfDFlsByTsc(Long tscMasterId);
