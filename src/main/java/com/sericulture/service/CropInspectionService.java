@@ -166,6 +166,7 @@ public class CropInspectionService {
             fitnessCertificate.setLotTestDetails(cropInspectionRequest.getLotTestDetails());
             fitnessCertificate.setDiseaseStatusId(cropInspectionRequest.getDiseaseStatusId());
             fitnessCertificate.setExpectedMarkerDate(cropInspectionRequest.getExpectedMarkerDate());
+            fitnessCertificate.setSpunDate(cropInspectionRequest.getSpunDate());
             fitnessCertificate.setNoOfChandies(cropInspectionRequest.getNoOfChandies());
             fitnessCertificate.setFitnessCertificatePath(cropInspectionRequest.getFitnessCertificatePath());
             fitnessCertificate.setIsFcIssued(1);

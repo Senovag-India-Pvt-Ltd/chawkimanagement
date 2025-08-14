@@ -22,6 +22,7 @@ public class CropInspectionRequest {
      private Long diseaseStatusId;
      private Float noOfChandies;
      private LocalDate expectedMarkerDate;
+     private LocalDate spunDate;
      private Long farmerLandDetailsId;
      private Long mulberryVarietyId;
      private LocalDate extensionDate;
