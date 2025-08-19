@@ -43,10 +43,10 @@ public class FitnessCertificate extends BaseEntity implements Serializable {
     private Float noOfChandies;
 
     @Column(name = "expected_marker_date")
-    private LocalDate expectedMarkerDate;
+    private String spunFromDate;
 
     @Column(name = "spun_date")
-    private LocalDate spunDate;
+    private String spunToDate;
 
     @Column(name = "fitness_certificate_path")
     private String fitnessCertificatePath;

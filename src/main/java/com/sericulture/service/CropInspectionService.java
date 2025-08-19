@@ -165,8 +165,8 @@ public class CropInspectionService {
             fitnessCertificate.setExpectedCocoon(cropInspectionRequest.getExpectedCocoon());
             fitnessCertificate.setLotTestDetails(cropInspectionRequest.getLotTestDetails());
             fitnessCertificate.setDiseaseStatusId(cropInspectionRequest.getDiseaseStatusId());
-            fitnessCertificate.setExpectedMarkerDate(cropInspectionRequest.getExpectedMarkerDate());
-            fitnessCertificate.setSpunDate(cropInspectionRequest.getSpunDate());
+            fitnessCertificate.setSpunFromDate(cropInspectionRequest.getSpunFromDate());
+            fitnessCertificate.setSpunToDate(cropInspectionRequest.getSpunToDate());
             fitnessCertificate.setNoOfChandies(cropInspectionRequest.getNoOfChandies());
             fitnessCertificate.setFitnessCertificatePath(cropInspectionRequest.getFitnessCertificatePath());
             fitnessCertificate.setIsFcIssued(1);
@@ -543,11 +543,13 @@ public class CropInspectionService {
                     .fitnessCertificateId(Util.objectToLong(arr[0]))
                     .fitnessCertificatePath(Util.objectToString(arr[1]))
                     .farmerId(Util.objectToLong(arr[2]))
-                    .dflsSource(Util.objectToString(arr[3]))
-                    .numbersOfDfls(Util.objectToString(arr[4]))
-                    .lotNumberRsp(Util.objectToString(arr[5]))
-                    .raceOfDfls(Util.objectToLong(arr[6]))
-                    .raceName(Util.objectToString(arr[7]))
+                    .spunFromDate(Util.objectToString(arr[3]))
+                    .spunToDate(Util.objectToString(arr[4]))
+                    .dflsSource(Util.objectToString(arr[5]))
+                    .numbersOfDfls(Util.objectToString(arr[6]))
+                    .lotNumberRsp(Util.objectToString(arr[7]))
+                    .raceOfDfls(Util.objectToLong(arr[8]))
+                    .raceName(Util.objectToString(arr[9]))
                     .build();
 
             responses.add(response);
