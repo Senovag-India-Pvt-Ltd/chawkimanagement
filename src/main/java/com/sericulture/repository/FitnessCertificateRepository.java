@@ -30,6 +30,8 @@ public interface FitnessCertificateRepository extends JpaRepository<FitnessCerti
                 fc.fitness_certificate_id,
                 fc.fitness_certificate_path,
                 fc.farmer_id,
+                fc.expected_marker_date,
+                fc.spun_date,
                 sadod.rate_per100dfls_price,
                 sadod.number_of_dfls_disposed,
                 sadod.lot_number,

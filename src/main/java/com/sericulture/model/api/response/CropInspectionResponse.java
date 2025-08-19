@@ -46,7 +46,9 @@ public class CropInspectionResponse {
     private String lotNumberRsp;
     private Long raceOfDfls;
     private String raceName;
-//    @Schema(name = "error", example = "true")
+    private String spunToDate;
+    private String spunFromDate;
+    //    @Schema(name = "error", example = "true")
     private Boolean error;
 
 //    @Schema(name = "error_description", example = "Username or password is incorrect")
