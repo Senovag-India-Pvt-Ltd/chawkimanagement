@@ -12,11 +12,17 @@ import com.sericulture.service.ChowkiManagementService;
 import com.sericulture.service.CropInspectionService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileInputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 
@@ -147,6 +153,148 @@ public class CropInspectionController {
     public List<CropInspectionResponse> getFitnessCertificatePath(@PathVariable Long farmerId) {
         return cropInspectionService.getFitnessCertificatePath(farmerId);
     }
+
+    @PostMapping("/getCropInspectionDetails")
+    public ResponseEntity<?> getCropInspectionDetails(
+            @RequestParam(required = false) Long tscId,
+            @RequestParam(defaultValue = "0") int pageNumber,
+            @RequestParam(defaultValue = "50") int pageSize) {
+        return cropInspectionService.getCropInspectionDetails(tscId, pageNumber, pageSize);
+    }
+
+    @PostMapping("/getCropInspectionReport")
+    public ResponseEntity<?> getCropInspectionReport(
+            @RequestParam(required = false) Long tscId,
+            @RequestParam(defaultValue = "0") int pageNumber,
+            @RequestParam(defaultValue = "50") int pageSize) {
+        try {
+            FileInputStream fileInputStream = cropInspectionService.getCropInspectionReport(tscId, pageNumber, pageSize);
+
+            InputStreamResource resource = new InputStreamResource(fileInputStream);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.CONTENT_DISPOSITION,
+                    "attachment; filename=crop_inspection_report" + Util.getISTLocalDate() + ".xlsx");
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+
+            return ResponseEntity.ok().headers(headers).body(resource);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return new ResponseEntity<>(
+                    ex.getMessage().getBytes(StandardCharsets.UTF_8),
+                    HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
+    @PostMapping("/getFitnessCertificateDetails")
+    public ResponseEntity<?> getFitnessCertificateDetails(
+            @RequestParam(required = false) Long tscId,
+            @RequestParam(defaultValue = "0") int pageNumber,
+            @RequestParam(defaultValue = "50") int pageSize) {
+        return cropInspectionService.getFitnessCertificateDetails(tscId, pageNumber, pageSize);
+    }
+
+    @PostMapping("/getFitnessCertificateReport")
+    public ResponseEntity<?> getFitnessCertificateReport(
+            @RequestParam(required = false) Long tscId,
+            @RequestParam(defaultValue = "0") int pageNumber,
+            @RequestParam(defaultValue = "50") int pageSize) {
+        try {
+            FileInputStream fileInputStream = cropInspectionService.getFitnessCertificateReport(tscId, pageNumber, pageSize);
+
+            InputStreamResource resource = new InputStreamResource(fileInputStream);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.CONTENT_DISPOSITION,
+                    "attachment; filename=fitness_certificate_report" + Util.getISTLocalDate() + ".xlsx");
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+
+            return ResponseEntity.ok().headers(headers).body(resource);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return new ResponseEntity<>(
+                    ex.getMessage().getBytes(StandardCharsets.UTF_8),
+                    HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
+    @PostMapping("/getFarmerMulberryExtensionDetails")
+    public ResponseEntity<?> getFarmerMulberryExtensionDetails(
+            @RequestParam(required = false) Long tscId,
+            @RequestParam(required = false) String applicationType,
+            @RequestParam(defaultValue = "0") int pageNumber,
+            @RequestParam(defaultValue = "50") int pageSize) {
+        return cropInspectionService.getFarmerMulberryExtensionDetails(
+                tscId, applicationType, pageNumber, pageSize);
+    }
+
+    @PostMapping("/getFarmerMulberryExtensionReport")
+    public ResponseEntity<?> getFarmerMulberryExtensionReport(
+            @RequestParam(required = false) Long tscId,
+            @RequestParam(required = false) String applicationType,
+            @RequestParam(defaultValue = "0") int pageNumber,
+            @RequestParam(defaultValue = "50") int pageSize) {
+        try {
+            FileInputStream fileInputStream = cropInspectionService.getFarmerMulberryExtensionReport(
+                    tscId, applicationType, pageNumber, pageSize);
+
+            InputStreamResource resource = new InputStreamResource(fileInputStream);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.CONTENT_DISPOSITION,
+                    "attachment; filename=farmer_mulberry_extension_report" + Util.getISTLocalDate() + ".xlsx");
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+
+            return ResponseEntity.ok().headers(headers).body(resource);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return new ResponseEntity<>(
+                    ex.getMessage().getBytes(StandardCharsets.UTF_8),
+                    HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
+    @PostMapping("/getSupplyOfDisinfectantDetails")
+    public ResponseEntity<?> getSupplyOfDisinfectantDetails(
+            @RequestParam(required = false) Long tscId,
+            @RequestParam(defaultValue = "0") int pageNumber,
+            @RequestParam(defaultValue = "50") int pageSize) {
+        return cropInspectionService.getSupplyOfDisinfectantDetails(tscId, pageNumber, pageSize);
+    }
+
+    @PostMapping("/getSupplyOfDisinfectantReport")
+    public ResponseEntity<?> getSupplyOfDisinfectantReport(
+            @RequestParam(required = false) Long tscId,
+            @RequestParam(defaultValue = "0") int pageNumber,
+            @RequestParam(defaultValue = "50") int pageSize) {
+        try {
+            FileInputStream fileInputStream = cropInspectionService.getSupplyOfDisinfectantReport(tscId, pageNumber, pageSize);
+            InputStreamResource resource = new InputStreamResource(fileInputStream);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.CONTENT_DISPOSITION,
+                    "attachment; filename=supply_of_disinfectant_report" + Util.getISTLocalDate() + ".xlsx");
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+
+            return ResponseEntity.ok().headers(headers).body(resource);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return new ResponseEntity<>(
+                    ex.getMessage().getBytes(StandardCharsets.UTF_8),
+                    HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
+
+
 
 
 }

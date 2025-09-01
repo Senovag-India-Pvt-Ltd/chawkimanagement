@@ -5,6 +5,8 @@ import com.sericulture.model.api.ChowkiManagementResponse;
 import com.sericulture.model.api.response.SupplyOfDisinfectantsResponse;
 import com.sericulture.model.entity.FitnessCertificate;
 import com.sericulture.model.entity.SupplyOfDisinfectants;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -85,5 +87,47 @@ public interface SupplyOfDisinfectantsRepository extends JpaRepository<SupplyOfD
 
 
     Optional<SupplyOfDisinfectantsResponse> findBySupplyOfDisinfectantsIdAndUserMasterId(Long supplyOfDisinfectantsId, Long userMasterId);
+
+
+    @Query(nativeQuery = true, value = """
+            SELECT
+                f.first_name,
+                f.father_name,
+                f.fruits_id,
+                sod.invoice_no_date,
+                sod.quantity,
+                sod.disinfectant_name,
+                sod.quantity_supplied,
+                sod.supply_date,
+                sod.size_of_rearing_house,
+                sod.no_of_dfls,
+                dm.disinfectant_master_name,
+                tm.name
+            FROM
+            supply_of_disinfectants sod
+            LEFT JOIN disinfectant_master dm ON dm.disinfectant_master_id = sod.disinfectant_master_id AND dm.active =1
+            LEFT JOIN farmer f ON sod.farmer_id  = f.FARMER_ID And f.active =1
+            LEFT JOIN tsc_master tm  ON tm.tsc_master_id  = f.tsc_master_id And tm.active = 1
+            WHERE (:tscId IS NULL OR f.tsc_master_id = :tscId)
+            AND sod.active =1
+        """,
+            countQuery = """
+           SELECT COUNT(*)
+             FROM supply_of_disinfectants sod
+             LEFT JOIN disinfectant_master dm
+                 ON dm.disinfectant_master_id = sod.disinfectant_master_id
+                AND dm.active = 1
+             LEFT JOIN farmer f
+                 ON sod.farmer_id = f.FARMER_ID
+                AND f.active = 1
+             LEFT JOIN tsc_master tm
+                 ON tm.tsc_master_id = f.tsc_master_id
+                AND tm.active = 1
+             WHERE (:tscId IS NULL OR f.tsc_master_id = :tscId)
+               AND sod.active = 1;
+        """)
+    Page<Object[]> getSupplyOfDisinfectantDetails(
+            @Param("tscId") Long tscId,
+            Pageable pageable);
 
 }

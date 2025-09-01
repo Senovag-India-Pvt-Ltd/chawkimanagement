@@ -2,6 +2,7 @@ package com.sericulture.service;
 
 import com.sericulture.helper.Util;
 import com.sericulture.model.Mapper;
+import com.sericulture.model.ResponseWrapper;
 import com.sericulture.model.api.ChowkiManagementByIdDTO;
 import com.sericulture.model.api.requests.AddSaleDisposalRequest;
 import com.sericulture.model.api.requests.UpdateChowkiRequest;
@@ -18,10 +19,23 @@ import com.sericulture.repository.DistrictRepository;
 import com.sericulture.repository.SaleAndDisposalOfDflsRepository;
 import com.sericulture.repository.UserMasterRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 import static io.micrometer.core.ipc.http.HttpSender.Request.build;
@@ -603,6 +617,125 @@ public class ChowkiManagementService {
         }
 
         return responses;
+    }
+
+    public ResponseEntity<?> getVerifiedDFLDetails(Long raceId, Long tscId, int pageNumber, int pageSize) {
+        ResponseWrapper rw = ResponseWrapper.createWrapper(List.class);
+        List<ChowkiManagementResponse> responseList = new ArrayList<>();
+
+        raceId = (raceId != null && raceId == 0) ? null : raceId;
+        tscId = (tscId != null && tscId == 0) ? null : tscId;
+
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Page<Object[]> applicablePage =
+                chowkiManagemenyRepository.getVerifiedDFLDetails(raceId, tscId, pageable);
+
+        List<Object[]> applicableList = applicablePage.getContent();
+        long totalRecords = applicablePage.getTotalElements();
+
+        buildResponse(responseList, applicableList, pageNumber, pageSize);
+
+        rw.setTotalRecords(totalRecords);
+        rw.setContent(responseList);
+        return ResponseEntity.ok(rw);
+    }
+
+    private static void buildResponse(List<ChowkiManagementResponse> responseList,
+                                      List<Object[]> applicableList,
+                                      int pageNumber, int pageSize) {
+        int serialNumber = pageNumber * pageSize + 1;
+        for (Object[] arr : applicableList) {
+            ChowkiManagementResponse response = ChowkiManagementResponse.builder()
+                    .serialNumber(serialNumber++)
+                    .lotNumber(Util.objectToString(arr[0]))
+                    .numbersOfDfls(Util.objectToLong(arr[1]))
+                    .ratePer100Dfls(Util.objectToFloat(arr[2]))
+                    .raceName(Util.objectToString(arr[3]))
+                    .expectedHatchingDate(Util.objectToString(arr[4]))
+                    .dateOfDisposal(Util.objectToString(arr[5]))
+                    .dflsSource(Util.objectToString(arr[6]))
+                    .nameAndAddressOfTheFarm(Util.objectToString(arr[7]))
+                    .tscName(Util.objectToString(arr[8]))
+                    .farmerName(Util.objectToString(arr[9]))
+                    .fatherName(Util.objectToString(arr[10]))
+                    .fruitsId(Util.objectToString(arr[11]))
+                    .build();
+            responseList.add(response);
+        }
+    }
+
+    public FileInputStream getVerifiedDFLReport(Long raceId, Long tscId, int pageNumber, int pageSize) throws Exception {
+        List<ChowkiManagementResponse> responseList = new ArrayList<>();
+
+        raceId = (raceId != null && raceId == 0) ? null : raceId;
+        tscId = (tscId != null && tscId == 0) ? null : tscId;
+
+        Pageable pageable = null; // fetch all records
+        Page<Object[]> applicablePage =
+                chowkiManagemenyRepository.getVerifiedDFLDetails(raceId, tscId, pageable);
+
+        buildResponse(responseList, applicablePage.getContent(), pageNumber, pageSize);
+
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Verified DFL Report");
+
+        // Header row
+        Row headerRow = sheet.createRow(0);
+        headerRow.createCell(0).setCellValue("Sl.No");
+        headerRow.createCell(1).setCellValue("Fruits ID");
+        headerRow.createCell(2).setCellValue("Farmer Name");
+        headerRow.createCell(3).setCellValue("Father Name");
+        headerRow.createCell(4).setCellValue("Lot Number");// new column
+        headerRow.createCell(5).setCellValue("Number of DFLs Disposed");
+        headerRow.createCell(6).setCellValue("Rate per 100 DFLs Price");
+        headerRow.createCell(7).setCellValue("Race Name");
+        headerRow.createCell(8).setCellValue("Expected Date of Hatching");
+        headerRow.createCell(9).setCellValue("Date of Disposal");
+        headerRow.createCell(10).setCellValue("Source of DFLs");
+        headerRow.createCell(11).setCellValue("Name and Address of the Farm");
+        headerRow.createCell(12).setCellValue("TSC");
+
+// Data rows
+        int dataRow = 1;
+        for (ChowkiManagementResponse c : responseList) {
+            Row row = sheet.createRow(dataRow++);
+            row.createCell(0).setCellValue(c.getSerialNumber());
+            row.createCell(1).setCellValue(c.getFruitsId());
+            row.createCell(2).setCellValue(c.getFarmerName());
+            row.createCell(3).setCellValue(c.getFatherName());
+            row.createCell(4).setCellValue(c.getLotNumber());// new column
+            row.createCell(5).setCellValue(c.getNumbersOfDfls());
+            row.createCell(6).setCellValue(c.getRatePer100Dfls());
+            row.createCell(7).setCellValue(c.getRaceName());
+            row.createCell(8).setCellValue(c.getExpectedHatchingDate());
+            row.createCell(9).setCellValue(c.getDateOfDisposal());
+            row.createCell(10).setCellValue(c.getDflsSource());
+            row.createCell(11).setCellValue(c.getNameAndAddressOfTheFarm());
+            row.createCell(12).setCellValue(c.getTscName());
+        }
+
+// Auto-size all 13 columns now
+        for (int col = 0; col <= 12; col++) {
+            sheet.autoSizeColumn(col, true);
+        }
+
+
+
+        for (int col = 0; col <= 9; col++) {
+            sheet.autoSizeColumn(col, true);
+        }
+
+        String userHome = System.getProperty("user.home");
+        String directoryPath = Paths.get(userHome, "Downloads").toString();
+        Files.createDirectories(Paths.get(directoryPath));
+        Path filePath = Paths.get(directoryPath, "verified_dfl_report" + Util.getISTLocalDate() + ".xlsx");
+
+        FileOutputStream fileOut = new FileOutputStream(filePath.toString());
+        FileInputStream fileIn = new FileInputStream(filePath.toString());
+        workbook.write(fileOut);
+        fileOut.close();
+        workbook.close();
+        return fileIn;
     }
 
 }

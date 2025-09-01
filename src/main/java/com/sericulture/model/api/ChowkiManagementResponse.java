@@ -17,7 +17,11 @@ public class ChowkiManagementResponse {
 
     private int chowkiId;
 
+    private int serialNumber;
+
     private String farmerName;
+
+    private String lotNumber;
 
     private String fatherName;
 

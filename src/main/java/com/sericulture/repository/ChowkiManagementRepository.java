@@ -3,6 +3,8 @@ package com.sericulture.repository;
 import com.sericulture.model.api.ChowkiManagementByIdDTO;
 import com.sericulture.model.entity.ChowkiManagement;
 import com.sericulture.model.api.ChowkiManagementResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -277,6 +279,42 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
              AND f.active = 1
    """)
     public List<Object[]> getFarmerDetailsFromChowkiManagementByTsc(Long tscMasterId);
+
+    @Query(nativeQuery = true, value = """
+        SELECT
+            sadod.lot_number,
+            sadod.number_of_dfls_disposed,
+            sadod.rate_per100dfls_price,
+            rm.race_name,
+            sadod.expected_date_of_hatching,
+            sadod.date_of_disposal,
+            sadod.source_of_dfls,
+            sadod.name_and_address_of_the_farm,
+            tm.name,
+            f.first_name,
+            f.father_name,
+            f.fruits_id
+        FROM sale_and_disposal_of_dfls sadod
+        LEFT JOIN race_master rm ON sadod.race_id = rm.race_id
+        LEFT JOIN tsc_master tm ON tm.tsc_master_id = sadod.tsc
+        LEFT JOIN farmer f ON f.fruits_id = sadod.fruits_id
+        WHERE (:raceId IS NULL OR sadod.race_id = :raceId)
+          AND (:tscId IS NULL OR sadod.tsc = :tscId)
+          AND sadod.is_verified = 1
+          AND sadod.active = 1
+        """,
+            countQuery = """
+           SELECT COUNT(*)
+            FROM sale_and_disposal_of_dfls sadod
+            WHERE (:raceId IS NULL OR sadod.race_id = :raceId)
+              AND (:tscId IS NULL OR sadod.tsc = :tscId)
+              AND sadod.is_verified = 1
+              AND sadod.active = 1
+        """)
+    Page<Object[]> getVerifiedDFLDetails(
+            @Param("raceId") Long raceId,
+            @Param("tscId") Long tscId,
+            Pageable pageable);
 
 
 }

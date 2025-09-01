@@ -11,6 +11,9 @@ import org.springframework.stereotype.Component;
 
 import java.security.Principal;
 import java.text.DecimalFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @Component
 public final class Util {
@@ -40,6 +43,11 @@ public final class Util {
 
     public static float objectToFloat(Object object) {
         return object == null ? 0 : Float.valueOf(decimalFormat.format(Float.parseFloat(String.valueOf(object))));
+    }
+
+    public static LocalDate getISTLocalDate() {
+        LocalDateTime l = LocalDateTime.now(ZoneId.of("Asia/Kolkata"));
+        return l.toLocalDate();
     }
 
 

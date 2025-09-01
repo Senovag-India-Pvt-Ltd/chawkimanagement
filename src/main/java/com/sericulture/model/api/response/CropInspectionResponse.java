@@ -12,12 +12,14 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class CropInspectionResponse {
     private  Long cropInspectionId;
+    private  int serialNumber;
     private  Long chowkiId;
     private  Long farmerId;
     private  Long cropInspectionTypeId;
     private LocalDate date;
     private Long reasonId;
     private String note;
+    private String tscName;
     private Long cropStatusId;
     private Long mountId;
     private String cropDate;
@@ -46,6 +48,10 @@ public class CropInspectionResponse {
     private String lotNumberRsp;
     private Long raceOfDfls;
     private String raceName;
+    private String farmerName;
+    private String fatherName;
+    private String fruitsId;
+    private String cropInspectionDate;
 //    @Schema(name = "error", example = "true")
     private Boolean error;
 

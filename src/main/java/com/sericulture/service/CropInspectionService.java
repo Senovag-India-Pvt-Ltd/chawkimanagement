@@ -3,6 +3,7 @@ package com.sericulture.service;
 import com.sericulture.controller.S3Controller;
 import com.sericulture.helper.Util;
 import com.sericulture.model.Mapper;
+import com.sericulture.model.ResponseWrapper;
 import com.sericulture.model.api.ChowkiManagementByIdDTO;
 import com.sericulture.model.api.ChowkiManagementResponse;
 import com.sericulture.model.api.requests.CropInspectionRequest;
@@ -13,13 +14,27 @@ import com.sericulture.model.api.response.*;
 import com.sericulture.model.entity.*;
 import com.sericulture.repository.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
+
 
 @Service
 @Slf4j
@@ -574,7 +589,7 @@ public class CropInspectionService {
             trackCocconRepository.save(trackCocoon);
 
             // Fetch existing SaleAndDisposalOfDfls by ID
-            Optional<SaleAndDisposalOfDfls> existingRecordOptional = saleAndDisposalOfDflsRepository.findByIdAndActive(trackCocoonRequest.getSaleAndDisposalId(), true );
+            Optional<SaleAndDisposalOfDfls> existingRecordOptional = saleAndDisposalOfDflsRepository.findByIdAndActive(trackCocoonRequest.getSaleAndDisposalId(), true);
 
             if (existingRecordOptional.isPresent()) {
                 SaleAndDisposalOfDfls existingRecord = existingRecordOptional.get();
@@ -603,5 +618,440 @@ public class CropInspectionService {
 
         return addChowkiResponse;
     }
+
+
+        public ResponseEntity<?> getCropInspectionDetails(Long tscId, int pageNumber, int pageSize) {
+            ResponseWrapper rw = ResponseWrapper.createWrapper(List.class);
+            List<CropInspectionResponse> responseList = new ArrayList<>();
+
+            tscId = (tscId != null && tscId == 0) ? null : tscId;
+
+            Pageable pageable = PageRequest.of(pageNumber, pageSize);
+            Page<Object[]> page = cropInspectionRepository.getCropInspectionDetails(tscId, pageable);
+
+            buildResponse(responseList, page.getContent(), pageNumber, pageSize);
+
+            rw.setTotalRecords(page.getTotalElements());
+            rw.setContent(responseList);
+            return ResponseEntity.ok(rw);
+        }
+
+    public FileInputStream getCropInspectionReport(Long tscId, int pageNumber, int pageSize) throws Exception {
+        List<CropInspectionResponse> responseList = new ArrayList<>();
+
+        tscId = (tscId != null && tscId == 0) ? null : tscId;
+
+        Pageable pageable = null; // fetch all records
+        Page<Object[]> page = cropInspectionRepository.getCropInspectionDetails(tscId, pageable);
+
+        buildResponse(responseList, page.getContent(), pageNumber, pageSize);
+
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Crop Inspection Report");
+
+        // Header row
+        Row headerRow = sheet.createRow(0);
+        headerRow.createCell(0).setCellValue("Sl.No");
+        headerRow.createCell(1).setCellValue("Farmer Name");
+        headerRow.createCell(2).setCellValue("Father Name");
+        headerRow.createCell(3).setCellValue("Fruits ID");
+        headerRow.createCell(4).setCellValue("Date");
+        headerRow.createCell(5).setCellValue("Note");
+        headerRow.createCell(6).setCellValue("Crop Status");
+        headerRow.createCell(7).setCellValue("Mount Name");
+        headerRow.createCell(8).setCellValue("Reason Name");
+        headerRow.createCell(9).setCellValue("Sale & Disposal ID");
+        headerRow.createCell(10).setCellValue("TSC Name");
+
+// Data rows
+        int dataRow = 1;
+        for (CropInspectionResponse c : responseList) {
+            Row row = sheet.createRow(dataRow++);
+            row.createCell(0).setCellValue(c.getSerialNumber());
+            row.createCell(1).setCellValue(c.getFarmerName());
+            row.createCell(2).setCellValue(c.getFatherName());
+            row.createCell(3).setCellValue(c.getFruitsId());
+            row.createCell(4).setCellValue(c.getCropInspectionDate());
+            row.createCell(5).setCellValue(c.getNote());
+            row.createCell(6).setCellValue(c.getCropStatusName());
+            row.createCell(7).setCellValue(c.getMountName());
+            row.createCell(8).setCellValue(c.getReasonName());
+            row.createCell(9).setCellValue(c.getSaleAndDisposalId());
+            row.createCell(10).setCellValue(c.getTscName());
+        }
+
+        for (int col = 0; col <= 7; col++) {
+            sheet.autoSizeColumn(col, true);
+        }
+
+        String userHome = System.getProperty("user.home");
+        String directoryPath = Paths.get(userHome, "Downloads").toString();
+        Files.createDirectories(Paths.get(directoryPath));
+        Path filePath = Paths.get(directoryPath, "crop_inspection_report" + Util.getISTLocalDate() + ".xlsx");
+
+        FileOutputStream fileOut = new FileOutputStream(filePath.toString());
+        FileInputStream fileIn = new FileInputStream(filePath.toString());
+        workbook.write(fileOut);
+        fileOut.close();
+        workbook.close();
+
+        return fileIn;
+    }
+
+
+    private static void buildResponse(List<CropInspectionResponse> responseList, List<Object[]> list, int pageNumber, int pageSize) {
+            int serialNumber = pageNumber * pageSize + 1;
+            for (Object[] arr : list) {
+                CropInspectionResponse response = CropInspectionResponse.builder()
+                        .serialNumber(serialNumber++)
+                        .cropInspectionDate(Util.objectToString(arr[0]))
+                        .note(Util.objectToString(arr[1]))
+                        .cropStatusName(Util.objectToString(arr[2]))
+                        .mountName(Util.objectToString(arr[3]))
+                        .reasonName(Util.objectToString(arr[4]))
+                        .saleAndDisposalId(Util.objectToLong(arr[5]))
+                        .tscName(Util.objectToString(arr[6]))
+                        .farmerName(Util.objectToString(arr[7]))
+                        .fatherName(Util.objectToString(arr[8]))
+                        .fruitsId(Util.objectToString(arr[9]))
+                        .build();
+                responseList.add(response);
+            }
+        }
+
+    public ResponseEntity<?> getFitnessCertificateDetails(Long tscId, int pageNumber, int pageSize) {
+        ResponseWrapper rw = ResponseWrapper.createWrapper(List.class);
+        List<FitnessCertificateResponse> responseList = new ArrayList<>();
+
+        tscId = (tscId != null && tscId == 0) ? null : tscId;
+
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Page<Object[]> page = fitnessCertificateRepository.getFitnessCertificateDetails(tscId, pageable);
+
+        buildResponseForFitness(responseList, page.getContent(), pageNumber, pageSize);
+
+        rw.setTotalRecords(page.getTotalElements());
+        rw.setContent(responseList);
+        return ResponseEntity.ok(rw);
+    }
+
+    public FileInputStream getFitnessCertificateReport(Long tscId, int pageNumber, int pageSize) throws Exception {
+        List<FitnessCertificateResponse> responseList = new ArrayList<>();
+
+        tscId = (tscId != null && tscId == 0) ? null : tscId;
+
+        Pageable pageable = null; // fetch all records for Excel
+        Page<Object[]> page = fitnessCertificateRepository.getFitnessCertificateDetails(tscId, pageable);
+
+        buildResponseForFitness(responseList, page.getContent(), pageNumber, pageSize);
+
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Fitness Certificate Report");
+
+        // Header row
+        Row headerRow = sheet.createRow(0);
+        headerRow.createCell(0).setCellValue("Sl.No");
+        headerRow.createCell(1).setCellValue("Farmer Name");
+        headerRow.createCell(2).setCellValue("Father Name");
+        headerRow.createCell(3).setCellValue("Fruits ID");
+        headerRow.createCell(4).setCellValue("Fitness Certificate ID");
+        headerRow.createCell(5).setCellValue("Fitness Certificate Path");
+        headerRow.createCell(6).setCellValue("Farmer ID");
+        headerRow.createCell(7).setCellValue("Rate per 100 DFLs Price");
+        headerRow.createCell(8).setCellValue("Number of DFLs Disposed");
+        headerRow.createCell(9).setCellValue("Lot Number");
+        headerRow.createCell(10).setCellValue("Race Name");
+        headerRow.createCell(11).setCellValue("TSC Name");
+
+        // Data rows
+        int dataRow = 1;
+        for (FitnessCertificateResponse f : responseList) {
+            Row row = sheet.createRow(dataRow++);
+            row.createCell(0).setCellValue(f.getSerialNumber());
+            row.createCell(1).setCellValue(f.getFarmerName());
+            row.createCell(2).setCellValue(f.getFatherName());
+            row.createCell(3).setCellValue(f.getFruitsId());
+            row.createCell(4).setCellValue(f.getFitnessCertificateId());
+            row.createCell(5).setCellValue(f.getFitnessCertificatePath());
+            row.createCell(6).setCellValue(f.getFarmerId());
+            row.createCell(7).setCellValue(f.getRatePer100Dfls());
+            row.createCell(8).setCellValue(f.getNumberOfDflsDisposed());
+            row.createCell(9).setCellValue(f.getLotNumber());
+            row.createCell(10).setCellValue(f.getRaceName());
+            row.createCell(11).setCellValue(f.getTscName());
+        }
+
+        for (int col = 0; col <= 11; col++) {
+            sheet.autoSizeColumn(col, true);
+        }
+
+        String userHome = System.getProperty("user.home");
+        String directoryPath = Paths.get(userHome, "Downloads").toString();
+        Files.createDirectories(Paths.get(directoryPath));
+        Path filePath = Paths.get(directoryPath, "fitness_certificate_report" + Util.getISTLocalDate() + ".xlsx");
+
+        FileOutputStream fileOut = new FileOutputStream(filePath.toString());
+        FileInputStream fileIn = new FileInputStream(filePath.toString());
+        workbook.write(fileOut);
+        fileOut.close();
+        workbook.close();
+
+        return fileIn;
+    }
+
+    private static void buildResponseForFitness(List<FitnessCertificateResponse> responseList, List<Object[]> list, int pageNumber, int pageSize) {
+        int serialNumber = pageNumber * pageSize + 1;
+        for (Object[] arr : list) {
+            FitnessCertificateResponse response = FitnessCertificateResponse.builder()
+                    .serialNumber(serialNumber++)
+                    .farmerName(Util.objectToString(arr[0]))
+                    .fatherName(Util.objectToString(arr[1]))
+                    .fruitsId(Util.objectToString(arr[2]))
+                    .fitnessCertificateId(Util.objectToLong(arr[3]))
+                    .fitnessCertificatePath(Util.objectToString(arr[4]))
+                    .farmerId(Util.objectToLong(arr[5]))
+                    .ratePer100Dfls(Util.objectToFloat(arr[6]))
+                    .numberOfDflsDisposed(Util.objectToInteger(arr[7]))
+                    .lotNumber(Util.objectToString(arr[8]))
+                    .raceName(Util.objectToString(arr[9]))
+                    .tscName(Util.objectToString(arr[10]))
+                    .build();
+            responseList.add(response);
+        }
+    }
+
+    public ResponseEntity<?> getFarmerMulberryExtensionDetails(Long tscId, String applicationType,
+                                                               int pageNumber, int pageSize) {
+        ResponseWrapper rw = ResponseWrapper.createWrapper(List.class);
+        List<FarmerMulberryExtensionResponse> responseList = new ArrayList<>();
+
+        tscId = (tscId != null && tscId == 0) ? null : tscId;
+        applicationType = (applicationType != null && applicationType.isEmpty()) ? null : applicationType;
+
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Page<Object[]> applicablePage =
+                farmerMulberryExtensionRepository.getFarmerMulberryExtensionDetails(tscId, applicationType, pageable);
+
+        List<Object[]> applicableList = applicablePage.getContent();
+        long totalRecords = applicablePage.getTotalElements();
+
+        buildResponseForFarmerMulberryExtension(responseList, applicableList, pageNumber, pageSize);
+
+        rw.setTotalRecords(totalRecords);
+        rw.setContent(responseList);
+        return ResponseEntity.ok(rw);
+    }
+
+    private static void buildResponseForFarmerMulberryExtension(List<FarmerMulberryExtensionResponse> responseList,
+                                      List<Object[]> applicableList,
+                                      int pageNumber, int pageSize) {
+        int serialNumber = pageNumber * pageSize + 1;
+        for (Object[] arr : applicableList) {
+            FarmerMulberryExtensionResponse response = FarmerMulberryExtensionResponse.builder()
+                    .serialNumber(serialNumber++)
+                    .firstName(Util.objectToString(arr[0]))
+                    .fatherName(Util.objectToString(arr[1]))
+                    .fruitsId(Util.objectToString(arr[2]))
+                    .scheme(Util.objectToString(arr[3]))
+                    .addressText(Util.objectToString(arr[4]))
+                    .tscName(Util.objectToString(arr[5]))
+                    .tscNameKannada(Util.objectToString(arr[6]))
+                    .mulberryVarietyName(Util.objectToString(arr[7]))
+                    .mulberryVarietyNameKannada(Util.objectToString(arr[8]))
+                    .plantationDate(Util.objectToString(arr[9]))
+                    .numberOfSaplings(Util.objectToString(arr[10]))
+                    .mulberryArea(Util.objectToString(arr[11]))
+                    .spacing(Util.objectToString(arr[12]))
+                    .applicationType(Util.objectToString(arr[13]))
+                    .uprootingReason(Util.objectToString(arr[14]))
+                    .uprootingDate(Util.objectToString(arr[15]))
+                    .build();
+            responseList.add(response);
+        }
+    }
+
+    public FileInputStream getFarmerMulberryExtensionReport(Long tscId, String applicationType,
+                                                            int pageNumber, int pageSize) throws Exception {
+        List<FarmerMulberryExtensionResponse> responseList = new ArrayList<>();
+
+        tscId = (tscId != null && tscId == 0) ? null : tscId;
+        applicationType = (applicationType != null && applicationType.isEmpty()) ? null : applicationType;
+
+        Pageable pageable = null; // fetch all records
+        Page<Object[]> applicablePage =
+                farmerMulberryExtensionRepository.getFarmerMulberryExtensionDetails(tscId, applicationType, pageable);
+
+        buildResponseForFarmerMulberryExtension(responseList, applicablePage.getContent(), pageNumber, pageSize);
+
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Farmer Mulberry Extension Report");
+
+        // Header row
+        Row headerRow = sheet.createRow(0);
+        headerRow.createCell(0).setCellValue("Sl.No");
+        headerRow.createCell(1).setCellValue("First Name");
+        headerRow.createCell(2).setCellValue("Father Name");
+        headerRow.createCell(3).setCellValue("Fruits ID");
+        headerRow.createCell(4).setCellValue("Scheme");
+        headerRow.createCell(5).setCellValue("Address");
+        headerRow.createCell(6).setCellValue("TSC");
+        headerRow.createCell(7).setCellValue("TSC (Kannada)");
+        headerRow.createCell(8).setCellValue("Mulberry Variety");
+        headerRow.createCell(9).setCellValue("Mulberry Variety (Kannada)");
+        headerRow.createCell(10).setCellValue("Plantation Date");
+        headerRow.createCell(11).setCellValue("Number of Saplings");
+        headerRow.createCell(12).setCellValue("Mulberry Area");
+        headerRow.createCell(13).setCellValue("Spacing");
+        headerRow.createCell(14).setCellValue("Application Type");
+        headerRow.createCell(15).setCellValue("Uprooting Reason");
+        headerRow.createCell(16).setCellValue("Uprooting Date");
+
+        // Data rows
+        int dataRow = 1;
+        for (FarmerMulberryExtensionResponse r : responseList) {
+            Row row = sheet.createRow(dataRow++);
+            row.createCell(0).setCellValue(r.getSerialNumber());
+            row.createCell(1).setCellValue(r.getFirstName());
+            row.createCell(2).setCellValue(r.getFatherName());
+            row.createCell(3).setCellValue(r.getFruitsId());
+            row.createCell(4).setCellValue(r.getScheme());
+            row.createCell(5).setCellValue(r.getAddressText());
+            row.createCell(6).setCellValue(r.getTscName());
+            row.createCell(7).setCellValue(r.getTscNameKannada());
+            row.createCell(8).setCellValue(r.getMulberryVarietyName());
+            row.createCell(9).setCellValue(r.getMulberryVarietyNameKannada());
+            row.createCell(10).setCellValue(r.getPlantationDate());
+            row.createCell(11).setCellValue(r.getNumberOfSaplings());
+            row.createCell(12).setCellValue(r.getMulberryArea());
+            row.createCell(13).setCellValue(r.getSpacing());
+            row.createCell(14).setCellValue(r.getApplicationType());
+            row.createCell(15).setCellValue(r.getUprootingReason());
+            row.createCell(16).setCellValue(r.getUprootingDate());
+        }
+
+        // Auto-size all 17 columns
+        for (int col = 0; col <= 16; col++) {
+            sheet.autoSizeColumn(col, true);
+        }
+
+        String userHome = System.getProperty("user.home");
+        String directoryPath = Paths.get(userHome, "Downloads").toString();
+        Files.createDirectories(Paths.get(directoryPath));
+        Path filePath = Paths.get(directoryPath, "farmer_mulberry_extension_report" + Util.getISTLocalDate() + ".xlsx");
+
+        FileOutputStream fileOut = new FileOutputStream(filePath.toString());
+        FileInputStream fileIn = new FileInputStream(filePath.toString());
+        workbook.write(fileOut);
+        fileOut.close();
+        workbook.close();
+        return fileIn;
+    }
+
+    public ResponseEntity<?> getSupplyOfDisinfectantDetails(Long tscId, int pageNumber, int pageSize) {
+        ResponseWrapper rw = ResponseWrapper.createWrapper(List.class);
+        List<SupplyOfDisinfectantResponse> responseList = new ArrayList<>();
+
+        tscId = (tscId != null && tscId == 0) ? null : tscId;
+
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Page<Object[]> page = supplyOfDisinfectantsRepository.getSupplyOfDisinfectantDetails(tscId, pageable);
+
+        buildResponseForDisinfectant(responseList, page.getContent(), pageNumber, pageSize);
+
+        rw.setTotalRecords(page.getTotalElements());
+        rw.setContent(responseList);
+        return ResponseEntity.ok(rw);
+    }
+
+    public FileInputStream getSupplyOfDisinfectantReport(Long tscId, int pageNumber, int pageSize) throws Exception {
+        List<SupplyOfDisinfectantResponse> responseList = new ArrayList<>();
+
+        tscId = (tscId != null && tscId == 0) ? null : tscId;
+
+        Pageable pageable = null; // fetch all records
+        Page<Object[]> page = supplyOfDisinfectantsRepository.getSupplyOfDisinfectantDetails(tscId, pageable);
+
+        buildResponseForDisinfectant(responseList, page.getContent(), pageNumber, pageSize);
+
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Supply Of Disinfectant Report");
+
+        // Header row
+        Row headerRow = sheet.createRow(0);
+        headerRow.createCell(0).setCellValue("Sl.No");
+        headerRow.createCell(1).setCellValue("Farmer Name");
+        headerRow.createCell(2).setCellValue("Father Name");
+        headerRow.createCell(3).setCellValue("Fruits ID");
+        headerRow.createCell(4).setCellValue("Invoice No/Date");
+        headerRow.createCell(5).setCellValue("Quantity");
+        headerRow.createCell(6).setCellValue("Disinfectant Name");
+        headerRow.createCell(7).setCellValue("Quantity Supplied");
+        headerRow.createCell(8).setCellValue("Supply Date");
+        headerRow.createCell(9).setCellValue("Size of Rearing House");
+        headerRow.createCell(10).setCellValue("No of DFLs");
+        headerRow.createCell(11).setCellValue("Disinfectant Master Name");
+        headerRow.createCell(12).setCellValue("TSC Name");
+
+        // Data rows
+        int dataRow = 1;
+        for (SupplyOfDisinfectantResponse r : responseList) {
+            Row row = sheet.createRow(dataRow++);
+            row.createCell(0).setCellValue(r.getSerialNumber());
+            row.createCell(1).setCellValue(r.getFarmerName());
+            row.createCell(2).setCellValue(r.getFatherName());
+            row.createCell(3).setCellValue(r.getFruitsId());
+            row.createCell(4).setCellValue(r.getInvoiceNoDate());
+            row.createCell(5).setCellValue(r.getQuantity());
+            row.createCell(6).setCellValue(r.getDisinfectantName());
+            row.createCell(7).setCellValue(r.getQuantitySupplied());
+            row.createCell(8).setCellValue(r.getSupplyDate());
+            row.createCell(9).setCellValue(r.getSizeOfRearingHouse());
+            row.createCell(10).setCellValue(r.getNoOfDfls());
+            row.createCell(11).setCellValue(r.getDisinfectantMasterName());
+            row.createCell(12).setCellValue(r.getTscName());
+        }
+
+        for (int col = 0; col <= 12; col++) {
+            sheet.autoSizeColumn(col, true);
+        }
+
+        String userHome = System.getProperty("user.home");
+        String directoryPath = Paths.get(userHome, "Downloads").toString();
+        Files.createDirectories(Paths.get(directoryPath));
+        Path filePath = Paths.get(directoryPath, "supply_of_disinfectant_report" + Util.getISTLocalDate() + ".xlsx");
+
+        FileOutputStream fileOut = new FileOutputStream(filePath.toString());
+        FileInputStream fileIn = new FileInputStream(filePath.toString());
+        workbook.write(fileOut);
+        fileOut.close();
+        workbook.close();
+
+        return fileIn;
+    }
+
+    private static void buildResponseForDisinfectant(List<SupplyOfDisinfectantResponse> responseList, List<Object[]> list, int pageNumber, int pageSize) {
+        int serialNumber = pageNumber * pageSize + 1;
+        for (Object[] arr : list) {
+            SupplyOfDisinfectantResponse response = SupplyOfDisinfectantResponse.builder()
+                    .serialNumber(serialNumber++)
+                    .farmerName(Util.objectToString(arr[0]))
+                    .fatherName(Util.objectToString(arr[1]))
+                    .fruitsId(Util.objectToString(arr[2]))
+                    .invoiceNoDate(Util.objectToString(arr[3]))
+                    .quantity(Util.objectToInteger(arr[4]))
+                    .disinfectantName(Util.objectToString(arr[5]))
+                    .quantitySupplied(Util.objectToInteger(arr[6]))
+                    .supplyDate(Util.objectToString(arr[7]))
+                    .sizeOfRearingHouse(Util.objectToString(arr[8]))
+                    .noOfDfls(Util.objectToInteger(arr[9]))
+                    .disinfectantMasterName(Util.objectToString(arr[10]))
+                    .tscName(Util.objectToString(arr[11]))
+                    .build();
+            responseList.add(response);
+        }
+    }
+
+
+
 
 }

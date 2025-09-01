@@ -1,6 +1,8 @@
 package com.sericulture.repository;
 
 import com.sericulture.model.entity.CropInspection;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -91,6 +93,55 @@ Left JOIN
     )
     """)
     List<Object[]> getInspectionTypeForCropFromSaleAndDisposalOfDfl(@Param("saleAndDisposalId") Long saleAndDisposalId);
+
+    @Query(nativeQuery = true, value = """
+        SELECT
+            ci.date,
+            ci.note,
+            cs.name AS crop_status_name,
+            m.name AS mount_name,
+            r.name As reason_name,
+            ci.sale_and_disposal_id,
+            tm.name,
+            f.first_name,
+            f.father_name,
+            f.fruits_id
+        FROM
+            crop_inspection ci
+        Left JOIN
+            crop_status cs ON ci.crop_status_id = cs.crop_status_id
+        Left JOIN
+            farmer f ON ci.farmer_id = f.farmer_id
+        Left JOIN
+            sale_and_disposal_of_dfls sd ON sd.id = ci.sale_and_disposal_id
+        Left JOIN
+            mount m ON ci.mount_id = m.mount_id
+        Left JOIN
+            reason r ON ci.reason_id = r.reason_id
+        Left JOIN
+            tsc_master tm ON tm.tsc_master_id = sd.tsc
+          WHERE
+              (:tscId IS NULL OR sd.tsc = :tscId)
+              AND ci.is_crop_inspected = 1
+              AND ci.active = 1
+        """,
+            countQuery = """
+           SELECT COUNT(*)
+              FROM crop_inspection ci
+              LEFT JOIN crop_status cs ON ci.crop_status_id = cs.crop_status_id
+              Left JOIN farmer f ON ci.farmer_id = f.farmer_id
+              LEFT JOIN sale_and_disposal_of_dfls sd ON sd.id = ci.sale_and_disposal_id
+              LEFT JOIN mount m ON ci.mount_id = m.mount_id
+              LEFT JOIN reason r ON ci.reason_id = r.reason_id
+              LEFT JOIN tsc_master tm ON tm.tsc_master_id = sd.tsc
+              WHERE
+                  (:tscId IS NULL OR sd.tsc = :tscId)
+                  AND ci.is_crop_inspected = 1
+                  AND ci.active = 1;
+        """)
+    Page<Object[]> getCropInspectionDetails(
+            @Param("tscId") Long tscId,
+            Pageable pageable);
 
 
 }

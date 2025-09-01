@@ -1,6 +1,7 @@
 package com.sericulture.controller;
 
 
+import com.sericulture.helper.Util;
 import com.sericulture.model.api.ChowkiManagementByIdDTO;
 import com.sericulture.model.api.requests.AddChowkiRequest;
 import com.sericulture.model.api.requests.AddSaleDisposalRequest;
@@ -11,13 +12,18 @@ import com.sericulture.model.api.requests.UpdateChowkiRequest;
 import com.sericulture.service.ChowkiManagementService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.FileInputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -138,6 +144,42 @@ public class ChowkiManagementController {
     @GetMapping("/getFarmerDetailsFromChowkiManagementByTsc/{tscMasterId}")
     public List<ChowkiManagementResponse> getFarmerDetailsFromChowkiManagementByTsc(@PathVariable Long tscMasterId) {
         return chowkiManagementService.getFarmerDetailsFromChowkiManagementByTsc(tscMasterId);
+    }
+
+    @PostMapping("/getVerifiedDFLDetails")
+    public ResponseEntity<?> getVerifiedDFLDetails(
+            @RequestParam(required = false) Long raceId,
+            @RequestParam(required = false) Long tscId,
+            @RequestParam(defaultValue = "0") int pageNumber,
+            @RequestParam(defaultValue = "50") int pageSize) {
+        return chowkiManagementService.getVerifiedDFLDetails(raceId, tscId, pageNumber, pageSize);
+    }
+
+    @PostMapping("/getVerifiedDFLReport")
+    public ResponseEntity<?> getVerifiedDFLReport(
+            @RequestParam(required = false) Long raceId,
+            @RequestParam(required = false) Long tscId,
+            @RequestParam(defaultValue = "0") int pageNumber,
+            @RequestParam(defaultValue = "50") int pageSize) {
+        try {
+            FileInputStream fileInputStream = chowkiManagementService.getVerifiedDFLReport(raceId, tscId, pageNumber, pageSize);
+
+            InputStreamResource resource = new InputStreamResource(fileInputStream);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.CONTENT_DISPOSITION,
+                    "attachment; filename=verified_dfl_report" + Util.getISTLocalDate() + ".xlsx");
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+
+            return ResponseEntity.ok().headers(headers).body(resource);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return new ResponseEntity<>(
+                    ex.getMessage().getBytes(StandardCharsets.UTF_8),
+                    HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
     }
 }
 
