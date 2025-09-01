@@ -21,7 +21,8 @@ public class CropInspectionRequest {
      private String lotTestDetails;
      private Long diseaseStatusId;
      private Float noOfChandies;
-     private LocalDate expectedMarkerDate;
+     private String spunToDate;
+     private String spunFromDate;
      private Long farmerLandDetailsId;
      private Long mulberryVarietyId;
      private LocalDate extensionDate;

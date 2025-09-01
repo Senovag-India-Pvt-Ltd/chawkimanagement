@@ -48,6 +48,9 @@ public class CropInspectionResponse {
     private String lotNumberRsp;
     private Long raceOfDfls;
     private String raceName;
+    private String spunToDate;
+    private String spunFromDate;
+    //    @Schema(name = "error", example = "true")
     private String farmerName;
     private String fatherName;
     private String fruitsId;
