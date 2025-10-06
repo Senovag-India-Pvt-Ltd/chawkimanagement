@@ -225,22 +225,26 @@ public class CropInspectionController {
     @PostMapping("/getFarmerMulberryExtensionDetails")
     public ResponseEntity<?> getFarmerMulberryExtensionDetails(
             @RequestParam(required = false) Long tscId,
+            @RequestParam(required = false) Long districtId,
+            @RequestParam(required = false) Long talukId,
             @RequestParam(required = false) String applicationType,
             @RequestParam(defaultValue = "0") int pageNumber,
             @RequestParam(defaultValue = "50") int pageSize) {
         return cropInspectionService.getFarmerMulberryExtensionDetails(
-                tscId, applicationType, pageNumber, pageSize);
+                tscId,districtId,talukId, applicationType, pageNumber, pageSize);
     }
 
     @PostMapping("/getFarmerMulberryExtensionReport")
     public ResponseEntity<?> getFarmerMulberryExtensionReport(
             @RequestParam(required = false) Long tscId,
+            @RequestParam(required = false) Long districtId,
+            @RequestParam(required = false) Long talukId,
             @RequestParam(required = false) String applicationType,
             @RequestParam(defaultValue = "0") int pageNumber,
             @RequestParam(defaultValue = "50") int pageSize) {
         try {
             FileInputStream fileInputStream = cropInspectionService.getFarmerMulberryExtensionReport(
-                    tscId, applicationType, pageNumber, pageSize);
+                    tscId,districtId,talukId, applicationType, pageNumber, pageSize);
 
             InputStreamResource resource = new InputStreamResource(fileInputStream);
 

@@ -30,7 +30,9 @@ public interface FarmerMulberryExtensionRepository extends JpaRepository<FarmerM
                 fm.spacing,
                 fm.application_type,
                 fm.uprooting_reason,
-                fm.uprooting_date
+                fm.uprooting_date,
+                d.district_name,
+                t.taluk_name
             FROM FARMER F
             INNER JOIN farmer_address fa
                 ON F.FARMER_ID = fa.FARMER_ID
@@ -50,9 +52,17 @@ public interface FarmerMulberryExtensionRepository extends JpaRepository<FarmerM
             LEFT JOIN tsc_master tm
                 ON F.tsc_master_id = tm.tsc_master_id
                AND tm.active = 1
+            LEFT JOIN district d
+                ON d.district_id = tm.district_id
+                AND d.active = 1
+            LEFT JOIN taluk t
+                ON t.taluk_id = tm.taluk_id
+                AND t.active = 1
             WHERE F.active = 1
-              AND (:tscId IS NULL OR tm.tsc_master_id = :tscId)
-              AND (:applicationType IS NULL OR fm.application_type = :applicationType);
+            AND (:tscId IS NULL OR tm.tsc_master_id = :tscId)
+            AND (:districtId IS NULL OR d.district_id = :districtId)
+            AND (:talukId IS NULL OR t.taluk_id = :talukId)
+            AND (:applicationType IS NULL OR fm.application_type = :applicationType);
         """,
             countQuery = """
            SELECT COUNT(*)
@@ -75,12 +85,22 @@ public interface FarmerMulberryExtensionRepository extends JpaRepository<FarmerM
             LEFT JOIN tsc_master tm
             ON F.tsc_master_id = tm.tsc_master_id
             AND tm.active = 1
+            LEFT JOIN district d
+            ON d.district_id = tm.district_id
+            AND d.active = 1
+            LEFT JOIN taluk t
+            ON t.taluk_id = tm.taluk_id
+            AND t.active = 1
             WHERE F.active = 1
             AND (:tscId IS NULL OR tm.tsc_master_id = :tscId)
+            AND (:districtId IS NULL OR d.district_id = :districtId)
+            AND (:talukId IS NULL OR t.taluk_id = :talukId)
             AND (:applicationType IS NULL OR fm.application_type = :applicationType);
         """)
     Page<Object[]> getFarmerMulberryExtensionDetails(
             @Param("tscId") Long tscId,
+            @Param("districtId") Long districtId,
+            @Param("talukId") Long talukId,
             @Param("applicationType") String applicationType,
             Pageable pageable);
 }

@@ -823,17 +823,19 @@ public class CropInspectionService {
         }
     }
 
-    public ResponseEntity<?> getFarmerMulberryExtensionDetails(Long tscId, String applicationType,
+    public ResponseEntity<?> getFarmerMulberryExtensionDetails(Long tscId,Long districtId,Long talukId, String applicationType,
                                                                int pageNumber, int pageSize) {
         ResponseWrapper rw = ResponseWrapper.createWrapper(List.class);
         List<FarmerMulberryExtensionResponse> responseList = new ArrayList<>();
 
         tscId = (tscId != null && tscId == 0) ? null : tscId;
+        districtId = (districtId != null && districtId == 0) ? null : districtId;
+        talukId = (talukId != null && talukId == 0) ? null : talukId;
         applicationType = (applicationType != null && applicationType.isEmpty()) ? null : applicationType;
 
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<Object[]> applicablePage =
-                farmerMulberryExtensionRepository.getFarmerMulberryExtensionDetails(tscId, applicationType, pageable);
+                farmerMulberryExtensionRepository.getFarmerMulberryExtensionDetails(tscId, districtId,talukId,applicationType, pageable);
 
         List<Object[]> applicableList = applicablePage.getContent();
         long totalRecords = applicablePage.getTotalElements();
@@ -868,21 +870,25 @@ public class CropInspectionService {
                     .applicationType(Util.objectToString(arr[13]))
                     .uprootingReason(Util.objectToString(arr[14]))
                     .uprootingDate(Util.objectToString(arr[15]))
+                    .districtName(Util.objectToString(arr[16]))
+                    .talukName(Util.objectToString(arr[17]))
                     .build();
             responseList.add(response);
         }
     }
 
-    public FileInputStream getFarmerMulberryExtensionReport(Long tscId, String applicationType,
+    public FileInputStream getFarmerMulberryExtensionReport(Long tscId, Long districtId,Long talukId,String applicationType,
                                                             int pageNumber, int pageSize) throws Exception {
         List<FarmerMulberryExtensionResponse> responseList = new ArrayList<>();
 
         tscId = (tscId != null && tscId == 0) ? null : tscId;
+        districtId = (districtId != null && districtId == 0) ? null : districtId;
+        talukId = (talukId != null && talukId == 0) ? null : talukId;
         applicationType = (applicationType != null && applicationType.isEmpty()) ? null : applicationType;
 
         Pageable pageable = null; // fetch all records
         Page<Object[]> applicablePage =
-                farmerMulberryExtensionRepository.getFarmerMulberryExtensionDetails(tscId, applicationType, pageable);
+                farmerMulberryExtensionRepository.getFarmerMulberryExtensionDetails(tscId,districtId,talukId, applicationType, pageable);
 
         buildResponseForFarmerMulberryExtension(responseList, applicablePage.getContent(), pageNumber, pageSize);
 
@@ -908,6 +914,8 @@ public class CropInspectionService {
         headerRow.createCell(14).setCellValue("Application Type");
         headerRow.createCell(15).setCellValue("Uprooting Reason");
         headerRow.createCell(16).setCellValue("Uprooting Date");
+        headerRow.createCell(17).setCellValue("District");
+        headerRow.createCell(18).setCellValue("Taluk");
 
         // Data rows
         int dataRow = 1;
@@ -930,6 +938,8 @@ public class CropInspectionService {
             row.createCell(14).setCellValue(r.getApplicationType());
             row.createCell(15).setCellValue(r.getUprootingReason());
             row.createCell(16).setCellValue(r.getUprootingDate());
+            row.createCell(16).setCellValue(r.getDistrictName());
+            row.createCell(16).setCellValue(r.getTalukName());
         }
 
         // Auto-size all 17 columns

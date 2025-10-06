@@ -25,4 +25,6 @@ public class FarmerMulberryExtensionResponse {
     private String applicationType;
     private String uprootingReason;
     private String uprootingDate;
+    private String districtName;
+    private String talukName;
 }
