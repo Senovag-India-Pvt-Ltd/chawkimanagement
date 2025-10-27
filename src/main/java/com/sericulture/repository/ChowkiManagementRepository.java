@@ -144,6 +144,7 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
      LEFT JOIN race_master rm ON sadod.race_id = rm.race_id
      WHERE sadod.fruits_id = :fruitsId
      AND sadod.tsc = :tscId
+     AND sadod.active = 1
      AND sadod.is_verified = 0;
     """)
 
@@ -160,6 +161,7 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
      FROM sale_and_disposal_of_dfls_rsso sadod
      LEFT JOIN race_master rm ON sadod.race_id = rm.race_id
      WHERE sadod.fruits_id = :fruitsId
+     AND sadod.active = 1
      AND sadod.is_verified = 0;
     """)
 
@@ -191,6 +193,7 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
      FROM sale_and_disposal_of_dfls sadod
      LEFT JOIN race_master rm ON sadod.race_id = rm.race_id
      WHERE sadod.fruits_id = :fruitsId
+     AND sadod.active = 1
      AND sadod.is_verified = 1;
     """)
 
@@ -223,6 +226,7 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
    LEFT JOIN market_auction ma ON ma.lot_Parental_Level = sadod.lot_number
    LEFT JOIN lot_groupage lg ON lg.market_auction_id = ma.market_auction_id
    WHERE sadod.fruits_id = :fruitsId
+   AND sadod.active = 1
    AND sadod.is_sale_tracked = 0;
    """)
     public List<Object[]> getInspectioninfoForCocoonSaleTrack(String fruitsId);

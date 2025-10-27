@@ -95,7 +95,7 @@ public class CropInspectionController {
     }
 
     @PostMapping("/update-mgnrega-scheme-info")
-    public CommonChowkiResponse updateMgnregaSchemeData(@Valid @RequestBody MgnregaSchemeRequest mgnregaSchemeRequest) {
+    public CommonChowkiResponse updateMgnregaSchemeData( @RequestBody MgnregaSchemeRequest mgnregaSchemeRequest) {
         return cropInspectionService.updateMgnregaSchemeData(mgnregaSchemeRequest);
     }
 
