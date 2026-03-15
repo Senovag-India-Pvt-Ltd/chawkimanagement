@@ -565,6 +565,7 @@ public class CropInspectionService {
                     .lotNumberRsp(Util.objectToString(arr[7]))
                     .raceOfDfls(Util.objectToLong(arr[8]))
                     .raceName(Util.objectToString(arr[9]))
+                    .fruitsId(Util.objectToString(arr[10]))
                     .build();
 
             responses.add(response);
@@ -1062,6 +1063,76 @@ public class CropInspectionService {
                     .build();
             responseList.add(response);
         }
+    }
+
+
+    @Transactional
+    public CropInspectionResponse updateCropDetailsSeedMarketDetails(CropInspectionRequest cropInspectionRequest){
+        CropInspectionResponse cropDetailsSeedMarketResponse = new CropInspectionResponse();
+//        List<RpRoleAssociation> rpRoleAssociationList = rpRoleAssociationRepository.findByRpPageRootName(rpPageRootRequest.getRpPageRootName());
+//        if(rpPageRootList.size()>0){
+//            throw new ValidationException("RpPageRoot already exists with this name, duplicates are not allowed.");
+//        }
+
+        FitnessCertificate fitnessCertificate = fitnessCertificateRepository.findByFitnessCertificateIdAndActiveIn(cropInspectionRequest.getCropInspectionId(), Set.of(true,false));
+        if(Objects.nonNull(fitnessCertificate)){
+            fitnessCertificate.setChowkiId(cropInspectionRequest.getChowkiId());
+            fitnessCertificate.setSaleAndDisposalId(cropInspectionRequest.getSaleAndDisposalId());
+            fitnessCertificate.setFarmerId(cropInspectionRequest.getFarmerId());
+            fitnessCertificate.setExpectedCocoon(cropInspectionRequest.getExpectedCocoon());
+            fitnessCertificate.setLotTestDetails(cropInspectionRequest.getLotTestDetails());
+            fitnessCertificate.setDiseaseStatusId(cropInspectionRequest.getDiseaseStatusId());
+            fitnessCertificate.setNoOfChandies(cropInspectionRequest.getNoOfChandies());
+            fitnessCertificate.setSpunFromDate(cropInspectionRequest.getSpunFromDate());
+            fitnessCertificate.setSpunToDate(cropInspectionRequest.getSpunToDate());
+            fitnessCertificate.setFitnessCertificatePath(cropInspectionRequest.getFitnessCertificatePath());
+            fitnessCertificate.setFruitsId(cropInspectionRequest.getFruitsId());
+            fitnessCertificate.setActive(true);
+            FitnessCertificate fitnessCertificate1 = fitnessCertificateRepository.save(fitnessCertificate);
+            cropDetailsSeedMarketResponse = mapper.fitnessCertificateEntityToObject(fitnessCertificate1, CropInspectionResponse.class);
+            cropDetailsSeedMarketResponse.setError(false);
+        } else {
+            cropDetailsSeedMarketResponse.setError(true);
+            cropDetailsSeedMarketResponse.setError_description("Error occurred while fetching Details");
+            // throw new ValidationException("Error occurred while fetching village");
+        }
+
+        return cropDetailsSeedMarketResponse;
+    }
+
+
+    @Transactional
+    public CropInspectionResponse updateFitnessCertificateDetails(CropInspectionRequest cropInspectionRequest){
+        CropInspectionResponse cropDetailsSeedMarketResponse = new CropInspectionResponse();
+//        List<RpRoleAssociation> rpRoleAssociationList = rpRoleAssociationRepository.findByRpPageRootName(rpPageRootRequest.getRpPageRootName());
+//        if(rpPageRootList.size()>0){
+//            throw new ValidationException("RpPageRoot already exists with this name, duplicates are not allowed.");
+//        }
+
+        CropInspection cropInspection = cropInspectionRepository.findByCropInspectionIdAndActiveIn(cropInspectionRequest.getCropInspectionId(), Set.of(true,false));
+        if(Objects.nonNull(cropInspection)){
+            cropInspection.setChowkiId(cropInspectionRequest.getChowkiId());
+            cropInspection.setSaleAndDisposalId(cropInspectionRequest.getSaleAndDisposalId());
+            cropInspection.setFarmerId(cropInspectionRequest.getFarmerId());
+            cropInspection.setCropInspectionTypeId(cropInspectionRequest.getCropInspectionTypeId());
+            cropInspection.setDate(cropInspectionRequest.getDate());
+            cropInspection.setReasonId(cropInspectionRequest.getReasonId());
+            cropInspection.setNote(cropInspectionRequest.getNote());
+            cropInspection.setCropStatusId(cropInspectionRequest.getCropStatusId());
+            cropInspection.setMountId(cropInspectionRequest.getMountId());
+            cropInspection.setCropInspectionPath(cropInspectionRequest.getCropInspectionPath());
+            cropInspection.setFruitsId(cropInspectionRequest.getFruitsId());
+            cropInspection.setActive(true);
+            CropInspection cropInspection1 = cropInspectionRepository.save(cropInspection);
+            cropDetailsSeedMarketResponse = mapper.cropInspectionEntityToObject(cropInspection1, CropInspectionResponse.class);
+            cropDetailsSeedMarketResponse.setError(false);
+        } else {
+            cropDetailsSeedMarketResponse.setError(true);
+            cropDetailsSeedMarketResponse.setError_description("Error occurred while fetching Details");
+            // throw new ValidationException("Error occurred while fetching village");
+        }
+
+        return cropDetailsSeedMarketResponse;
     }
 
 

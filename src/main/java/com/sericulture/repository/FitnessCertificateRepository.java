@@ -12,6 +12,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface FitnessCertificateRepository extends JpaRepository<FitnessCertificate, Long> {
 
@@ -38,7 +39,8 @@ public interface FitnessCertificateRepository extends JpaRepository<FitnessCerti
                 sadod.number_of_dfls_disposed,
                 sadod.lot_number,
                 sadod.race_id,
-                rm.race_name
+                rm.race_name,
+                fc.fruits_id
                 FROM fitness_certificate fc
                 Inner JOIN sale_and_disposal_of_dfls sadod ON sadod.id = fc.sale_and_disposal_id  AND (sadod.is_disposed = 0 OR sadod.is_disposed IS NULL) AND  sadod.active = 1
                 LEFT JOIN race_master rm ON rm.race_id = sadod.race_id AND rm.active = 1
@@ -93,4 +95,6 @@ public interface FitnessCertificateRepository extends JpaRepository<FitnessCerti
     Page<Object[]> getFitnessCertificateDetails(
             @Param("tscId") Long tscId,
             Pageable pageable);
+
+    public FitnessCertificate findByFitnessCertificateIdAndActiveIn(@Param("id") long id, @Param("active") Set<Boolean> active);
 }

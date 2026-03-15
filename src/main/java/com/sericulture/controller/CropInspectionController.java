@@ -298,6 +298,45 @@ public class CropInspectionController {
     }
 
 
+    @PostMapping("/editCropInspectionDetails")
+    public ResponseEntity<?> editCropInspectionDetails(
+            @RequestBody final CropInspectionRequest cropInspectionRequest
+    ) {
+        ResponseWrapper<CropInspectionResponse> rw = ResponseWrapper.createWrapper(CropInspectionResponse.class);
+        rw.setContent(cropInspectionService.updateCropDetailsSeedMarketDetails(cropInspectionRequest));
+        return ResponseEntity.ok(rw);
+    }
+
+    @PostMapping("/editFitnessCertificateDetails")
+    public ResponseEntity<?> editFitnessCertificateDetails(
+            @RequestBody final CropInspectionRequest cropInspectionRequest
+    ) {
+        ResponseWrapper<CropInspectionResponse> rw = ResponseWrapper.createWrapper(CropInspectionResponse.class);
+        rw.setContent(cropInspectionService.updateFitnessCertificateDetails(cropInspectionRequest));
+        return ResponseEntity.ok(rw);
+    }
+
+//    @GetMapping("/getCropInspectionDetailsById/{id}")
+//    public ResponseEntity<?> getCropInspectionDetailsById(
+//            @PathVariable final Integer id
+//    ) {
+//        ResponseWrapper rw = ResponseWrapper.createWrapper(CropInspectionResponse.class);
+//
+//        rw.setContent(cropInspectionService.getCropInspectionDetailsById(id));
+//        return ResponseEntity.ok(rw);
+//    }
+//
+//    @GetMapping("/getFitnessCertificateDetailsById/{id}")
+//    public ResponseEntity<?> getFitnessCertificateDetailsById(
+//            @PathVariable final Integer id
+//    ) {
+//        ResponseWrapper rw = ResponseWrapper.createWrapper(FitnessCertificateResponse.class);
+//
+//        rw.setContent(cropInspectionService.getFitnessCertificateDetailsById(id));
+//        return ResponseEntity.ok(rw);
+//    }
+
+
 
 
 

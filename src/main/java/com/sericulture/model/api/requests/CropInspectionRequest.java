@@ -9,6 +9,7 @@ import java.util.Date;
 @Getter
 @Setter
 public class CropInspectionRequest {
+    private  Long cropInspectionId;
      private  Long chowkiId;
      private  Long farmerId;
      private  Long cropInspectionTypeId;

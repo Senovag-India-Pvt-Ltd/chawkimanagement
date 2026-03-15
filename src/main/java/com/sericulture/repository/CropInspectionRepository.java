@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface CropInspectionRepository extends JpaRepository<CropInspection, Long> {
 
@@ -142,6 +143,8 @@ Left JOIN
     Page<Object[]> getCropInspectionDetails(
             @Param("tscId") Long tscId,
             Pageable pageable);
+
+    public CropInspection findByCropInspectionIdAndActiveIn(@Param("id") long id, @Param("active") Set<Boolean> active);
 
 
 }

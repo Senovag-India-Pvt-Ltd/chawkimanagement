@@ -190,11 +190,14 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
          sadod.date_of_disposal,
          sadod.source_of_dfls,
          sadod.name_and_address_of_the_farm
-     FROM sale_and_disposal_of_dfls sadod
-     LEFT JOIN race_master rm ON sadod.race_id = rm.race_id
-     WHERE sadod.fruits_id = :fruitsId
-     AND sadod.active = 1
-     AND sadod.is_verified = 1;
+         FROM sale_and_disposal_of_dfls sadod
+         LEFT JOIN race_master rm ON sadod.race_id = rm.race_id and rm.active = 1
+         LEFT JOIN crop_inspection ci ON ci.fruits_id = sadod.fruits_id
+         WHERE sadod.fruits_id = :fruitsId
+         AND sadod.active = 1
+         AND (ci.is_crop_inspected = 0 OR ci.is_crop_inspected IS NULL)
+         AND sadod.active = 1
+         AND sadod.is_verified = 1;
     """)
 
     public List<Object[]> getInspectioninfoForFarmerFromSaleDisposalOfDFls(String fruitsId);
