@@ -48,6 +48,9 @@ public class FitnessCertificate extends BaseEntity implements Serializable {
     @Column(name = "spun_date")
     private String spunToDate;
 
+    @Column(name = "transaction_date")
+    private LocalDate transactionDate;
+
     @Column(name = "fitness_certificate_path")
     private String fitnessCertificatePath;
 

@@ -184,6 +184,7 @@ public class CropInspectionService {
             fitnessCertificate.setSpunToDate(cropInspectionRequest.getSpunToDate());
             fitnessCertificate.setNoOfChandies(cropInspectionRequest.getNoOfChandies());
             fitnessCertificate.setFitnessCertificatePath(cropInspectionRequest.getFitnessCertificatePath());
+            fitnessCertificate.setTransactionDate(cropInspectionRequest.getTransactionDate());
             fitnessCertificate.setIsFcIssued(1);
             fitnessCertificateRepository.save(fitnessCertificate);
 

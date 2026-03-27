@@ -39,4 +39,5 @@ public class CropInspectionRequest {
      private String cropInspectionPath;
      private Long saleAndDisposalId;
      private String fruitsId;
+     private LocalDate transactionDate;
 }
