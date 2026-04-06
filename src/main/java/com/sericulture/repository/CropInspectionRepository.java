@@ -106,7 +106,8 @@ Left JOIN
             tm.name,
             f.first_name,
             f.father_name,
-            f.fruits_id
+            f.fruits_id,
+            ci.crop_inspection_id
         FROM
             crop_inspection ci
         Left JOIN

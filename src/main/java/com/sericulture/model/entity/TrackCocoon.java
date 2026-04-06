@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Date;
 
 @Entity
 @AllArgsConstructor
@@ -24,7 +25,7 @@ public class TrackCocoon extends BaseEntity implements Serializable {
     private Long trackCocoonId;
 
     @Column(name = "market_auction_date")
-    private LocalDate marketAuctionDate;
+    private Date marketAuctionDate;
 
     @Column(name = "market_master_id")
     private Long marketMasterId;

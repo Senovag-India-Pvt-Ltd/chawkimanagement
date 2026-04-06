@@ -719,6 +719,7 @@ public class CropInspectionService {
                         .farmerName(Util.objectToString(arr[7]))
                         .fatherName(Util.objectToString(arr[8]))
                         .fruitsId(Util.objectToString(arr[9]))
+                        .cropInspectionId(Util.objectToLong(arr[10]))
                         .build();
                 responseList.add(response);
             }
