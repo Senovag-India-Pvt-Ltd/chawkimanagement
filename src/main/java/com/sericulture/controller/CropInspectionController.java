@@ -316,25 +316,25 @@ public class CropInspectionController {
         return ResponseEntity.ok(rw);
     }
 
-    @GetMapping("/getCropInspectionDetailsById/{id}")
-    public ResponseEntity<?> getCropInspectionDetailsById(
-            @PathVariable final Integer id
-    ) {
-        ResponseWrapper rw = ResponseWrapper.createWrapper(CropInspectionResponse.class);
+//    @GetMapping("/getCropInspectionDetailsById/{id}")
+//    public ResponseEntity<?> getCropInspectionDetailsById(
+//            @PathVariable final Integer id
+//    ) {
+//        ResponseWrapper rw = ResponseWrapper.createWrapper(CropInspectionResponse.class);
+//
+//        rw.setContent(cropInspectionService.getCropInspectionDetailsById(id));
+//        return ResponseEntity.ok(rw);
+//    }
 
-        rw.setContent(cropInspectionService.getCropInspectionDetailsById(id));
-        return ResponseEntity.ok(rw);
-    }
-
-    @GetMapping("/getFitnessCertificateDetailsById/{id}")
-    public ResponseEntity<?> getFitnessCertificateDetailsById(
-            @PathVariable final Integer id
-    ) {
-        ResponseWrapper rw = ResponseWrapper.createWrapper(FitnessCertificateResponse.class);
-
-        rw.setContent(cropInspectionService.getFitnessCertificateDetailsById(id));
-        return ResponseEntity.ok(rw);
-    }
+//    @GetMapping("/getFitnessCertificateDetailsById/{id}")
+//    public ResponseEntity<?> getFitnessCertificateDetailsById(
+//            @PathVariable final Integer id
+//    ) {
+//        ResponseWrapper rw = ResponseWrapper.createWrapper(FitnessCertificateResponse.class);
+//
+//        rw.setContent(cropInspectionService.getFitnessCertificateDetailsById(id));
+//        return ResponseEntity.ok(rw);
+//    }
 
 
 
