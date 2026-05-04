@@ -35,15 +35,20 @@ public interface FitnessCertificateRepository extends JpaRepository<FitnessCerti
                 fc.farmer_id,
                 fc.expected_marker_date,
                 fc.spun_date,
+                fc.no_of_chandies,
+                fc.expected_cocoon,
                 sadod.rate_per100dfls_price,
                 sadod.number_of_dfls_disposed,
                 sadod.lot_number,
                 sadod.race_id,
+                sadod.expected_date_of_hatching,
                 rm.race_name,
+                gm.grainage_master_name,
                 fc.fruits_id
                 FROM fitness_certificate fc
                 Inner JOIN sale_and_disposal_of_dfls sadod ON sadod.id = fc.sale_and_disposal_id  AND (sadod.is_disposed = 0 OR sadod.is_disposed IS NULL) AND  sadod.active = 1
                 LEFT JOIN race_master rm ON rm.race_id = sadod.race_id AND rm.active = 1
+                LEFT JOIN grainage_master gm ON sadod.grainage_id = gm.grainage_master_id AND gm.active = 1
                  WHERE fc.farmer_id =:farmerId
                  AND fc.is_fc_issued = 1
                  AND fc.active = 1

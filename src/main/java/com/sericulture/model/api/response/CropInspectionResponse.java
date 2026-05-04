@@ -55,6 +55,9 @@ public class CropInspectionResponse {
     private String fatherName;
     private String fruitsId;
     private String cropInspectionDate;
+    private String dateOfBrushing;
+    private String grainageName;
+
 //    @Schema(name = "error", example = "true")
     private Boolean error;
 

@@ -561,12 +561,16 @@ public class CropInspectionService {
                     .farmerId(Util.objectToLong(arr[2]))
                     .spunFromDate(Util.objectToString(arr[3]))
                     .spunToDate(Util.objectToString(arr[4]))
-                    .dflsSource(Util.objectToString(arr[5]))
-                    .numbersOfDfls(Util.objectToString(arr[6]))
-                    .lotNumberRsp(Util.objectToString(arr[7]))
-                    .raceOfDfls(Util.objectToLong(arr[8]))
-                    .raceName(Util.objectToString(arr[9]))
-                    .fruitsId(Util.objectToString(arr[10]))
+                    .noOfChandies(Util.objectToFloat(arr[5]))
+                    .expectedCocoon(Util.objectToFloat(arr[6]))
+                    .dflsSource(Util.objectToString(arr[7]))
+                    .numbersOfDfls(Util.objectToString(arr[8]))
+                    .lotNumberRsp(Util.objectToString(arr[9]))
+                    .raceOfDfls(Util.objectToLong(arr[10]))
+                    .dateOfBrushing(arr[11] != null ? arr[11].toString() : null)
+                    .raceName(Util.objectToString(arr[12]))
+                    .grainageName(Util.objectToString(arr[13]))
+                    .fruitsId(Util.objectToString(arr[14]))
                     .build();
 
             responses.add(response);
