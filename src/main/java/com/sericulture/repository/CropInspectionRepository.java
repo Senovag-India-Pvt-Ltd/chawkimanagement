@@ -147,5 +147,39 @@ Left JOIN
 
     public CropInspection findByCropInspectionIdAndActiveIn(@Param("id") long id, @Param("active") Set<Boolean> active);
 
+    @Query(nativeQuery = true, value = """
+            SELECT
+                ci.crop_inspection_id,
+                ci.crop_inspection_path,
+                ci.farmer_id,
+                ci.date,
+                ci.note,
+                cs.name AS crop_status_name,
+                m.name AS mount_name,
+                r.name AS reason_name,
+                sadod.rate_per100dfls_price,
+                sadod.number_of_dfls_disposed,
+                sadod.lot_number,
+                sadod.race_id,
+                sadod.expected_date_of_hatching,
+                rm.race_name,
+                gm.grainage_master_name,
+                ci.fruits_id,
+                ci.sale_and_disposal_id,
+                ci.crop_inspection_type_id
+                FROM crop_inspection ci
+                INNER JOIN sale_and_disposal_of_dfls sadod ON sadod.id = ci.sale_and_disposal_id AND (sadod.is_disposed = 0 OR sadod.is_disposed IS NULL) AND sadod.active = 1
+                LEFT JOIN race_master rm ON rm.race_id = sadod.race_id AND rm.active = 1
+                LEFT JOIN grainage_master gm ON sadod.grainage_id = gm.grainage_master_id AND gm.active = 1
+                LEFT JOIN crop_status cs ON ci.crop_status_id = cs.crop_status_id
+                LEFT JOIN mount m ON ci.mount_id = m.mount_id
+                LEFT JOIN reason r ON ci.reason_id = r.reason_id
+                WHERE ci.farmer_id = :farmerId
+                AND ci.is_crop_inspected = 1
+                AND ci.active = 1
+                ORDER BY ci.created_date DESC;
+    """)
+    public List<Object[]> getCropInspectionPath(@Param("farmerId") Long farmerId);
+
 
 }
