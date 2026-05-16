@@ -566,6 +566,7 @@ public class ChowkiManagementService {
                     .dflsSource(Util.objectToString(arr[8]))
                     .nameAndAddressOfTheFarm(Util.objectToString(arr[9]))
                     .fruitsId(Util.objectToString(arr[10]))
+                    .grainageMasterName(Util.objectToString(arr[11]))
                     .build();
 
             responses.add(response);
@@ -736,6 +737,50 @@ public class ChowkiManagementService {
         fileOut.close();
         workbook.close();
         return fileIn;
+    }
+
+    public Map<String, Object> getPendingFitnessCertificateByTsc(Long tscMasterId) {
+        List<Object[]> pendingList = chowkiManagemenyRepository.getPendingFitnessCertificateByTsc(tscMasterId);
+        List<ChowkiManagementResponse> responses = new ArrayList<>();
+
+        for (Object[] arr : pendingList) {
+            ChowkiManagementResponse response = ChowkiManagementResponse.builder()
+                    .fruitsId(Util.objectToString(arr[0]))
+                    .farmerName(Util.objectToString(arr[1]))
+                    .raceName(Util.objectToString(arr[2]))
+                    .lotNumber(Util.objectToString(arr[3]))
+                    .numbersOfDfls(Util.objectToLong(arr[4]))
+                    .ratePer100Dfls(Util.objectToFloat(arr[5]))
+                    .build();
+            responses.add(response);
+        }
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("pendingCount", responses.size());
+        result.put("data", responses);
+        return result;
+    }
+
+    public Map<String, Object> getPendingCropInspectionByTsc(Long tscMasterId) {
+        List<Object[]> pendingList = chowkiManagemenyRepository.getPendingCropInspectionByTsc(tscMasterId);
+        List<ChowkiManagementResponse> responses = new ArrayList<>();
+
+        for (Object[] arr : pendingList) {
+            ChowkiManagementResponse response = ChowkiManagementResponse.builder()
+                    .fruitsId(Util.objectToString(arr[0]))
+                    .farmerName(Util.objectToString(arr[1]))
+                    .raceName(Util.objectToString(arr[2]))
+                    .lotNumber(Util.objectToString(arr[3]))
+                    .numbersOfDfls(Util.objectToLong(arr[4]))
+                    .ratePer100Dfls(Util.objectToFloat(arr[5]))
+                    .build();
+            responses.add(response);
+        }
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("pendingCount", responses.size());
+        result.put("data", responses);
+        return result;
     }
 
 }
