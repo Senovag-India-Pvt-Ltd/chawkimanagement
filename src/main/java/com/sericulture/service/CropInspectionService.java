@@ -571,6 +571,41 @@ public class CropInspectionService {
                     .raceName(Util.objectToString(arr[12]))
                     .grainageName(Util.objectToString(arr[13]))
                     .fruitsId(Util.objectToString(arr[14]))
+                    .saleAndDisposalId(Util.objectToLong(arr[15]))
+                    .lotTestDetails(Util.objectToString(arr[16]))
+                    .diseaseStatusId(Util.objectToLong(arr[17]))
+                    .build();
+
+            responses.add(response);
+        }
+
+        return responses;
+    }
+
+    public List<CropInspectionResponse> getCropInspectionPath(Long farmerId) {
+        List<Object[]> details = cropInspectionRepository.getCropInspectionPath(farmerId);
+        List<CropInspectionResponse> responses = new ArrayList<>();
+
+        for (Object[] arr : details) {
+            CropInspectionResponse response = CropInspectionResponse.builder()
+                    .cropInspectionId(Util.objectToLong(arr[0]))
+                    .cropInspectionPath(Util.objectToString(arr[1]))
+                    .farmerId(Util.objectToLong(arr[2]))
+                    .cropDate(arr[3] != null ? arr[3].toString() : null)
+                    .note(Util.objectToString(arr[4]))
+                    .cropStatusName(Util.objectToString(arr[5]))
+                    .mountName(Util.objectToString(arr[6]))
+                    .reasonName(Util.objectToString(arr[7]))
+                    .dflsSource(Util.objectToString(arr[8]))
+                    .numbersOfDfls(Util.objectToString(arr[9]))
+                    .lotNumberRsp(Util.objectToString(arr[10]))
+                    .raceOfDfls(Util.objectToLong(arr[11]))
+                    .dateOfBrushing(arr[12] != null ? arr[12].toString() : null)
+                    .raceName(Util.objectToString(arr[13]))
+                    .grainageName(Util.objectToString(arr[14]))
+                    .fruitsId(Util.objectToString(arr[15]))
+                    .saleAndDisposalId(Util.objectToLong(arr[16]))
+                    .cropInspectionTypeId(Util.objectToLong(arr[17]))
                     .build();
 
             responses.add(response);

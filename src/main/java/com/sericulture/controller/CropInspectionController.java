@@ -154,6 +154,11 @@ public class CropInspectionController {
         return cropInspectionService.getFitnessCertificatePath(farmerId);
     }
 
+    @GetMapping("/getCropInspectionPath/{farmerId}")
+    public List<CropInspectionResponse> getCropInspectionPath(@PathVariable Long farmerId) {
+        return cropInspectionService.getCropInspectionPath(farmerId);
+    }
+
     @PostMapping("/getCropInspectionDetails")
     public ResponseEntity<?> getCropInspectionDetails(
             @RequestParam(required = false) Long tscId,
@@ -303,7 +308,7 @@ public class CropInspectionController {
             @RequestBody final CropInspectionRequest cropInspectionRequest
     ) {
         ResponseWrapper<CropInspectionResponse> rw = ResponseWrapper.createWrapper(CropInspectionResponse.class);
-        rw.setContent(cropInspectionService.updateCropDetailsSeedMarketDetails(cropInspectionRequest));
+        rw.setContent(cropInspectionService.updateFitnessCertificateDetails(cropInspectionRequest));
         return ResponseEntity.ok(rw);
     }
 
@@ -312,7 +317,7 @@ public class CropInspectionController {
             @RequestBody final CropInspectionRequest cropInspectionRequest
     ) {
         ResponseWrapper<CropInspectionResponse> rw = ResponseWrapper.createWrapper(CropInspectionResponse.class);
-        rw.setContent(cropInspectionService.updateFitnessCertificateDetails(cropInspectionRequest));
+        rw.setContent(cropInspectionService.updateCropDetailsSeedMarketDetails(cropInspectionRequest));
         return ResponseEntity.ok(rw);
     }
 
