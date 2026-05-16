@@ -166,14 +166,15 @@ Left JOIN
                 gm.grainage_master_name,
                 ci.fruits_id,
                 ci.sale_and_disposal_id,
-                ci.crop_inspection_type_id
+                ci.crop_inspection_type_id,
+                sadod.is_disposed
                 FROM crop_inspection ci
-                INNER JOIN sale_and_disposal_of_dfls sadod ON sadod.id = ci.sale_and_disposal_id AND (sadod.is_disposed = 0 OR sadod.is_disposed IS NULL) AND sadod.active = 1
-                LEFT JOIN race_master rm ON rm.race_id = sadod.race_id AND rm.active = 1
-                LEFT JOIN grainage_master gm ON sadod.grainage_id = gm.grainage_master_id AND gm.active = 1
                 LEFT JOIN crop_status cs ON ci.crop_status_id = cs.crop_status_id
                 LEFT JOIN mount m ON ci.mount_id = m.mount_id
                 LEFT JOIN reason r ON ci.reason_id = r.reason_id
+                LEFT JOIN sale_and_disposal_of_dfls sadod ON sadod.id = ci.sale_and_disposal_id AND sadod.active = 1
+                LEFT JOIN race_master rm ON rm.race_id = sadod.race_id AND rm.active = 1
+                LEFT JOIN grainage_master gm ON gm.grainage_master_id = sadod.grainage_id AND gm.active = 1
                 WHERE ci.farmer_id = :farmerId
                 AND ci.is_crop_inspected = 1
                 AND ci.active = 1

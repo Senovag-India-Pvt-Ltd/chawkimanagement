@@ -15,7 +15,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -93,6 +95,26 @@ public class S3Service {
         return keys;
     }
 
+
+    public Map<String, Object> downloadFileWithMeta(
+            final String keyName
+    ) throws IOException, AmazonClientException {
+        S3Object s3Object = s3Client.getObject(bucketName, keyName);
+        String contentType = s3Object.getObjectMetadata().getContentType();
+        InputStream inputStream = s3Object.getObjectContent();
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        byte[] buffer = new byte[4096];
+        int len;
+        while ((len = inputStream.read(buffer, 0, buffer.length)) != -1) {
+            outputStream.write(buffer, 0, len);
+        }
+        inputStream.close();
+        log.info("File downloaded from bucket({}): {}", bucketName, keyName);
+        Map<String, Object> result = new HashMap<>();
+        result.put("contentType", contentType != null ? contentType : "application/octet-stream");
+        result.put("data", outputStream);
+        return result;
+    }
 
     public void deleteFile(
             final String keyName

@@ -46,6 +46,7 @@ public class CropInspectionResponse {
     private String dflsSource;
     private String numbersOfDfls;
     private String lotNumberRsp;
+    private String dateOfBrushing;
     private Long raceOfDfls;
     private String raceName;
     private String spunToDate;
@@ -55,9 +56,9 @@ public class CropInspectionResponse {
     private String fatherName;
     private String fruitsId;
     private String cropInspectionDate;
-    private String dateOfBrushing;
     private String grainageName;
     private String cropInspectionPath;
+    private Integer isDisposed;
 
 //    @Schema(name = "error", example = "true")
     private Boolean error;

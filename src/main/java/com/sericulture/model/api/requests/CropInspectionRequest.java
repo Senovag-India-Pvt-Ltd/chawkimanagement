@@ -40,4 +40,8 @@ public class CropInspectionRequest {
      private Long saleAndDisposalId;
      private String fruitsId;
      private LocalDate transactionDate;
+     private Integer raceOfDfls;
+     private Long grainageMasterId;
+     private Integer numbersOfDfls;
+     private LocalDate dateOfBrushing;
 }

@@ -78,4 +78,7 @@ public class SaleAndDisposalOfDfls extends BaseEntity implements Serializable {
 
     @Column(name = "source_of_dfls")
     private String dflsSource;
+
+    @Column(name = "is_disposed")
+    private Integer isDisposed;
 }
