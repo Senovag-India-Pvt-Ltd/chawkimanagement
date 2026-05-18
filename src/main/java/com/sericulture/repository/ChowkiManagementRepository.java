@@ -244,10 +244,12 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
              sadod.source_of_dfls,
              sadod.name_and_address_of_the_farm,
              sadod.fruits_id,
-            gm.grainage_master_name
+             gm.grainage_master_name,
+             f.name_kan
          FROM sale_and_disposal_of_dfls sadod
          LEFT JOIN race_master rm ON sadod.race_id = rm.race_id
-        LEFT JOIN grainage_master gm on sadod.grainage_id=gm.grainage_master_id
+         LEFT JOIN grainage_master gm ON sadod.grainage_id = gm.grainage_master_id
+         LEFT JOIN farmer f ON sadod.fruits_id = f.fruits_id
          WHERE sadod.tsc = :tscMasterId
              AND sadod.active = 1
              AND sadod.is_verified = 0;
@@ -325,7 +327,7 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
     @Query(nativeQuery = true, value = """
      SELECT
             sadod.fruits_id,
-            f.first_name,
+            f.name_kan,
             rm.race_name,
             sadod.lot_number,
             sadod.number_of_dfls_disposed,
@@ -343,7 +345,7 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
     @Query(nativeQuery = true, value = """
      SELECT
             sadod.fruits_id,
-            f.first_name,
+            f.name_kan,
             rm.race_name,
             sadod.lot_number,
             sadod.number_of_dfls_disposed,

@@ -567,6 +567,7 @@ public class ChowkiManagementService {
                     .nameAndAddressOfTheFarm(Util.objectToString(arr[9]))
                     .fruitsId(Util.objectToString(arr[10]))
                     .grainageMasterName(Util.objectToString(arr[11]))
+                    .farmerName(Util.objectToString(arr[12]))
                     .build();
 
             responses.add(response);
