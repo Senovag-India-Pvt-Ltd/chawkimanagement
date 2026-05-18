@@ -411,6 +411,7 @@ public class ChowkiManagementService {
                     .dateOfDisposal(Util.objectToString(arr[7]))
                     .dflsSource(Util.objectToString(arr[8]))
                     .nameAndAddressOfTheFarm(Util.objectToString(arr[9]))
+                    .farmerName(Util.objectToString(arr[10]))
                     .build();
 
             responses.add(response);
@@ -430,6 +431,7 @@ public class ChowkiManagementService {
                     .numbersOfDfls(Util.objectToLong(arr[2]))
                     .ratePer100Dfls(Util.objectToFloat(arr[3]))
                     .raceName(Util.objectToString(arr[5]))
+                    .farmerName(Util.objectToString(arr[6]))
                     .build();
 
             responses.add(response);
@@ -475,6 +477,7 @@ public class ChowkiManagementService {
                     .dateOfDisposal(Util.objectToString(arr[7]))
                     .dflsSource(Util.objectToString(arr[8]))
                     .nameAndAddressOfTheFarm(Util.objectToString(arr[9]))
+                    .farmerName(Util.objectToString(arr[10]))
                     .build();
 
             responses.add(response);
