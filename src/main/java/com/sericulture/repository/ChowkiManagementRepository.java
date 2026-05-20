@@ -194,10 +194,53 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
      LEFT JOIN race_master rm ON sadod.race_id = rm.race_id
      WHERE sadod.fruits_id = :fruitsId
      AND sadod.active = 1
-     AND sadod.is_verified = 1;
+     AND sadod.is_verified = 1
+     AND NOT EXISTS (
+         SELECT 1 FROM crop_inspection ci
+         WHERE ci.sale_and_disposal_id = sadod.id
+         AND ci.active = 1
+     );
     """)
 
     public List<Object[]> getInspectioninfoForFarmerFromSaleDisposalOfDFls(String fruitsId);
+
+    /**
+     * Returns sale-and-disposal-of-DFL rows that are
+     *   1. already crop-inspected   (crop_inspection.is_crop_inspected = 1)
+     *   2. NOT yet certified         (no row in fitness_certificate)
+     * Used by the Fitness Certificate page to drive its DFL list.
+     */
+    @Query(nativeQuery = true, value = """
+         SELECT
+         sadod.id,
+         sadod.lot_number,
+         sadod.number_of_dfls_disposed,
+         sadod.rate_per100dfls_price ,
+         sadod.race_id,
+         rm.race_name,
+         sadod.expected_date_of_hatching,
+         sadod.date_of_disposal,
+         sadod.source_of_dfls,
+         sadod.name_and_address_of_the_farm
+     FROM sale_and_disposal_of_dfls sadod
+     LEFT JOIN race_master rm ON sadod.race_id = rm.race_id
+     WHERE sadod.fruits_id = :fruitsId
+     AND sadod.active = 1
+     AND sadod.is_verified = 1
+     AND EXISTS (
+         SELECT 1 FROM crop_inspection ci
+         WHERE ci.sale_and_disposal_id = sadod.id
+         AND ci.active = 1
+         AND ci.is_crop_inspected = 1
+     )
+     AND NOT EXISTS (
+         SELECT 1 FROM fitness_certificate fc
+         WHERE fc.sale_and_disposal_id = sadod.id
+         AND fc.active = 1
+     );
+    """)
+
+    public List<Object[]> getInspectioninfoForFarmerForFitnessCertificate(String fruitsId);
 
 
     @Query(nativeQuery = true, value = """
