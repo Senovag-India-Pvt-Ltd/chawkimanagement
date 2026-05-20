@@ -5,9 +5,13 @@ import lombok.SneakyThrows;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.ByteArrayOutputStream;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/v1/api/s3")
@@ -32,11 +36,14 @@ public class S3Controller {
 
     @SneakyThrows
     @GetMapping("/download")
-    public ResponseEntity<?> downloadFile(
+    public ResponseEntity<byte[]> downloadFile(
             @RequestParam("fileName") String fileName) throws Exception {
-        val body = s3Service.downloadFile(fileName);
+        Map<String, Object> fileMeta = s3Service.downloadFileWithMeta(fileName);
+        String contentType = (String) fileMeta.get("contentType");
+        ByteArrayOutputStream body = (ByteArrayOutputStream) fileMeta.get("data");
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; ")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline")
+                .contentType(MediaType.parseMediaType(contentType))
                 .body(body.toByteArray());
     }
 

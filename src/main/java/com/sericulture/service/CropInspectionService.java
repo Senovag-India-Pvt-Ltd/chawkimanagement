@@ -574,6 +574,7 @@ public class CropInspectionService {
                     .saleAndDisposalId(Util.objectToLong(arr[15]))
                     .lotTestDetails(Util.objectToString(arr[16]))
                     .diseaseStatusId(Util.objectToLong(arr[17]))
+                    .isDisposed(arr[18] != null ? ((Number) arr[18]).intValue() : null)
                     .build();
 
             responses.add(response);
@@ -606,6 +607,7 @@ public class CropInspectionService {
                     .fruitsId(Util.objectToString(arr[15]))
                     .saleAndDisposalId(Util.objectToLong(arr[16]))
                     .cropInspectionTypeId(Util.objectToLong(arr[17]))
+                    .isDisposed(arr[18] != null ? ((Number) arr[18]).intValue() : null)
                     .build();
 
             responses.add(response);
@@ -1117,8 +1119,20 @@ public class CropInspectionService {
 
         FitnessCertificate fitnessCertificate = fitnessCertificateRepository.findByFitnessCertificateIdAndActiveIn(cropInspectionRequest.getCropInspectionId(), Set.of(true,false));
         if(Objects.nonNull(fitnessCertificate)){
-            fitnessCertificate.setChowkiId(cropInspectionRequest.getChowkiId());
-            fitnessCertificate.setSaleAndDisposalId(cropInspectionRequest.getSaleAndDisposalId());
+            if (fitnessCertificate.getSaleAndDisposalId() != null) {
+                Optional<SaleAndDisposalOfDfls> sadodOpt = saleAndDisposalOfDflsRepository.findByIdAndActive(fitnessCertificate.getSaleAndDisposalId().intValue(), true);
+                if (sadodOpt.isPresent() && Integer.valueOf(1).equals(sadodOpt.get().getIsDisposed())) {
+                    cropDetailsSeedMarketResponse.setError(true);
+                    cropDetailsSeedMarketResponse.setError_description("Cannot edit: E-Inward has already been processed for this record.");
+                    return cropDetailsSeedMarketResponse;
+                }
+            }
+            if (cropInspectionRequest.getChowkiId() != null) {
+                fitnessCertificate.setChowkiId(cropInspectionRequest.getChowkiId());
+            }
+            if (cropInspectionRequest.getSaleAndDisposalId() != null) {
+                fitnessCertificate.setSaleAndDisposalId(cropInspectionRequest.getSaleAndDisposalId());
+            }
             fitnessCertificate.setFarmerId(cropInspectionRequest.getFarmerId());
             fitnessCertificate.setExpectedCocoon(cropInspectionRequest.getExpectedCocoon());
             fitnessCertificate.setLotTestDetails(cropInspectionRequest.getLotTestDetails());
@@ -1130,6 +1144,21 @@ public class CropInspectionService {
             fitnessCertificate.setFruitsId(cropInspectionRequest.getFruitsId());
             fitnessCertificate.setActive(true);
             FitnessCertificate fitnessCertificate1 = fitnessCertificateRepository.save(fitnessCertificate);
+
+            // Update race, grainage, and DFLs count on the linked SaleAndDisposalOfDfls via JOIN — no entity fields added to FitnessCertificate
+            Long linkedSadodId = fitnessCertificate1.getSaleAndDisposalId();
+            if (linkedSadodId != null) {
+                Optional<SaleAndDisposalOfDfls> sadodToUpdate = saleAndDisposalOfDflsRepository.findByIdAndActive(linkedSadodId.intValue(), true);
+                if (sadodToUpdate.isPresent()) {
+                    SaleAndDisposalOfDfls sadod = sadodToUpdate.get();
+                    if (cropInspectionRequest.getRaceOfDfls() != null) sadod.setRaceId(cropInspectionRequest.getRaceOfDfls());
+                    if (cropInspectionRequest.getGrainageMasterId() != null) sadod.setGrainageId(cropInspectionRequest.getGrainageMasterId());
+                    if (cropInspectionRequest.getNumbersOfDfls() != null) sadod.setNumberOfDflsDisposed(cropInspectionRequest.getNumbersOfDfls());
+                    if (cropInspectionRequest.getDateOfBrushing() != null) sadod.setExpectedDateOfHatching(cropInspectionRequest.getDateOfBrushing());
+                    saleAndDisposalOfDflsRepository.save(sadod);
+                }
+            }
+
             cropDetailsSeedMarketResponse = mapper.fitnessCertificateEntityToObject(fitnessCertificate1, CropInspectionResponse.class);
             cropDetailsSeedMarketResponse.setError(false);
         } else {
@@ -1143,6 +1172,16 @@ public class CropInspectionService {
 
 
     @Transactional
+    public void markSaleAndDisposalAsDisposed(Long saleAndDisposalId) {
+        if (saleAndDisposalId == null) return;
+        saleAndDisposalOfDflsRepository.findByIdAndActive(saleAndDisposalId.intValue(), true)
+                .ifPresent(sadod -> {
+                    sadod.setIsDisposed(1);
+                    saleAndDisposalOfDflsRepository.save(sadod);
+                });
+    }
+
+    @Transactional
     public CropInspectionResponse updateFitnessCertificateDetails(CropInspectionRequest cropInspectionRequest){
         CropInspectionResponse cropDetailsSeedMarketResponse = new CropInspectionResponse();
 //        List<RpRoleAssociation> rpRoleAssociationList = rpRoleAssociationRepository.findByRpPageRootName(rpPageRootRequest.getRpPageRootName());
@@ -1152,19 +1191,62 @@ public class CropInspectionService {
 
         CropInspection cropInspection = cropInspectionRepository.findByCropInspectionIdAndActiveIn(cropInspectionRequest.getCropInspectionId(), Set.of(true,false));
         if(Objects.nonNull(cropInspection)){
-            cropInspection.setChowkiId(cropInspectionRequest.getChowkiId());
-            cropInspection.setSaleAndDisposalId(cropInspectionRequest.getSaleAndDisposalId());
-            cropInspection.setFarmerId(cropInspectionRequest.getFarmerId());
-            cropInspection.setCropInspectionTypeId(cropInspectionRequest.getCropInspectionTypeId());
-            cropInspection.setDate(cropInspectionRequest.getDate());
-            cropInspection.setReasonId(cropInspectionRequest.getReasonId());
+            if (cropInspection.getSaleAndDisposalId() != null) {
+                Optional<SaleAndDisposalOfDfls> sadodOpt = saleAndDisposalOfDflsRepository.findByIdAndActive(cropInspection.getSaleAndDisposalId().intValue(), true);
+                if (sadodOpt.isPresent() && Integer.valueOf(1).equals(sadodOpt.get().getIsDisposed())) {
+                    cropDetailsSeedMarketResponse.setError(true);
+                    cropDetailsSeedMarketResponse.setError_description("Cannot edit: E-Inward has already been processed for this record.");
+                    return cropDetailsSeedMarketResponse;
+                }
+            }
+            if (cropInspectionRequest.getChowkiId() != null) {
+                cropInspection.setChowkiId(cropInspectionRequest.getChowkiId());
+            }
+            if (cropInspectionRequest.getSaleAndDisposalId() != null) {
+                cropInspection.setSaleAndDisposalId(cropInspectionRequest.getSaleAndDisposalId());
+            }
+            if (cropInspectionRequest.getFarmerId() != null) {
+                cropInspection.setFarmerId(cropInspectionRequest.getFarmerId());
+            }
+            if (cropInspectionRequest.getCropInspectionTypeId() != null) {
+                cropInspection.setCropInspectionTypeId(cropInspectionRequest.getCropInspectionTypeId());
+            }
+            if (cropInspectionRequest.getDate() != null) {
+                cropInspection.setDate(cropInspectionRequest.getDate());
+            }
+            if (cropInspectionRequest.getReasonId() != null) {
+                cropInspection.setReasonId(cropInspectionRequest.getReasonId());
+            }
+            if (cropInspectionRequest.getCropStatusId() != null) {
+                cropInspection.setCropStatusId(cropInspectionRequest.getCropStatusId());
+            }
+            if (cropInspectionRequest.getMountId() != null) {
+                cropInspection.setMountId(cropInspectionRequest.getMountId());
+            }
+            if (cropInspectionRequest.getFruitsId() != null) {
+                cropInspection.setFruitsId(cropInspectionRequest.getFruitsId());
+            }
+            if (cropInspectionRequest.getCropInspectionPath() != null) {
+                cropInspection.setCropInspectionPath(cropInspectionRequest.getCropInspectionPath());
+            }
             cropInspection.setNote(cropInspectionRequest.getNote());
-            cropInspection.setCropStatusId(cropInspectionRequest.getCropStatusId());
-            cropInspection.setMountId(cropInspectionRequest.getMountId());
-            cropInspection.setCropInspectionPath(cropInspectionRequest.getCropInspectionPath());
-            cropInspection.setFruitsId(cropInspectionRequest.getFruitsId());
             cropInspection.setActive(true);
             CropInspection cropInspection1 = cropInspectionRepository.save(cropInspection);
+
+            // Update race, grainage, DFLs, and date of brushing on the linked SaleAndDisposalOfDfls
+            Long linkedSadodId = cropInspection1.getSaleAndDisposalId();
+            if (linkedSadodId != null) {
+                Optional<SaleAndDisposalOfDfls> sadodToUpdate = saleAndDisposalOfDflsRepository.findByIdAndActive(linkedSadodId.intValue(), true);
+                if (sadodToUpdate.isPresent()) {
+                    SaleAndDisposalOfDfls sadod = sadodToUpdate.get();
+                    if (cropInspectionRequest.getRaceOfDfls() != null) sadod.setRaceId(cropInspectionRequest.getRaceOfDfls());
+                    if (cropInspectionRequest.getGrainageMasterId() != null) sadod.setGrainageId(cropInspectionRequest.getGrainageMasterId());
+                    if (cropInspectionRequest.getNumbersOfDfls() != null) sadod.setNumberOfDflsDisposed(cropInspectionRequest.getNumbersOfDfls());
+                    if (cropInspectionRequest.getDateOfBrushing() != null) sadod.setExpectedDateOfHatching(cropInspectionRequest.getDateOfBrushing());
+                    saleAndDisposalOfDflsRepository.save(sadod);
+                }
+            }
+
             cropDetailsSeedMarketResponse = mapper.cropInspectionEntityToObject(cropInspection1, CropInspectionResponse.class);
             cropDetailsSeedMarketResponse.setError(false);
         } else {

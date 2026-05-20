@@ -156,6 +156,16 @@ public class ChowkiManagementController {
         return chowkiManagementService.getFarmerDetailsFromChowkiManagementByTsc(tscMasterId);
     }
 
+    @GetMapping("/getpendingCropInspectionByTsc/{tscMasterId}")
+    public Map<String, Object> getPendingCropInspectionByTsc(@PathVariable Long tscMasterId) {
+        return chowkiManagementService.getPendingCropInspectionByTsc(tscMasterId);
+    }
+
+    @GetMapping("/getPendingFitnessCertificateByTsc/{tscMasterId}")
+    public Map<String, Object> getPendingFitnessCertificateByTsc(@PathVariable Long tscMasterId) {
+        return chowkiManagementService.getPendingFitnessCertificateByTsc(tscMasterId);
+    }
+
     @PostMapping("/getVerifiedDFLDetails")
     public ResponseEntity<?> getVerifiedDFLDetails(
             @RequestParam(required = false) Long raceId,

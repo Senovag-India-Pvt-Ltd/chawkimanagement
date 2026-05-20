@@ -321,6 +321,12 @@ public class CropInspectionController {
         return ResponseEntity.ok(rw);
     }
 
+    @PostMapping("/markAsDisposed")
+    public ResponseEntity<?> markAsDisposed(@RequestParam Long saleAndDisposalId) {
+        cropInspectionService.markSaleAndDisposalAsDisposed(saleAndDisposalId);
+        return ResponseEntity.ok().build();
+    }
+
 //    @GetMapping("/getCropInspectionDetailsById/{id}")
 //    public ResponseEntity<?> getCropInspectionDetailsById(
 //            @PathVariable final Integer id

@@ -139,9 +139,11 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
          sadod.expected_date_of_hatching,
          sadod.date_of_disposal,
          sadod.source_of_dfls,
-         sadod.name_and_address_of_the_farm
+         sadod.name_and_address_of_the_farm,
+         f.name_kan
      FROM sale_and_disposal_of_dfls sadod
      LEFT JOIN race_master rm ON sadod.race_id = rm.race_id
+     LEFT JOIN farmer f ON sadod.fruits_id = f.fruits_id
      WHERE sadod.fruits_id = :fruitsId
      AND sadod.tsc = :tscId
      AND sadod.active = 1
@@ -157,9 +159,11 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
          sadod.number_of_dfls_disposed,
          sadod.rate_per100dfls_price ,
          sadod.race_id,
-         rm.race_name
+         rm.race_name,
+         f.name_kan
      FROM sale_and_disposal_of_dfls_rsso sadod
      LEFT JOIN race_master rm ON sadod.race_id = rm.race_id
+     LEFT JOIN farmer f ON sadod.fruits_id = f.fruits_id
      WHERE sadod.fruits_id = :fruitsId
      AND sadod.active = 1
      AND sadod.is_verified = 0;
@@ -189,9 +193,11 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
          sadod.expected_date_of_hatching,
          sadod.date_of_disposal,
          sadod.source_of_dfls,
-         sadod.name_and_address_of_the_farm
+         sadod.name_and_address_of_the_farm,
+         f.name_kan
      FROM sale_and_disposal_of_dfls sadod
      LEFT JOIN race_master rm ON sadod.race_id = rm.race_id
+     LEFT JOIN farmer f ON sadod.fruits_id = f.fruits_id
      WHERE sadod.fruits_id = :fruitsId
      AND sadod.active = 1
      AND sadod.is_verified = 1
@@ -286,9 +292,13 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
              sadod.date_of_disposal,
              sadod.source_of_dfls,
              sadod.name_and_address_of_the_farm,
-             sadod.fruits_id
+             sadod.fruits_id,
+             gm.grainage_master_name,
+             f.name_kan
          FROM sale_and_disposal_of_dfls sadod
          LEFT JOIN race_master rm ON sadod.race_id = rm.race_id
+         LEFT JOIN grainage_master gm ON sadod.grainage_id = gm.grainage_master_id
+         LEFT JOIN farmer f ON sadod.fruits_id = f.fruits_id
          WHERE sadod.tsc = :tscMasterId
              AND sadod.active = 1
              AND sadod.is_verified = 0;
@@ -363,5 +373,40 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
             @Param("tscId") Long tscId,
             Pageable pageable);
 
+    @Query(nativeQuery = true, value = """
+     SELECT
+            sadod.fruits_id,
+            f.name_kan,
+            rm.race_name,
+            sadod.lot_number,
+            sadod.number_of_dfls_disposed,
+            sadod.rate_per100dfls_price
+      FROM sale_and_disposal_of_dfls sadod
+        LEFT JOIN race_master rm ON sadod.race_id = rm.race_id
+        LEFT JOIN farmer f ON f.fruits_id = sadod.fruits_id
+        LEFT JOIN crop_inspection cp ON sadod.id = cp.sale_and_disposal_id
+    WHERE (:tscMasterId IS NULL OR sadod.tsc = :tscMasterId)
+        AND (cp.is_crop_inspected IS NULL OR cp.is_crop_inspected = 0)
+        AND sadod.is_verified = 1
+   """)
+    List<Object[]> getPendingCropInspectionByTsc(Long tscMasterId);
 
+    @Query(nativeQuery = true, value = """
+     SELECT
+            sadod.fruits_id,
+            f.name_kan,
+            rm.race_name,
+            sadod.lot_number,
+            sadod.number_of_dfls_disposed,
+            sadod.rate_per100dfls_price
+      FROM sale_and_disposal_of_dfls sadod
+        LEFT JOIN race_master rm ON sadod.race_id = rm.race_id
+        LEFT JOIN farmer f ON f.fruits_id = sadod.fruits_id
+        LEFT JOIN fitness_certificate fc ON sadod.id = fc.sale_and_disposal_id
+        LEFT JOIN crop_inspection cp ON sadod.id = cp.sale_and_disposal_id 
+    WHERE (:tscMasterId IS NULL OR sadod.tsc = :tscMasterId)
+        AND (fc.is_fc_issued IS NULL OR fc.is_fc_issued = 0)
+        AND cp.is_crop_inspected = 1
+   """)
+    List<Object[]> getPendingFitnessCertificateByTsc(Long tscMasterId);
 }

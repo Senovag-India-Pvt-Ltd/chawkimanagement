@@ -70,5 +70,6 @@ public class ChowkiManagementResponse {
     private String cocoonsQuantity;
     private String dateOfDisposal;
     private String nameAndAddressOfTheFarm;
+    private String grainageMasterName;
 
 }
