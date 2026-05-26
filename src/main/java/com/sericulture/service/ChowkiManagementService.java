@@ -486,6 +486,30 @@ public class ChowkiManagementService {
         return responses;
     }
 
+    public List<ChowkiManagementResponse> getInspectioninfoForFarmerFromSaleDisposalOfDFlsForNewApp(String fruitsId) {
+        List<Object[]> chowkiDetails = chowkiManagemenyRepository.getInspectioninfoForFarmerFromSaleDisposalOfDFlsForNewApp(fruitsId);
+        List<ChowkiManagementResponse> responses = new ArrayList<>();
+
+        for (Object[] arr : chowkiDetails) {
+            ChowkiManagementResponse response = ChowkiManagementResponse.builder()
+                    .saleAndDisposalId(Util.objectToInteger(arr[0]))
+                    .lotNumberCrc(Util.objectToString(arr[1]))
+                    .numbersOfDfls(Util.objectToLong(arr[2]))
+                    .ratePer100Dfls(Util.objectToFloat(arr[3]))
+                    .raceName(Util.objectToString(arr[5]))
+                    .hatchingInspectionDate(Util.objectToString(arr[6]))
+                    .dateOfDisposal(Util.objectToString(arr[7]))
+                    .dflsSource(Util.objectToString(arr[8]))
+                    .nameAndAddressOfTheFarm(Util.objectToString(arr[9]))
+                    .farmerName(Util.objectToString(arr[10]))
+                    .build();
+
+            responses.add(response);
+        }
+
+        return responses;
+    }
+
     public List<ChowkiManagementResponse> getInspectioninfoForFarmerForFitnessCertificate(String fruitsId) {
         List<Object[]> chowkiDetails = chowkiManagemenyRepository.getInspectioninfoForFarmerForFitnessCertificate(fruitsId);
         List<ChowkiManagementResponse> responses = new ArrayList<>();

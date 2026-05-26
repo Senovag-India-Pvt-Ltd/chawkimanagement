@@ -201,6 +201,28 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
      WHERE sadod.fruits_id = :fruitsId
      AND sadod.active = 1
      AND sadod.is_verified = 1
+    """)
+
+    public List<Object[]> getInspectioninfoForFarmerFromSaleDisposalOfDFls(String fruitsId);
+
+
+    @Query(nativeQuery = true, value = """
+         SELECT
+         sadod.id,
+         sadod.lot_number,
+         sadod.number_of_dfls_disposed,
+         sadod.rate_per100dfls_price ,
+         sadod.race_id,
+         rm.race_name,
+         sadod.expected_date_of_hatching,
+         sadod.date_of_disposal,
+         sadod.source_of_dfls,
+         sadod.name_and_address_of_the_farm
+     FROM sale_and_disposal_of_dfls sadod
+     LEFT JOIN race_master rm ON sadod.race_id = rm.race_id
+     WHERE sadod.fruits_id = :fruitsId
+     AND sadod.active = 1
+     AND sadod.is_verified = 1
      AND NOT EXISTS (
          SELECT 1 FROM crop_inspection ci
          WHERE ci.sale_and_disposal_id = sadod.id
@@ -208,7 +230,7 @@ public interface ChowkiManagementRepository extends JpaRepository<ChowkiManageme
      );
     """)
 
-    public List<Object[]> getInspectioninfoForFarmerFromSaleDisposalOfDFls(String fruitsId);
+    public List<Object[]> getInspectioninfoForFarmerFromSaleDisposalOfDFlsForNewApp(String fruitsId);
 
     /**
      * Returns sale-and-disposal-of-DFL rows that are

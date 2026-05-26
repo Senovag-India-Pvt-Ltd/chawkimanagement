@@ -116,6 +116,11 @@ public class ChowkiManagementController {
         return chowkiManagementService.getInspectioninfoForFarmerFromSaleDisposalOfDFls(fruitsId);
     }
 
+    @GetMapping("/getInspectioninfoForFarmerFromSaleDisposalOfDFlsForNewApp/{fruitsId}")
+    public List<ChowkiManagementResponse> getInspectioninfoForFarmerFromSaleDisposalOfDFlsForNewApp(@PathVariable String fruitsId) {
+        return chowkiManagementService.getInspectioninfoForFarmerFromSaleDisposalOfDFlsForNewApp(fruitsId);
+    }
+
     /**
      * Used by the Fitness Certificate page. Returns DFLs that are already
      * crop-inspected (is_crop_inspected = 1) and don't yet have a
