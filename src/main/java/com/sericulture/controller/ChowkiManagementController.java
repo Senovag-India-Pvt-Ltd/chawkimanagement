@@ -51,33 +51,33 @@ public class ChowkiManagementController {
     }
 
     @PostMapping("/add-info")
-    public AddChowkiResponse insertData(@Valid @RequestBody AddChowkiRequest addChowkiRequest) {
+    public AddChowkiResponse insertData(@RequestBody AddChowkiRequest addChowkiRequest) {
         return chowkiManagementService.insertData(addChowkiRequest);
     }
 
     @PostMapping("/add-dfl-info")
-    public AddChowkiResponse insertDFLData(@Valid @RequestBody AddChowkiRequest addChowkiRequest) {
+    public AddChowkiResponse insertDFLData(@RequestBody AddChowkiRequest addChowkiRequest) {
         return chowkiManagementService.insertDFLData(addChowkiRequest);
     }
 
     @PostMapping("/add-sale-disposal-dfl-info")
-    public AddChowkiResponse insertSaleAndDisposalDFlDetails(@Valid @RequestBody AddSaleDisposalRequest addSaleDisposalRequest) {
+    public AddChowkiResponse insertSaleAndDisposalDFlDetails(@RequestBody AddSaleDisposalRequest addSaleDisposalRequest) {
         return chowkiManagementService.insertSaleAndDisposalDFlDetails(addSaleDisposalRequest);
     }
 
 
     @PostMapping("/update-info")
-    public CommonChowkiResponse updateData(@Valid @RequestBody UpdateChowkiRequest updateChowkiRequest) {
+    public CommonChowkiResponse updateData(@RequestBody UpdateChowkiRequest updateChowkiRequest) {
         return chowkiManagementService.updateData(updateChowkiRequest);
     }
 
     @PostMapping("/update-dfl-info")
-    public CommonChowkiResponse updateDFLData(@Valid @RequestBody UpdateChowkiRequest updateChowkiRequest) {
+    public CommonChowkiResponse updateDFLData(@RequestBody UpdateChowkiRequest updateChowkiRequest) {
         return chowkiManagementService.updateDFLData(updateChowkiRequest);
     }
 
     @PostMapping("/update-sale-disposal-dfl-info")
-    public CommonChowkiResponse updateSaleDFLData(@Valid @RequestBody UpdateChowkiRequest updateChowkiRequest) {
+    public CommonChowkiResponse updateSaleDFLData(@RequestBody UpdateChowkiRequest updateChowkiRequest) {
         return chowkiManagementService.updateSaleDFLData(updateChowkiRequest);
     }
 
