@@ -14,9 +14,19 @@ import com.sericulture.model.api.response.*;
 import com.sericulture.model.entity.*;
 import com.sericulture.repository.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -692,42 +702,156 @@ public class CropInspectionService {
 
         buildResponse(responseList, page.getContent(), pageNumber, pageSize);
 
-        Workbook workbook = new XSSFWorkbook();
+        String[] headerLabels = {
+            "Sl.No", "Farmer Name", "Father Name", "Fruits ID", "Date", "Note",
+            "Crop Status", "Mount Name", "Reason Name", "Sale & Disposal ID", "TSC Name"
+        };
+        final int TOTAL_COLS = headerLabels.length;
+
+        SXSSFWorkbook workbook = new SXSSFWorkbook(100);
+        workbook.setCompressTempFiles(true);
         Sheet sheet = workbook.createSheet("Crop Inspection Report");
 
-        // Header row
-        Row headerRow = sheet.createRow(0);
-        headerRow.createCell(0).setCellValue("Sl.No");
-        headerRow.createCell(1).setCellValue("Farmer Name");
-        headerRow.createCell(2).setCellValue("Father Name");
-        headerRow.createCell(3).setCellValue("Fruits ID");
-        headerRow.createCell(4).setCellValue("Date");
-        headerRow.createCell(5).setCellValue("Note");
-        headerRow.createCell(6).setCellValue("Crop Status");
-        headerRow.createCell(7).setCellValue("Mount Name");
-        headerRow.createCell(8).setCellValue("Reason Name");
-        headerRow.createCell(9).setCellValue("Sale & Disposal ID");
-        headerRow.createCell(10).setCellValue("TSC Name");
+        // ── Colors ───────────────────────────────────────────────────────────
+        XSSFColor primaryBlue = new XSSFColor(new byte[]{(byte)26,  (byte)95,  (byte)158}, null);
+        XSSFColor darkNavy    = new XSSFColor(new byte[]{(byte)12,  (byte)74,  (byte)158}, null);
+        XSSFColor altRow      = new XSSFColor(new byte[]{(byte)247, (byte)250, (byte)253}, null);
+        XSSFColor white       = new XSSFColor(new byte[]{(byte)255, (byte)255, (byte)255}, null);
+        XSSFColor darkText    = new XSSFColor(new byte[]{(byte)30,  (byte)58,  (byte)95},  null);
+        XSSFColor black       = new XSSFColor(new byte[]{(byte)0,   (byte)0,   (byte)0},   null);
 
-// Data rows
-        int dataRow = 1;
-        for (CropInspectionResponse c : responseList) {
-            Row row = sheet.createRow(dataRow++);
-            row.createCell(0).setCellValue(c.getSerialNumber());
-            row.createCell(1).setCellValue(c.getFarmerName());
-            row.createCell(2).setCellValue(c.getFatherName());
-            row.createCell(3).setCellValue(c.getFruitsId());
-            row.createCell(4).setCellValue(c.getCropInspectionDate());
-            row.createCell(5).setCellValue(c.getNote());
-            row.createCell(6).setCellValue(c.getCropStatusName());
-            row.createCell(7).setCellValue(c.getMountName());
-            row.createCell(8).setCellValue(c.getReasonName());
-            row.createCell(9).setCellValue(c.getSaleAndDisposalId());
-            row.createCell(10).setCellValue(c.getTscName());
+        // ── Fonts ────────────────────────────────────────────────────────────
+        XSSFFont titleFont = (XSSFFont) workbook.createFont();
+        titleFont.setFontName("Calibri"); titleFont.setFontHeightInPoints((short)16);
+        titleFont.setBold(true); titleFont.setColor(white);
+
+        XSSFFont subFont = (XSSFFont) workbook.createFont();
+        subFont.setFontName("Calibri"); subFont.setFontHeightInPoints((short)11);
+        subFont.setColor(white);
+
+        XSSFFont hdrFont = (XSSFFont) workbook.createFont();
+        hdrFont.setFontName("Calibri"); hdrFont.setFontHeightInPoints((short)11);
+        hdrFont.setBold(true); hdrFont.setColor(white);
+
+        XSSFFont dataFont = (XSSFFont) workbook.createFont();
+        dataFont.setFontName("Calibri"); dataFont.setFontHeightInPoints((short)10);
+        dataFont.setColor(darkText);
+
+        // ── Styles ───────────────────────────────────────────────────────────
+        XSSFCellStyle titleStyle = (XSSFCellStyle) workbook.createCellStyle();
+        titleStyle.setFont(titleFont);
+        titleStyle.setFillForegroundColor(darkNavy);
+        titleStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        titleStyle.setAlignment(HorizontalAlignment.CENTER);
+        titleStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        titleStyle.setBorderTop(BorderStyle.THIN); titleStyle.setBorderBottom(BorderStyle.THIN);
+        titleStyle.setBorderLeft(BorderStyle.THIN); titleStyle.setBorderRight(BorderStyle.THIN);
+        titleStyle.setTopBorderColor(black); titleStyle.setBottomBorderColor(black);
+        titleStyle.setLeftBorderColor(black); titleStyle.setRightBorderColor(black);
+
+        XSSFCellStyle subStyle = (XSSFCellStyle) workbook.createCellStyle();
+        subStyle.setFont(subFont);
+        subStyle.setFillForegroundColor(primaryBlue);
+        subStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        subStyle.setAlignment(HorizontalAlignment.CENTER);
+        subStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        subStyle.setBorderTop(BorderStyle.THIN); subStyle.setBorderBottom(BorderStyle.THIN);
+        subStyle.setBorderLeft(BorderStyle.THIN); subStyle.setBorderRight(BorderStyle.THIN);
+        subStyle.setTopBorderColor(black); subStyle.setBottomBorderColor(black);
+        subStyle.setLeftBorderColor(black); subStyle.setRightBorderColor(black);
+
+        XSSFCellStyle hdrStyle = (XSSFCellStyle) workbook.createCellStyle();
+        hdrStyle.setFont(hdrFont);
+        hdrStyle.setFillForegroundColor(primaryBlue);
+        hdrStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        hdrStyle.setAlignment(HorizontalAlignment.CENTER);
+        hdrStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        hdrStyle.setWrapText(true);
+        hdrStyle.setBorderTop(BorderStyle.THIN); hdrStyle.setBorderBottom(BorderStyle.THIN);
+        hdrStyle.setBorderLeft(BorderStyle.THIN); hdrStyle.setBorderRight(BorderStyle.THIN);
+        hdrStyle.setTopBorderColor(black); hdrStyle.setBottomBorderColor(black);
+        hdrStyle.setLeftBorderColor(black); hdrStyle.setRightBorderColor(black);
+
+        XSSFCellStyle dataWhite = (XSSFCellStyle) workbook.createCellStyle();
+        dataWhite.setFont(dataFont);
+        dataWhite.setAlignment(HorizontalAlignment.CENTER);
+        dataWhite.setVerticalAlignment(VerticalAlignment.CENTER);
+        dataWhite.setWrapText(true);
+        dataWhite.setBorderTop(BorderStyle.THIN); dataWhite.setBorderBottom(BorderStyle.THIN);
+        dataWhite.setBorderLeft(BorderStyle.THIN); dataWhite.setBorderRight(BorderStyle.THIN);
+        dataWhite.setTopBorderColor(black); dataWhite.setBottomBorderColor(black);
+        dataWhite.setLeftBorderColor(black); dataWhite.setRightBorderColor(black);
+
+        XSSFCellStyle dataAlt = (XSSFCellStyle) workbook.createCellStyle();
+        dataAlt.cloneStyleFrom(dataWhite);
+        dataAlt.setFillForegroundColor(altRow);
+        dataAlt.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+        // ── Row 0: Department title ───────────────────────────────────────────
+        Row titleRow = sheet.createRow(0);
+        titleRow.setHeightInPoints(36);
+        Cell titleCell = titleRow.createCell(0);
+        titleCell.setCellValue("Department of Sericulture, Government of Karnataka");
+        titleCell.setCellStyle(titleStyle);
+        for (int c = 1; c < TOTAL_COLS; c++) { titleRow.createCell(c).setCellStyle(titleStyle); }
+        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, TOTAL_COLS - 1));
+
+        // ── Row 1: Report name ────────────────────────────────────────────────
+        Row reportRow = sheet.createRow(1);
+        reportRow.setHeightInPoints(24);
+        Cell reportCell = reportRow.createCell(0);
+        reportCell.setCellValue("CROP INSPECTION REPORT");
+        reportCell.setCellStyle(subStyle);
+        for (int c = 1; c < TOTAL_COLS; c++) { reportRow.createCell(c).setCellStyle(subStyle); }
+        sheet.addMergedRegion(new CellRangeAddress(1, 1, 0, TOTAL_COLS - 1));
+
+        // ── Row 2: Generated on ───────────────────────────────────────────────
+        Row genRow = sheet.createRow(2);
+        genRow.setHeightInPoints(20);
+        Cell genCell = genRow.createCell(0);
+        genCell.setCellValue("Generated On: " + new java.text.SimpleDateFormat("dd-MMM-yyyy HH:mm").format(new java.util.Date()));
+        genCell.setCellStyle(subStyle);
+        for (int c = 1; c < TOTAL_COLS; c++) { genRow.createCell(c).setCellStyle(subStyle); }
+        sheet.addMergedRegion(new CellRangeAddress(2, 2, 0, TOTAL_COLS - 1));
+
+        // ── Row 3: Column headers ─────────────────────────────────────────────
+        Row headerRow = sheet.createRow(3);
+        headerRow.setHeightInPoints(36);
+        for (int i = 0; i < TOTAL_COLS; i++) {
+            Cell hCell = headerRow.createCell(i);
+            hCell.setCellValue(headerLabels[i]);
+            hCell.setCellStyle(hdrStyle);
         }
 
-        for (int col = 0; col <= 7; col++) {
-            sheet.autoSizeColumn(col, true);
+        // ── Rows 4+: Data rows ────────────────────────────────────────────────
+        int dataStartsFrom = 4;
+        for (int i = 0; i < responseList.size(); i++) {
+            CropInspectionResponse c = responseList.get(i);
+            Row row = sheet.createRow(dataStartsFrom + i);
+            XSSFCellStyle rowStyle = (i % 2 != 0) ? dataAlt : dataWhite;
+            String[] values = {
+                String.valueOf(c.getSerialNumber()),
+                c.getFarmerName(),
+                c.getFatherName(),
+                c.getFruitsId(),
+                c.getCropInspectionDate(),
+                c.getNote(),
+                c.getCropStatusName(),
+                c.getMountName(),
+                c.getReasonName(),
+                c.getSaleAndDisposalId() != null ? String.valueOf(c.getSaleAndDisposalId()) : "",
+                c.getTscName()
+            };
+            for (int col = 0; col < TOTAL_COLS; col++) {
+                Cell cell = row.createCell(col);
+                cell.setCellValue(values[col] != null ? values[col] : "");
+                cell.setCellStyle(rowStyle);
+            }
+        }
+
+        sheet.createFreezePane(0, 4);
+        for (int col = 0; col < TOTAL_COLS; col++) {
+            sheet.setColumnWidth(col, 20 * 256);
         }
 
         String userHome = System.getProperty("user.home");
@@ -736,11 +860,10 @@ public class CropInspectionService {
         Path filePath = Paths.get(directoryPath, "crop_inspection_report" + Util.getISTLocalDate() + ".xlsx");
 
         FileOutputStream fileOut = new FileOutputStream(filePath.toString());
-        FileInputStream fileIn = new FileInputStream(filePath.toString());
         workbook.write(fileOut);
         fileOut.close();
         workbook.close();
-
+        FileInputStream fileIn = new FileInputStream(filePath.toString());
         return fileIn;
     }
 
@@ -792,44 +915,158 @@ public class CropInspectionService {
 
         buildResponseForFitness(responseList, page.getContent(), pageNumber, pageSize);
 
-        Workbook workbook = new XSSFWorkbook();
+        String[] headerLabels = {
+            "Sl.No", "Farmer Name", "Father Name", "Fruits ID", "Fitness Certificate ID",
+            "Fitness Certificate Path", "Farmer ID", "Rate per 100 DFLs Price",
+            "Number of DFLs Disposed", "Lot Number", "Race Name", "TSC Name"
+        };
+        final int TOTAL_COLS = headerLabels.length;
+
+        SXSSFWorkbook workbook = new SXSSFWorkbook(100);
+        workbook.setCompressTempFiles(true);
         Sheet sheet = workbook.createSheet("Fitness Certificate Report");
 
-        // Header row
-        Row headerRow = sheet.createRow(0);
-        headerRow.createCell(0).setCellValue("Sl.No");
-        headerRow.createCell(1).setCellValue("Farmer Name");
-        headerRow.createCell(2).setCellValue("Father Name");
-        headerRow.createCell(3).setCellValue("Fruits ID");
-        headerRow.createCell(4).setCellValue("Fitness Certificate ID");
-        headerRow.createCell(5).setCellValue("Fitness Certificate Path");
-        headerRow.createCell(6).setCellValue("Farmer ID");
-        headerRow.createCell(7).setCellValue("Rate per 100 DFLs Price");
-        headerRow.createCell(8).setCellValue("Number of DFLs Disposed");
-        headerRow.createCell(9).setCellValue("Lot Number");
-        headerRow.createCell(10).setCellValue("Race Name");
-        headerRow.createCell(11).setCellValue("TSC Name");
+        // ── Colors ───────────────────────────────────────────────────────────
+        XSSFColor primaryBlue = new XSSFColor(new byte[]{(byte)26,  (byte)95,  (byte)158}, null);
+        XSSFColor darkNavy    = new XSSFColor(new byte[]{(byte)12,  (byte)74,  (byte)158}, null);
+        XSSFColor altRow      = new XSSFColor(new byte[]{(byte)247, (byte)250, (byte)253}, null);
+        XSSFColor white       = new XSSFColor(new byte[]{(byte)255, (byte)255, (byte)255}, null);
+        XSSFColor darkText    = new XSSFColor(new byte[]{(byte)30,  (byte)58,  (byte)95},  null);
+        XSSFColor black       = new XSSFColor(new byte[]{(byte)0,   (byte)0,   (byte)0},   null);
 
-        // Data rows
-        int dataRow = 1;
-        for (FitnessCertificateResponse f : responseList) {
-            Row row = sheet.createRow(dataRow++);
-            row.createCell(0).setCellValue(f.getSerialNumber());
-            row.createCell(1).setCellValue(f.getFarmerName());
-            row.createCell(2).setCellValue(f.getFatherName());
-            row.createCell(3).setCellValue(f.getFruitsId());
-            row.createCell(4).setCellValue(f.getFitnessCertificateId());
-            row.createCell(5).setCellValue(f.getFitnessCertificatePath());
-            row.createCell(6).setCellValue(f.getFarmerId());
-            row.createCell(7).setCellValue(f.getRatePer100Dfls());
-            row.createCell(8).setCellValue(f.getNumberOfDflsDisposed());
-            row.createCell(9).setCellValue(f.getLotNumber());
-            row.createCell(10).setCellValue(f.getRaceName());
-            row.createCell(11).setCellValue(f.getTscName());
+        // ── Fonts ────────────────────────────────────────────────────────────
+        XSSFFont titleFont = (XSSFFont) workbook.createFont();
+        titleFont.setFontName("Calibri"); titleFont.setFontHeightInPoints((short)16);
+        titleFont.setBold(true); titleFont.setColor(white);
+
+        XSSFFont subFont = (XSSFFont) workbook.createFont();
+        subFont.setFontName("Calibri"); subFont.setFontHeightInPoints((short)11);
+        subFont.setColor(white);
+
+        XSSFFont hdrFont = (XSSFFont) workbook.createFont();
+        hdrFont.setFontName("Calibri"); hdrFont.setFontHeightInPoints((short)11);
+        hdrFont.setBold(true); hdrFont.setColor(white);
+
+        XSSFFont dataFont = (XSSFFont) workbook.createFont();
+        dataFont.setFontName("Calibri"); dataFont.setFontHeightInPoints((short)10);
+        dataFont.setColor(darkText);
+
+        // ── Styles ───────────────────────────────────────────────────────────
+        XSSFCellStyle titleStyle = (XSSFCellStyle) workbook.createCellStyle();
+        titleStyle.setFont(titleFont);
+        titleStyle.setFillForegroundColor(darkNavy);
+        titleStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        titleStyle.setAlignment(HorizontalAlignment.CENTER);
+        titleStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        titleStyle.setBorderTop(BorderStyle.THIN); titleStyle.setBorderBottom(BorderStyle.THIN);
+        titleStyle.setBorderLeft(BorderStyle.THIN); titleStyle.setBorderRight(BorderStyle.THIN);
+        titleStyle.setTopBorderColor(black); titleStyle.setBottomBorderColor(black);
+        titleStyle.setLeftBorderColor(black); titleStyle.setRightBorderColor(black);
+
+        XSSFCellStyle subStyle = (XSSFCellStyle) workbook.createCellStyle();
+        subStyle.setFont(subFont);
+        subStyle.setFillForegroundColor(primaryBlue);
+        subStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        subStyle.setAlignment(HorizontalAlignment.CENTER);
+        subStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        subStyle.setBorderTop(BorderStyle.THIN); subStyle.setBorderBottom(BorderStyle.THIN);
+        subStyle.setBorderLeft(BorderStyle.THIN); subStyle.setBorderRight(BorderStyle.THIN);
+        subStyle.setTopBorderColor(black); subStyle.setBottomBorderColor(black);
+        subStyle.setLeftBorderColor(black); subStyle.setRightBorderColor(black);
+
+        XSSFCellStyle hdrStyle = (XSSFCellStyle) workbook.createCellStyle();
+        hdrStyle.setFont(hdrFont);
+        hdrStyle.setFillForegroundColor(primaryBlue);
+        hdrStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        hdrStyle.setAlignment(HorizontalAlignment.CENTER);
+        hdrStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        hdrStyle.setWrapText(true);
+        hdrStyle.setBorderTop(BorderStyle.THIN); hdrStyle.setBorderBottom(BorderStyle.THIN);
+        hdrStyle.setBorderLeft(BorderStyle.THIN); hdrStyle.setBorderRight(BorderStyle.THIN);
+        hdrStyle.setTopBorderColor(black); hdrStyle.setBottomBorderColor(black);
+        hdrStyle.setLeftBorderColor(black); hdrStyle.setRightBorderColor(black);
+
+        XSSFCellStyle dataWhite = (XSSFCellStyle) workbook.createCellStyle();
+        dataWhite.setFont(dataFont);
+        dataWhite.setAlignment(HorizontalAlignment.CENTER);
+        dataWhite.setVerticalAlignment(VerticalAlignment.CENTER);
+        dataWhite.setWrapText(true);
+        dataWhite.setBorderTop(BorderStyle.THIN); dataWhite.setBorderBottom(BorderStyle.THIN);
+        dataWhite.setBorderLeft(BorderStyle.THIN); dataWhite.setBorderRight(BorderStyle.THIN);
+        dataWhite.setTopBorderColor(black); dataWhite.setBottomBorderColor(black);
+        dataWhite.setLeftBorderColor(black); dataWhite.setRightBorderColor(black);
+
+        XSSFCellStyle dataAlt = (XSSFCellStyle) workbook.createCellStyle();
+        dataAlt.cloneStyleFrom(dataWhite);
+        dataAlt.setFillForegroundColor(altRow);
+        dataAlt.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+        // ── Row 0: Department title ───────────────────────────────────────────
+        Row titleRow = sheet.createRow(0);
+        titleRow.setHeightInPoints(36);
+        Cell titleCell = titleRow.createCell(0);
+        titleCell.setCellValue("Department of Sericulture, Government of Karnataka");
+        titleCell.setCellStyle(titleStyle);
+        for (int c = 1; c < TOTAL_COLS; c++) { titleRow.createCell(c).setCellStyle(titleStyle); }
+        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, TOTAL_COLS - 1));
+
+        // ── Row 1: Report name ────────────────────────────────────────────────
+        Row reportRow = sheet.createRow(1);
+        reportRow.setHeightInPoints(24);
+        Cell reportCell = reportRow.createCell(0);
+        reportCell.setCellValue("FITNESS CERTIFICATE REPORT");
+        reportCell.setCellStyle(subStyle);
+        for (int c = 1; c < TOTAL_COLS; c++) { reportRow.createCell(c).setCellStyle(subStyle); }
+        sheet.addMergedRegion(new CellRangeAddress(1, 1, 0, TOTAL_COLS - 1));
+
+        // ── Row 2: Generated on ───────────────────────────────────────────────
+        Row genRow = sheet.createRow(2);
+        genRow.setHeightInPoints(20);
+        Cell genCell = genRow.createCell(0);
+        genCell.setCellValue("Generated On: " + new java.text.SimpleDateFormat("dd-MMM-yyyy HH:mm").format(new java.util.Date()));
+        genCell.setCellStyle(subStyle);
+        for (int c = 1; c < TOTAL_COLS; c++) { genRow.createCell(c).setCellStyle(subStyle); }
+        sheet.addMergedRegion(new CellRangeAddress(2, 2, 0, TOTAL_COLS - 1));
+
+        // ── Row 3: Column headers ─────────────────────────────────────────────
+        Row headerRow = sheet.createRow(3);
+        headerRow.setHeightInPoints(36);
+        for (int i = 0; i < TOTAL_COLS; i++) {
+            Cell hCell = headerRow.createCell(i);
+            hCell.setCellValue(headerLabels[i]);
+            hCell.setCellStyle(hdrStyle);
         }
 
-        for (int col = 0; col <= 11; col++) {
-            sheet.autoSizeColumn(col, true);
+        // ── Rows 4+: Data rows ────────────────────────────────────────────────
+        int dataStartsFrom = 4;
+        for (int i = 0; i < responseList.size(); i++) {
+            FitnessCertificateResponse f = responseList.get(i);
+            Row row = sheet.createRow(dataStartsFrom + i);
+            XSSFCellStyle rowStyle = (i % 2 != 0) ? dataAlt : dataWhite;
+            String[] values = {
+                String.valueOf(f.getSerialNumber()),
+                f.getFarmerName(),
+                f.getFatherName(),
+                f.getFruitsId(),
+                f.getFitnessCertificateId() != null ? String.valueOf(f.getFitnessCertificateId()) : "",
+                f.getFitnessCertificatePath(),
+                f.getFarmerId() != null ? String.valueOf(f.getFarmerId()) : "",
+                f.getRatePer100Dfls() != null ? String.valueOf(f.getRatePer100Dfls()) : "",
+                f.getNumberOfDflsDisposed() != null ? String.valueOf(f.getNumberOfDflsDisposed()) : "",
+                f.getLotNumber(),
+                f.getRaceName(),
+                f.getTscName()
+            };
+            for (int col = 0; col < TOTAL_COLS; col++) {
+                Cell cell = row.createCell(col);
+                cell.setCellValue(values[col] != null ? values[col] : "");
+                cell.setCellStyle(rowStyle);
+            }
+        }
+
+        sheet.createFreezePane(0, 4);
+        for (int col = 0; col < TOTAL_COLS; col++) {
+            sheet.setColumnWidth(col, 20 * 256);
         }
 
         String userHome = System.getProperty("user.home");
@@ -838,11 +1075,10 @@ public class CropInspectionService {
         Path filePath = Paths.get(directoryPath, "fitness_certificate_report" + Util.getISTLocalDate() + ".xlsx");
 
         FileOutputStream fileOut = new FileOutputStream(filePath.toString());
-        FileInputStream fileIn = new FileInputStream(filePath.toString());
         workbook.write(fileOut);
         fileOut.close();
         workbook.close();
-
+        FileInputStream fileIn = new FileInputStream(filePath.toString());
         return fileIn;
     }
 
@@ -936,59 +1172,166 @@ public class CropInspectionService {
 
         buildResponseForFarmerMulberryExtension(responseList, applicablePage.getContent(), pageNumber, pageSize);
 
-        Workbook workbook = new XSSFWorkbook();
+        String[] headerLabels = {
+            "Sl.No", "First Name", "Father Name", "Fruits ID", "Scheme", "Address",
+            "TSC", "TSC (Kannada)", "Mulberry Variety", "Mulberry Variety (Kannada)",
+            "Plantation Date", "Number of Saplings", "Mulberry Area", "Spacing",
+            "Application Type", "Uprooting Reason", "Uprooting Date", "District", "Taluk"
+        };
+        final int TOTAL_COLS = headerLabels.length;
+
+        SXSSFWorkbook workbook = new SXSSFWorkbook(100);
+        workbook.setCompressTempFiles(true);
         Sheet sheet = workbook.createSheet("Farmer Mulberry Extension Report");
 
-        // Header row
-        Row headerRow = sheet.createRow(0);
-        headerRow.createCell(0).setCellValue("Sl.No");
-        headerRow.createCell(1).setCellValue("First Name");
-        headerRow.createCell(2).setCellValue("Father Name");
-        headerRow.createCell(3).setCellValue("Fruits ID");
-        headerRow.createCell(4).setCellValue("Scheme");
-        headerRow.createCell(5).setCellValue("Address");
-        headerRow.createCell(6).setCellValue("TSC");
-        headerRow.createCell(7).setCellValue("TSC (Kannada)");
-        headerRow.createCell(8).setCellValue("Mulberry Variety");
-        headerRow.createCell(9).setCellValue("Mulberry Variety (Kannada)");
-        headerRow.createCell(10).setCellValue("Plantation Date");
-        headerRow.createCell(11).setCellValue("Number of Saplings");
-        headerRow.createCell(12).setCellValue("Mulberry Area");
-        headerRow.createCell(13).setCellValue("Spacing");
-        headerRow.createCell(14).setCellValue("Application Type");
-        headerRow.createCell(15).setCellValue("Uprooting Reason");
-        headerRow.createCell(16).setCellValue("Uprooting Date");
-        headerRow.createCell(17).setCellValue("District");
-        headerRow.createCell(18).setCellValue("Taluk");
+        // ── Colors ───────────────────────────────────────────────────────────
+        XSSFColor primaryBlue = new XSSFColor(new byte[]{(byte)26,  (byte)95,  (byte)158}, null);
+        XSSFColor darkNavy    = new XSSFColor(new byte[]{(byte)12,  (byte)74,  (byte)158}, null);
+        XSSFColor altRow      = new XSSFColor(new byte[]{(byte)247, (byte)250, (byte)253}, null);
+        XSSFColor white       = new XSSFColor(new byte[]{(byte)255, (byte)255, (byte)255}, null);
+        XSSFColor darkText    = new XSSFColor(new byte[]{(byte)30,  (byte)58,  (byte)95},  null);
+        XSSFColor black       = new XSSFColor(new byte[]{(byte)0,   (byte)0,   (byte)0},   null);
 
-        // Data rows
-        int dataRow = 1;
-        for (FarmerMulberryExtensionResponse r : responseList) {
-            Row row = sheet.createRow(dataRow++);
-            row.createCell(0).setCellValue(r.getSerialNumber());
-            row.createCell(1).setCellValue(r.getFirstName());
-            row.createCell(2).setCellValue(r.getFatherName());
-            row.createCell(3).setCellValue(r.getFruitsId());
-            row.createCell(4).setCellValue(r.getScheme());
-            row.createCell(5).setCellValue(r.getAddressText());
-            row.createCell(6).setCellValue(r.getTscName());
-            row.createCell(7).setCellValue(r.getTscNameKannada());
-            row.createCell(8).setCellValue(r.getMulberryVarietyName());
-            row.createCell(9).setCellValue(r.getMulberryVarietyNameKannada());
-            row.createCell(10).setCellValue(r.getPlantationDate());
-            row.createCell(11).setCellValue(r.getNumberOfSaplings());
-            row.createCell(12).setCellValue(r.getMulberryArea());
-            row.createCell(13).setCellValue(r.getSpacing());
-            row.createCell(14).setCellValue(r.getApplicationType());
-            row.createCell(15).setCellValue(r.getUprootingReason());
-            row.createCell(16).setCellValue(r.getUprootingDate());
-            row.createCell(16).setCellValue(r.getDistrictName());
-            row.createCell(16).setCellValue(r.getTalukName());
+        // ── Fonts ────────────────────────────────────────────────────────────
+        XSSFFont titleFont = (XSSFFont) workbook.createFont();
+        titleFont.setFontName("Calibri"); titleFont.setFontHeightInPoints((short)16);
+        titleFont.setBold(true); titleFont.setColor(white);
+
+        XSSFFont subFont = (XSSFFont) workbook.createFont();
+        subFont.setFontName("Calibri"); subFont.setFontHeightInPoints((short)11);
+        subFont.setColor(white);
+
+        XSSFFont hdrFont = (XSSFFont) workbook.createFont();
+        hdrFont.setFontName("Calibri"); hdrFont.setFontHeightInPoints((short)11);
+        hdrFont.setBold(true); hdrFont.setColor(white);
+
+        XSSFFont dataFont = (XSSFFont) workbook.createFont();
+        dataFont.setFontName("Calibri"); dataFont.setFontHeightInPoints((short)10);
+        dataFont.setColor(darkText);
+
+        // ── Styles ───────────────────────────────────────────────────────────
+        XSSFCellStyle titleStyle = (XSSFCellStyle) workbook.createCellStyle();
+        titleStyle.setFont(titleFont);
+        titleStyle.setFillForegroundColor(darkNavy);
+        titleStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        titleStyle.setAlignment(HorizontalAlignment.CENTER);
+        titleStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        titleStyle.setBorderTop(BorderStyle.THIN); titleStyle.setBorderBottom(BorderStyle.THIN);
+        titleStyle.setBorderLeft(BorderStyle.THIN); titleStyle.setBorderRight(BorderStyle.THIN);
+        titleStyle.setTopBorderColor(black); titleStyle.setBottomBorderColor(black);
+        titleStyle.setLeftBorderColor(black); titleStyle.setRightBorderColor(black);
+
+        XSSFCellStyle subStyle = (XSSFCellStyle) workbook.createCellStyle();
+        subStyle.setFont(subFont);
+        subStyle.setFillForegroundColor(primaryBlue);
+        subStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        subStyle.setAlignment(HorizontalAlignment.CENTER);
+        subStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        subStyle.setBorderTop(BorderStyle.THIN); subStyle.setBorderBottom(BorderStyle.THIN);
+        subStyle.setBorderLeft(BorderStyle.THIN); subStyle.setBorderRight(BorderStyle.THIN);
+        subStyle.setTopBorderColor(black); subStyle.setBottomBorderColor(black);
+        subStyle.setLeftBorderColor(black); subStyle.setRightBorderColor(black);
+
+        XSSFCellStyle hdrStyle = (XSSFCellStyle) workbook.createCellStyle();
+        hdrStyle.setFont(hdrFont);
+        hdrStyle.setFillForegroundColor(primaryBlue);
+        hdrStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        hdrStyle.setAlignment(HorizontalAlignment.CENTER);
+        hdrStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        hdrStyle.setWrapText(true);
+        hdrStyle.setBorderTop(BorderStyle.THIN); hdrStyle.setBorderBottom(BorderStyle.THIN);
+        hdrStyle.setBorderLeft(BorderStyle.THIN); hdrStyle.setBorderRight(BorderStyle.THIN);
+        hdrStyle.setTopBorderColor(black); hdrStyle.setBottomBorderColor(black);
+        hdrStyle.setLeftBorderColor(black); hdrStyle.setRightBorderColor(black);
+
+        XSSFCellStyle dataWhite = (XSSFCellStyle) workbook.createCellStyle();
+        dataWhite.setFont(dataFont);
+        dataWhite.setAlignment(HorizontalAlignment.CENTER);
+        dataWhite.setVerticalAlignment(VerticalAlignment.CENTER);
+        dataWhite.setWrapText(true);
+        dataWhite.setBorderTop(BorderStyle.THIN); dataWhite.setBorderBottom(BorderStyle.THIN);
+        dataWhite.setBorderLeft(BorderStyle.THIN); dataWhite.setBorderRight(BorderStyle.THIN);
+        dataWhite.setTopBorderColor(black); dataWhite.setBottomBorderColor(black);
+        dataWhite.setLeftBorderColor(black); dataWhite.setRightBorderColor(black);
+
+        XSSFCellStyle dataAlt = (XSSFCellStyle) workbook.createCellStyle();
+        dataAlt.cloneStyleFrom(dataWhite);
+        dataAlt.setFillForegroundColor(altRow);
+        dataAlt.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+        // ── Row 0: Department title ───────────────────────────────────────────
+        Row titleRow = sheet.createRow(0);
+        titleRow.setHeightInPoints(36);
+        Cell titleCell = titleRow.createCell(0);
+        titleCell.setCellValue("Department of Sericulture, Government of Karnataka");
+        titleCell.setCellStyle(titleStyle);
+        for (int c = 1; c < TOTAL_COLS; c++) { titleRow.createCell(c).setCellStyle(titleStyle); }
+        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, TOTAL_COLS - 1));
+
+        // ── Row 1: Report name ────────────────────────────────────────────────
+        Row reportRow = sheet.createRow(1);
+        reportRow.setHeightInPoints(24);
+        Cell reportCell = reportRow.createCell(0);
+        reportCell.setCellValue("FARMER MULBERRY EXTENSION REPORT");
+        reportCell.setCellStyle(subStyle);
+        for (int c = 1; c < TOTAL_COLS; c++) { reportRow.createCell(c).setCellStyle(subStyle); }
+        sheet.addMergedRegion(new CellRangeAddress(1, 1, 0, TOTAL_COLS - 1));
+
+        // ── Row 2: Generated on ───────────────────────────────────────────────
+        Row genRow = sheet.createRow(2);
+        genRow.setHeightInPoints(20);
+        Cell genCell = genRow.createCell(0);
+        genCell.setCellValue("Generated On: " + new java.text.SimpleDateFormat("dd-MMM-yyyy HH:mm").format(new java.util.Date()));
+        genCell.setCellStyle(subStyle);
+        for (int c = 1; c < TOTAL_COLS; c++) { genRow.createCell(c).setCellStyle(subStyle); }
+        sheet.addMergedRegion(new CellRangeAddress(2, 2, 0, TOTAL_COLS - 1));
+
+        // ── Row 3: Column headers ─────────────────────────────────────────────
+        Row headerRow = sheet.createRow(3);
+        headerRow.setHeightInPoints(36);
+        for (int i = 0; i < TOTAL_COLS; i++) {
+            Cell hCell = headerRow.createCell(i);
+            hCell.setCellValue(headerLabels[i]);
+            hCell.setCellStyle(hdrStyle);
         }
 
-        // Auto-size all 17 columns
-        for (int col = 0; col <= 16; col++) {
-            sheet.autoSizeColumn(col, true);
+        // ── Rows 4+: Data rows ────────────────────────────────────────────────
+        int dataStartsFrom = 4;
+        for (int i = 0; i < responseList.size(); i++) {
+            FarmerMulberryExtensionResponse r = responseList.get(i);
+            Row row = sheet.createRow(dataStartsFrom + i);
+            XSSFCellStyle rowStyle = (i % 2 != 0) ? dataAlt : dataWhite;
+            String[] values = {
+                String.valueOf(r.getSerialNumber()),
+                r.getFirstName(),
+                r.getFatherName(),
+                r.getFruitsId(),
+                r.getScheme(),
+                r.getAddressText(),
+                r.getTscName(),
+                r.getTscNameKannada(),
+                r.getMulberryVarietyName(),
+                r.getMulberryVarietyNameKannada(),
+                r.getPlantationDate(),
+                r.getNumberOfSaplings(),
+                r.getMulberryArea(),
+                r.getSpacing(),
+                r.getApplicationType(),
+                r.getUprootingReason(),
+                r.getUprootingDate(),
+                r.getDistrictName(),
+                r.getTalukName()
+            };
+            for (int col = 0; col < TOTAL_COLS; col++) {
+                Cell cell = row.createCell(col);
+                cell.setCellValue(values[col] != null ? values[col] : "");
+                cell.setCellStyle(rowStyle);
+            }
+        }
+
+        sheet.createFreezePane(0, 4);
+        for (int col = 0; col < TOTAL_COLS; col++) {
+            sheet.setColumnWidth(col, 20 * 256);
         }
 
         String userHome = System.getProperty("user.home");
@@ -997,10 +1340,10 @@ public class CropInspectionService {
         Path filePath = Paths.get(directoryPath, "farmer_mulberry_extension_report" + Util.getISTLocalDate() + ".xlsx");
 
         FileOutputStream fileOut = new FileOutputStream(filePath.toString());
-        FileInputStream fileIn = new FileInputStream(filePath.toString());
         workbook.write(fileOut);
         fileOut.close();
         workbook.close();
+        FileInputStream fileIn = new FileInputStream(filePath.toString());
         return fileIn;
     }
 
@@ -1030,46 +1373,159 @@ public class CropInspectionService {
 
         buildResponseForDisinfectant(responseList, page.getContent(), pageNumber, pageSize);
 
-        Workbook workbook = new XSSFWorkbook();
+        String[] headerLabels = {
+            "Sl.No", "Farmer Name", "Father Name", "Fruits ID", "Invoice No/Date",
+            "Quantity", "Disinfectant Name", "Quantity Supplied", "Supply Date",
+            "Size of Rearing House", "No of DFLs", "Disinfectant Master Name", "TSC Name"
+        };
+        final int TOTAL_COLS = headerLabels.length;
+
+        SXSSFWorkbook workbook = new SXSSFWorkbook(100);
+        workbook.setCompressTempFiles(true);
         Sheet sheet = workbook.createSheet("Supply Of Disinfectant Report");
 
-        // Header row
-        Row headerRow = sheet.createRow(0);
-        headerRow.createCell(0).setCellValue("Sl.No");
-        headerRow.createCell(1).setCellValue("Farmer Name");
-        headerRow.createCell(2).setCellValue("Father Name");
-        headerRow.createCell(3).setCellValue("Fruits ID");
-        headerRow.createCell(4).setCellValue("Invoice No/Date");
-        headerRow.createCell(5).setCellValue("Quantity");
-        headerRow.createCell(6).setCellValue("Disinfectant Name");
-        headerRow.createCell(7).setCellValue("Quantity Supplied");
-        headerRow.createCell(8).setCellValue("Supply Date");
-        headerRow.createCell(9).setCellValue("Size of Rearing House");
-        headerRow.createCell(10).setCellValue("No of DFLs");
-        headerRow.createCell(11).setCellValue("Disinfectant Master Name");
-        headerRow.createCell(12).setCellValue("TSC Name");
+        // ── Colors ───────────────────────────────────────────────────────────
+        XSSFColor primaryBlue = new XSSFColor(new byte[]{(byte)26,  (byte)95,  (byte)158}, null);
+        XSSFColor darkNavy    = new XSSFColor(new byte[]{(byte)12,  (byte)74,  (byte)158}, null);
+        XSSFColor altRow      = new XSSFColor(new byte[]{(byte)247, (byte)250, (byte)253}, null);
+        XSSFColor white       = new XSSFColor(new byte[]{(byte)255, (byte)255, (byte)255}, null);
+        XSSFColor darkText    = new XSSFColor(new byte[]{(byte)30,  (byte)58,  (byte)95},  null);
+        XSSFColor black       = new XSSFColor(new byte[]{(byte)0,   (byte)0,   (byte)0},   null);
 
-        // Data rows
-        int dataRow = 1;
-        for (SupplyOfDisinfectantResponse r : responseList) {
-            Row row = sheet.createRow(dataRow++);
-            row.createCell(0).setCellValue(r.getSerialNumber());
-            row.createCell(1).setCellValue(r.getFarmerName());
-            row.createCell(2).setCellValue(r.getFatherName());
-            row.createCell(3).setCellValue(r.getFruitsId());
-            row.createCell(4).setCellValue(r.getInvoiceNoDate());
-            row.createCell(5).setCellValue(r.getQuantity());
-            row.createCell(6).setCellValue(r.getDisinfectantName());
-            row.createCell(7).setCellValue(r.getQuantitySupplied());
-            row.createCell(8).setCellValue(r.getSupplyDate());
-            row.createCell(9).setCellValue(r.getSizeOfRearingHouse());
-            row.createCell(10).setCellValue(r.getNoOfDfls());
-            row.createCell(11).setCellValue(r.getDisinfectantMasterName());
-            row.createCell(12).setCellValue(r.getTscName());
+        // ── Fonts ────────────────────────────────────────────────────────────
+        XSSFFont titleFont = (XSSFFont) workbook.createFont();
+        titleFont.setFontName("Calibri"); titleFont.setFontHeightInPoints((short)16);
+        titleFont.setBold(true); titleFont.setColor(white);
+
+        XSSFFont subFont = (XSSFFont) workbook.createFont();
+        subFont.setFontName("Calibri"); subFont.setFontHeightInPoints((short)11);
+        subFont.setColor(white);
+
+        XSSFFont hdrFont = (XSSFFont) workbook.createFont();
+        hdrFont.setFontName("Calibri"); hdrFont.setFontHeightInPoints((short)11);
+        hdrFont.setBold(true); hdrFont.setColor(white);
+
+        XSSFFont dataFont = (XSSFFont) workbook.createFont();
+        dataFont.setFontName("Calibri"); dataFont.setFontHeightInPoints((short)10);
+        dataFont.setColor(darkText);
+
+        // ── Styles ───────────────────────────────────────────────────────────
+        XSSFCellStyle titleStyle = (XSSFCellStyle) workbook.createCellStyle();
+        titleStyle.setFont(titleFont);
+        titleStyle.setFillForegroundColor(darkNavy);
+        titleStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        titleStyle.setAlignment(HorizontalAlignment.CENTER);
+        titleStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        titleStyle.setBorderTop(BorderStyle.THIN); titleStyle.setBorderBottom(BorderStyle.THIN);
+        titleStyle.setBorderLeft(BorderStyle.THIN); titleStyle.setBorderRight(BorderStyle.THIN);
+        titleStyle.setTopBorderColor(black); titleStyle.setBottomBorderColor(black);
+        titleStyle.setLeftBorderColor(black); titleStyle.setRightBorderColor(black);
+
+        XSSFCellStyle subStyle = (XSSFCellStyle) workbook.createCellStyle();
+        subStyle.setFont(subFont);
+        subStyle.setFillForegroundColor(primaryBlue);
+        subStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        subStyle.setAlignment(HorizontalAlignment.CENTER);
+        subStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        subStyle.setBorderTop(BorderStyle.THIN); subStyle.setBorderBottom(BorderStyle.THIN);
+        subStyle.setBorderLeft(BorderStyle.THIN); subStyle.setBorderRight(BorderStyle.THIN);
+        subStyle.setTopBorderColor(black); subStyle.setBottomBorderColor(black);
+        subStyle.setLeftBorderColor(black); subStyle.setRightBorderColor(black);
+
+        XSSFCellStyle hdrStyle = (XSSFCellStyle) workbook.createCellStyle();
+        hdrStyle.setFont(hdrFont);
+        hdrStyle.setFillForegroundColor(primaryBlue);
+        hdrStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        hdrStyle.setAlignment(HorizontalAlignment.CENTER);
+        hdrStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        hdrStyle.setWrapText(true);
+        hdrStyle.setBorderTop(BorderStyle.THIN); hdrStyle.setBorderBottom(BorderStyle.THIN);
+        hdrStyle.setBorderLeft(BorderStyle.THIN); hdrStyle.setBorderRight(BorderStyle.THIN);
+        hdrStyle.setTopBorderColor(black); hdrStyle.setBottomBorderColor(black);
+        hdrStyle.setLeftBorderColor(black); hdrStyle.setRightBorderColor(black);
+
+        XSSFCellStyle dataWhite = (XSSFCellStyle) workbook.createCellStyle();
+        dataWhite.setFont(dataFont);
+        dataWhite.setAlignment(HorizontalAlignment.CENTER);
+        dataWhite.setVerticalAlignment(VerticalAlignment.CENTER);
+        dataWhite.setWrapText(true);
+        dataWhite.setBorderTop(BorderStyle.THIN); dataWhite.setBorderBottom(BorderStyle.THIN);
+        dataWhite.setBorderLeft(BorderStyle.THIN); dataWhite.setBorderRight(BorderStyle.THIN);
+        dataWhite.setTopBorderColor(black); dataWhite.setBottomBorderColor(black);
+        dataWhite.setLeftBorderColor(black); dataWhite.setRightBorderColor(black);
+
+        XSSFCellStyle dataAlt = (XSSFCellStyle) workbook.createCellStyle();
+        dataAlt.cloneStyleFrom(dataWhite);
+        dataAlt.setFillForegroundColor(altRow);
+        dataAlt.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+        // ── Row 0: Department title ───────────────────────────────────────────
+        Row titleRow = sheet.createRow(0);
+        titleRow.setHeightInPoints(36);
+        Cell titleCell = titleRow.createCell(0);
+        titleCell.setCellValue("Department of Sericulture, Government of Karnataka");
+        titleCell.setCellStyle(titleStyle);
+        for (int c = 1; c < TOTAL_COLS; c++) { titleRow.createCell(c).setCellStyle(titleStyle); }
+        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, TOTAL_COLS - 1));
+
+        // ── Row 1: Report name ────────────────────────────────────────────────
+        Row reportRow = sheet.createRow(1);
+        reportRow.setHeightInPoints(24);
+        Cell reportCell = reportRow.createCell(0);
+        reportCell.setCellValue("SUPPLY OF DISINFECTANT REPORT");
+        reportCell.setCellStyle(subStyle);
+        for (int c = 1; c < TOTAL_COLS; c++) { reportRow.createCell(c).setCellStyle(subStyle); }
+        sheet.addMergedRegion(new CellRangeAddress(1, 1, 0, TOTAL_COLS - 1));
+
+        // ── Row 2: Generated on ───────────────────────────────────────────────
+        Row genRow = sheet.createRow(2);
+        genRow.setHeightInPoints(20);
+        Cell genCell = genRow.createCell(0);
+        genCell.setCellValue("Generated On: " + new java.text.SimpleDateFormat("dd-MMM-yyyy HH:mm").format(new java.util.Date()));
+        genCell.setCellStyle(subStyle);
+        for (int c = 1; c < TOTAL_COLS; c++) { genRow.createCell(c).setCellStyle(subStyle); }
+        sheet.addMergedRegion(new CellRangeAddress(2, 2, 0, TOTAL_COLS - 1));
+
+        // ── Row 3: Column headers ─────────────────────────────────────────────
+        Row headerRow = sheet.createRow(3);
+        headerRow.setHeightInPoints(36);
+        for (int i = 0; i < TOTAL_COLS; i++) {
+            Cell hCell = headerRow.createCell(i);
+            hCell.setCellValue(headerLabels[i]);
+            hCell.setCellStyle(hdrStyle);
         }
 
-        for (int col = 0; col <= 12; col++) {
-            sheet.autoSizeColumn(col, true);
+        // ── Rows 4+: Data rows ────────────────────────────────────────────────
+        int dataStartsFrom = 4;
+        for (int i = 0; i < responseList.size(); i++) {
+            SupplyOfDisinfectantResponse r = responseList.get(i);
+            Row row = sheet.createRow(dataStartsFrom + i);
+            XSSFCellStyle rowStyle = (i % 2 != 0) ? dataAlt : dataWhite;
+            String[] values = {
+                String.valueOf(r.getSerialNumber()),
+                r.getFarmerName(),
+                r.getFatherName(),
+                r.getFruitsId(),
+                r.getInvoiceNoDate(),
+                r.getQuantity() != null ? String.valueOf(r.getQuantity()) : "",
+                r.getDisinfectantName(),
+                r.getQuantitySupplied() != null ? String.valueOf(r.getQuantitySupplied()) : "",
+                r.getSupplyDate(),
+                r.getSizeOfRearingHouse(),
+                r.getNoOfDfls() != null ? String.valueOf(r.getNoOfDfls()) : "",
+                r.getDisinfectantMasterName(),
+                r.getTscName()
+            };
+            for (int col = 0; col < TOTAL_COLS; col++) {
+                Cell cell = row.createCell(col);
+                cell.setCellValue(values[col] != null ? values[col] : "");
+                cell.setCellStyle(rowStyle);
+            }
+        }
+
+        sheet.createFreezePane(0, 4);
+        for (int col = 0; col < TOTAL_COLS; col++) {
+            sheet.setColumnWidth(col, 20 * 256);
         }
 
         String userHome = System.getProperty("user.home");
@@ -1078,11 +1534,10 @@ public class CropInspectionService {
         Path filePath = Paths.get(directoryPath, "supply_of_disinfectant_report" + Util.getISTLocalDate() + ".xlsx");
 
         FileOutputStream fileOut = new FileOutputStream(filePath.toString());
-        FileInputStream fileIn = new FileInputStream(filePath.toString());
         workbook.write(fileOut);
         fileOut.close();
         workbook.close();
-
+        FileInputStream fileIn = new FileInputStream(filePath.toString());
         return fileIn;
     }
 
